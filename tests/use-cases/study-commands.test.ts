@@ -24,7 +24,16 @@ class MockFileSystemService implements IFileSystemService {
   }
 
   async ensureDirectoryExists(path: string): Promise<void> {
-    this.directories.add(path);
+    // Create parent directories recursively
+    const parts = path.split('/');
+    let currentPath = '';
+    
+    for (const part of parts) {
+      if (part) {
+        currentPath = currentPath ? `${currentPath}/${part}` : part;
+        this.directories.add(currentPath);
+      }
+    }
   }
 
   async writeFile(path: string, content: string): Promise<void> {
@@ -40,22 +49,42 @@ class MockFileSystemService implements IFileSystemService {
   }
 
   async deleteDirectory(path: string, recursive?: boolean): Promise<void> {
+    // Remove both original and normalized paths for consistency
+    const normalizedPath = path.startsWith('/') ? path.substring(1) : path;
     this.directories.delete(path);
+    this.directories.delete(normalizedPath);
+    
+    // Also remove any files in this directory
+    const filesToDelete = Array.from(this.files.keys()).filter(file => 
+      file.startsWith(path) || file.startsWith(normalizedPath)
+    );
+    filesToDelete.forEach(file => this.files.delete(file));
   }
 
   async pathExists(path: string): Promise<boolean> {
-    return this.files.has(path) || this.directories.has(path);
+    // Remove leading slash for consistency
+    const normalizedPath = path.startsWith('/') ? path.substring(1) : path;
+    return this.files.has(path) || this.files.has(normalizedPath) || 
+           this.directories.has(path) || this.directories.has(normalizedPath);
   }
 
   async isDirectory(path: string): Promise<boolean> {
-    return this.directories.has(path);
+    // Remove leading slash for consistency
+    const normalizedPath = path.startsWith('/') ? path.substring(1) : path;
+    return this.directories.has(path) || this.directories.has(normalizedPath);
   }
 
   async listFiles(path: string, extension?: string): Promise<string[]> {
     const allPaths = [...this.files.keys(), ...this.directories];
-    return allPaths.filter(file => 
-      file.startsWith(path) && file !== path && (!extension || file.endsWith(extension))
-    );
+    return allPaths.filter(file => {
+      // Normalize paths for comparison
+      const normalizedFile = file.startsWith('/') ? file.substring(1) : file;
+      const normalizedPath = path.startsWith('/') ? path.substring(1) : path;
+      
+      return normalizedFile.startsWith(normalizedPath) && 
+             normalizedFile !== normalizedPath && 
+             (!extension || normalizedFile.endsWith(extension));
+    });
   }
 
   joinPaths(...paths: string[]): string {
@@ -71,6 +100,11 @@ class MockFileSystemService implements IFileSystemService {
   dirname(path: string): string {
     const parts = path.split('/');
     return parts.slice(0, -1).join('/');
+  }
+
+  clear(): void {
+    this.files.clear();
+    this.directories.clear();
   }
 }
 
@@ -126,6 +160,12 @@ describe('Study Commands Use Cases', () => {
     listStudiesCommand = new ListStudiesCommand(studyService, mockOutput);
     showStudyCommand = new ShowStudyCommand(studyService, mockOutput);
     deleteStudyCommand = new DeleteStudyCommand(studyService, mockOutput);
+  });
+
+  afterEach(() => {
+    // Clear all mock state after each test to ensure isolation
+    mockFileSystem.clear();
+    mockOutput.clear();
   });
 
   describe('Given a UX-Kit initialized project', () => {
@@ -221,13 +261,9 @@ describe('Study Commands Use Cases', () => {
       });
 
       it('Then should list all studies with metadata', async () => {
-        // Given: A project with multiple studies
+        // Given: A project with multiple studies (created in beforeEach)
         // When: Listing studies
         // Then: Should return all studies with metadata
-        
-        // Create studies for this test
-        await createStudyCommand.execute(['Study 1'], { projectRoot });
-        await createStudyCommand.execute(['Study 2'], { projectRoot });
         
         const result = await listStudiesCommand.execute([], { projectRoot });
         

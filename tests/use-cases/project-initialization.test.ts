@@ -105,7 +105,7 @@ describe('Project Initialization Use Cases', () => {
         const eslintConfig = require(eslintPath);
         
         // Should extend TypeScript recommended rules
-        expect(eslintConfig.extends).toContain('@typescript-eslint/recommended');
+        expect(eslintConfig.extends).toContain('plugin:@typescript-eslint/recommended');
         expect(eslintConfig.extends).toContain('prettier');
         
         // Should have TypeScript parser
@@ -115,13 +115,13 @@ describe('Project Initialization Use Cases', () => {
         expect(eslintConfig.plugins).toContain('@typescript-eslint');
         
         // Should have proper parser options
-        expect(eslintConfig.parserOptions.ecmaVersion).toBe(2020);
+        expect(eslintConfig.parserOptions.ecmaVersion).toBe(2021);
         expect(eslintConfig.parserOptions.sourceType).toBe('module');
         expect(eslintConfig.parserOptions.project).toBe('./tsconfig.json');
         
         // Should have proper environment
         expect(eslintConfig.env.node).toBe(true);
-        expect(eslintConfig.env.es2020).toBe(true);
+        expect(eslintConfig.env.jest).toBe(true);
       });
       
       it('Then should create Prettier configuration for code formatting', () => {

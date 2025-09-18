@@ -9,7 +9,7 @@ import { IFileSystemService } from '../contracts/infrastructure-contracts';
 export class TemplateService {
   constructor(private fileSystem: IFileSystemService) {}
 
-  async copyTemplates(projectRoot: string, templateSource?: string): Promise<void> {
+  async copyTemplates(projectRoot: string, _templateSource?: string): Promise<void> {
     const templatesDir = this.fileSystem.joinPaths(projectRoot, '.uxkit', 'templates');
     
     // Create template files

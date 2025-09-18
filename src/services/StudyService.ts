@@ -52,16 +52,27 @@ export class StudyService {
       return [];
     }
     
-    const studyDirs = await this.fileSystem.listFiles(studiesDir);
+    const allPaths = await this.fileSystem.listFiles(studiesDir);
     const studies: StudyMetadata[] = [];
     
+    // Filter to only get study directories (not subdirectories or files)
+    const studyDirs = allPaths.filter(path => {
+      // Normalize paths for comparison
+      const normalizedPath = path.startsWith('/') ? path.substring(1) : path;
+      const normalizedStudiesDir = studiesDir.startsWith('/') ? studiesDir.substring(1) : studiesDir;
+      
+      // Check if this path is a direct child of the studies directory
+      const relativePath = normalizedPath.replace(normalizedStudiesDir + '/', '');
+      const isDirectChild = !relativePath.includes('/') && relativePath !== '';
+      
+      return isDirectChild;
+    });
+    
     for (const studyDir of studyDirs) {
-      if (await this.fileSystem.isDirectory(studyDir)) {
-        const studyId = this.fileSystem.basename(studyDir);
-        const study = await this.getStudy(studyId, projectRoot);
-        if (study) {
-          studies.push(study);
-        }
+      const studyId = this.fileSystem.basename(studyDir);
+      const study = await this.getStudy(studyId, projectRoot);
+      if (study) {
+        studies.push(study);
       }
     }
     
@@ -104,6 +115,16 @@ export class StudyService {
   }
 
   private async generateStudyId(projectRoot: string, name: string): Promise<string> {
+    const studiesDir = this.fileSystem.joinPaths(projectRoot, '.uxkit', 'studies');
+    
+    // If studies directory doesn't exist, this is the first study
+    if (!(await this.fileSystem.pathExists(studiesDir))) {
+      const numberPart = '001';
+      const namePart = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+      return `${numberPart}-${namePart}`;
+    }
+    
+    // Get existing studies to determine next number
     const studies = await this.listStudies(projectRoot);
     const nextNumber = studies.length + 1;
     const numberPart = nextNumber.toString().padStart(3, '0');

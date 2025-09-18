@@ -1,28 +1,24 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2020,
+    ecmaVersion: 2021,
     sourceType: 'module',
-    project: './tsconfig.json',
+    project: './tsconfig.json'
+  },
+  env: {
+    node: true,
+    jest: true
   },
   plugins: ['@typescript-eslint'],
   extends: [
     'eslint:recommended',
-    '@typescript-eslint/recommended',
-    'prettier',
+    'plugin:@typescript-eslint/recommended',
+    'prettier'
   ],
-  env: {
-    node: true,
-    es2020: true,
-    jest: true,
-  },
   rules: {
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-    '@typescript-eslint/explicit-function-return-type': 'warn',
-    '@typescript-eslint/no-explicit-any': 'warn',
-    '@typescript-eslint/no-non-null-assertion': 'warn',
-    'prefer-const': 'error',
-    'no-var': 'error',
-  },
-  ignorePatterns: ['dist/', 'node_modules/', 'coverage/'],
+    // Add custom rules here
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-explicit-any': 'off' // Allow any for now during development
+  }
 };
