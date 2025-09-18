@@ -1,0 +1,19 @@
+# UX-Kit Default Configuration
+# This file contains the default configuration values for UX-Kit CLI
+
+version: "1.0.0"
+
+# Template configuration
+templates:
+  directory: "./templates"
+  format: "markdown"
+
+# Output configuration
+output:
+  directory: "./output"
+  format: "markdown"
+
+# Research configuration
+research:
+  defaultStudy: "default-study"
+  autoSave: true
