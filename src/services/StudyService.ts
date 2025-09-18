@@ -52,21 +52,12 @@ export class StudyService {
       return [];
     }
     
-    const allPaths = await this.fileSystem.listFiles(studiesDir);
+    const allPaths = await this.fileSystem.listDirectories(studiesDir);
+    
     const studies: StudyMetadata[] = [];
     
-    // Filter to only get study directories (not subdirectories or files)
-    const studyDirs = allPaths.filter(path => {
-      // Normalize paths for comparison
-      const normalizedPath = path.startsWith('/') ? path.substring(1) : path;
-      const normalizedStudiesDir = studiesDir.startsWith('/') ? studiesDir.substring(1) : studiesDir;
-      
-      // Check if this path is a direct child of the studies directory
-      const relativePath = normalizedPath.replace(normalizedStudiesDir + '/', '');
-      const isDirectChild = !relativePath.includes('/') && relativePath !== '';
-      
-      return isDirectChild;
-    });
+    // Since listDirectories already returns only directories, we can use them directly
+    const studyDirs = allPaths;
     
     for (const studyDir of studyDirs) {
       const studyId = this.fileSystem.basename(studyDir);

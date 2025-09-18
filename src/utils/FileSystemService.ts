@@ -85,6 +85,13 @@ export class FileSystemService implements IFileSystemService {
   }
 
   /**
+   * List directories in a directory
+   */
+  async listDirectories(path: string): Promise<string[]> {
+    return await DirectoryUtils.listDirectories(path);
+  }
+
+  /**
    * Join multiple path segments into a single path
    */
   joinPaths(...paths: string[]): string {

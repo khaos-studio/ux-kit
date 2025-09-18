@@ -14,6 +14,7 @@ export interface IFileSystemService {
   pathExists(path: string): Promise<boolean>;
   isDirectory(path: string): Promise<boolean>;
   listFiles(path: string, extension?: string): Promise<string[]>;
+  listDirectories(path: string): Promise<string[]>;
   joinPaths(...paths: string[]): string;
   basename(path: string, ext?: string): string;
   dirname(path: string): string;
