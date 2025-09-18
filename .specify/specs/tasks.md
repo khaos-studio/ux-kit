@@ -4,8 +4,9 @@
 **Architecture**: Spec-Driven Development (SDD) inspired by GitHub's spec-kit  
 **Methodology**: Test-Driven Development (TDD)  
 **File Strategy**: Small, focused files with composition over inheritance  
-**Scope**: CLI tool that creates text files and scripts to support AI agent research workflows in IDEs  
-**Inspiration**: GitHub's spec-kit for specification-driven development
+**Scope**: Lightweight CLI tool that creates text files and scripts to support AI agent research workflows in IDEs  
+**Inspiration**: GitHub's spec-kit for specification-driven development  
+**Architecture**: Simple layered architecture (CLI, Service, Utility layers) with file-based approach
 
 ## Task Execution Strategy
 
@@ -30,6 +31,7 @@
 - **File Generation**: Create research artifact files (questions.md, sources.md, etc.)
 - **IDE Integration**: Provide slash commands for seamless workflow integration
 - **Template System**: Structured templates for consistent research outputs
+- **Simple Architecture**: Lightweight CLI with file-based approach, no complex data models
 
 ### Spec-Kit Inspiration
 GitHub's spec-kit provides a specification-driven development workflow with commands like:
@@ -49,6 +51,8 @@ Both tools emphasize:
 - **AI agent integration**: Leverage AI for content generation and refinement
 - **Structured workflows**: Clear phases and consistent outputs
 - **IDE integration**: Seamless integration with development environments
+- **File-based approach**: Simple text files and scripts, no complex databases
+- **Lightweight implementation**: Focus on essential functionality
 
 ---
 

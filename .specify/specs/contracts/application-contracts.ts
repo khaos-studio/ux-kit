@@ -1,500 +1,668 @@
 /**
  * Application Layer Contracts
  * 
- * These interfaces define the application layer contracts
- * for the UX-Kit system. They represent use cases, command
- * handlers, and application services that orchestrate
- * domain logic and infrastructure concerns.
+ * This file defines the application layer interfaces and types for the UX-Kit TypeScript CLI.
+ * The application layer orchestrates domain services and handles use cases, following
+ * clean architecture principles and protocol-oriented design.
+ * 
+ * The application layer is inspired by GitHub's spec-kit approach for structured workflows.
  */
 
 import {
-  ResearchStudy,
+  ResearchStudyDirectory,
   ResearchQuestion,
   ResearchSource,
   ResearchSummary,
   Interview,
   ResearchInsight,
-  ResearchContext,
-  ResearchArtifact,
+  StudyStatus,
   Priority,
   QuestionCategory,
   SourceType,
-  SummaryMethod,
-  InterviewMethod,
   InsightCategory,
-  OutputFormat
+  ValidationStatus
 } from './domain-contracts';
 
 // ============================================================================
-// Use Case Contracts
+// Use Case Interfaces
 // ============================================================================
 
-export interface ICreateResearchStudyUseCase {
+/**
+ * Use case for creating a new research study
+ */
+export interface ICreateStudyUseCase {
   execute(request: CreateStudyRequest): Promise<CreateStudyResponse>;
 }
 
+export interface CreateStudyRequest {
+  name: string;
+  description?: string;
+  tags?: string[];
+  priority?: Priority;
+  teamMembers?: string[];
+}
+
+export interface CreateStudyResponse {
+  study: ResearchStudyDirectory;
+  success: boolean;
+  message: string;
+}
+
+/**
+ * Use case for generating research questions
+ */
 export interface IGenerateQuestionsUseCase {
   execute(request: GenerateQuestionsRequest): Promise<GenerateQuestionsResponse>;
 }
 
-export interface IProcessSourcesUseCase {
-  execute(request: ProcessSourcesRequest): Promise<ProcessSourcesResponse>;
+export interface GenerateQuestionsRequest {
+  studyId: string;
+  prompt: string;
+  categories?: QuestionCategory[];
+  maxQuestions?: number;
 }
 
+export interface GenerateQuestionsResponse {
+  questions: ResearchQuestion[];
+  success: boolean;
+  message: string;
+  metadata: {
+    prompt: string;
+    aiAgent: string;
+    processingTime: number;
+  };
+}
+
+/**
+ * Use case for discovering research sources
+ */
+export interface IDiscoverSourcesUseCase {
+  execute(request: DiscoverSourcesRequest): Promise<DiscoverSourcesResponse>;
+}
+
+export interface DiscoverSourcesRequest {
+  studyId: string;
+  query: string;
+  types?: SourceType[];
+  maxSources?: number;
+  autoDiscover?: boolean;
+}
+
+export interface DiscoverSourcesResponse {
+  sources: ResearchSource[];
+  success: boolean;
+  message: string;
+  metadata: {
+    query: string;
+    autoDiscovered: boolean;
+    aiAgent: string;
+    processingTime: number;
+  };
+}
+
+/**
+ * Use case for summarizing research sources
+ */
 export interface ISummarizeSourceUseCase {
   execute(request: SummarizeSourceRequest): Promise<SummarizeSourceResponse>;
 }
 
+export interface SummarizeSourceRequest {
+  sourceId: string;
+  studyId: string;
+  content: string;
+  focusAreas?: string[];
+  maxLength?: number;
+}
+
+export interface SummarizeSourceResponse {
+  summary: ResearchSummary;
+  success: boolean;
+  message: string;
+  metadata: {
+    sourceId: string;
+    aiAgent: string;
+    processingTime: number;
+    wordCount: number;
+  };
+}
+
+/**
+ * Use case for formatting interview transcripts
+ */
 export interface IFormatInterviewUseCase {
   execute(request: FormatInterviewRequest): Promise<FormatInterviewResponse>;
 }
 
+export interface FormatInterviewRequest {
+  studyId: string;
+  participantId: string;
+  transcript: string;
+  participantInfo?: {
+    demographics?: any;
+    experience?: any;
+  };
+  focusAreas?: string[];
+}
+
+export interface FormatInterviewResponse {
+  interview: Interview;
+  success: boolean;
+  message: string;
+  metadata: {
+    participantId: string;
+    aiAgent: string;
+    processingTime: number;
+    duration: number;
+  };
+}
+
+/**
+ * Use case for synthesizing research insights
+ */
 export interface ISynthesizeInsightsUseCase {
   execute(request: SynthesizeInsightsRequest): Promise<SynthesizeInsightsResponse>;
 }
 
-export interface IListStudiesUseCase {
-  execute(request: ListStudiesRequest): Promise<ListStudiesResponse>;
-}
-
-export interface IGetStudyUseCase {
-  execute(request: GetStudyRequest): Promise<GetStudyResponse>;
-}
-
-export interface IUpdateStudyUseCase {
-  execute(request: UpdateStudyRequest): Promise<UpdateStudyResponse>;
-}
-
-export interface IDeleteStudyUseCase {
-  execute(request: DeleteStudyRequest): Promise<DeleteStudyResponse>;
-}
-
-// ============================================================================
-// Request/Response Models
-// ============================================================================
-
-export interface CreateStudyRequest {
-  readonly name: string;
-  readonly description: string;
-  readonly metadata?: Partial<StudyMetadata>;
-  readonly context: ResearchContext;
-}
-
-export interface CreateStudyResponse {
-  readonly success: boolean;
-  readonly study?: ResearchStudy;
-  readonly error?: ApplicationError;
-}
-
-export interface GenerateQuestionsRequest {
-  readonly studyId: string;
-  readonly prompt: string;
-  readonly context?: ResearchContext;
-  readonly maxQuestions?: number;
-  readonly categories?: QuestionCategory[];
-}
-
-export interface GenerateQuestionsResponse {
-  readonly success: boolean;
-  readonly questions?: ResearchQuestion[];
-  readonly error?: ApplicationError;
-}
-
-export interface ProcessSourcesRequest {
-  readonly studyId: string;
-  readonly sources: SourceInput[];
-  readonly autoDiscover?: boolean;
-  readonly context?: ResearchContext;
-}
-
-export interface ProcessSourcesResponse {
-  readonly success: boolean;
-  readonly sources?: ResearchSource[];
-  readonly error?: ApplicationError;
-}
-
-export interface SourceInput {
-  readonly title: string;
-  readonly url?: string;
-  readonly filePath?: string;
-  readonly type: SourceType;
-  readonly metadata?: Partial<SourceMetadata>;
-}
-
-export interface SummarizeSourceRequest {
-  readonly sourceId: string;
-  readonly method?: SummaryMethod;
-  readonly maxLength?: number;
-  readonly context?: ResearchContext;
-}
-
-export interface SummarizeSourceResponse {
-  readonly success: boolean;
-  readonly summary?: ResearchSummary;
-  readonly error?: ApplicationError;
-}
-
-export interface FormatInterviewRequest {
-  readonly studyId: string;
-  readonly participantId: string;
-  readonly transcript: string;
-  readonly metadata?: Partial<InterviewMetadata>;
-  readonly context?: ResearchContext;
-}
-
-export interface FormatInterviewResponse {
-  readonly success: boolean;
-  readonly interview?: Interview;
-  readonly error?: ApplicationError;
-}
-
 export interface SynthesizeInsightsRequest {
-  readonly studyId: string;
-  readonly artifacts: ResearchArtifact[];
-  readonly format?: OutputFormat;
-  readonly context?: ResearchContext;
+  studyId: string;
+  artifactIds: string[];
+  focusAreas?: string[];
+  categories?: InsightCategory[];
+  minConfidence?: number;
 }
 
 export interface SynthesizeInsightsResponse {
-  readonly success: boolean;
-  readonly insights?: ResearchInsight[];
-  readonly error?: ApplicationError;
-}
-
-export interface ListStudiesRequest {
-  readonly context: ResearchContext;
-  readonly filters?: StudyFilters;
-  readonly pagination?: PaginationOptions;
-}
-
-export interface ListStudiesResponse {
-  readonly success: boolean;
-  readonly studies?: ResearchStudy[];
-  readonly pagination?: PaginationInfo;
-  readonly error?: ApplicationError;
-}
-
-export interface GetStudyRequest {
-  readonly studyId: string;
-  readonly context: ResearchContext;
-}
-
-export interface GetStudyResponse {
-  readonly success: boolean;
-  readonly study?: ResearchStudy;
-  readonly error?: ApplicationError;
-}
-
-export interface UpdateStudyRequest {
-  readonly studyId: string;
-  readonly updates: Partial<ResearchStudy>;
-  readonly context: ResearchContext;
-}
-
-export interface UpdateStudyResponse {
-  readonly success: boolean;
-  readonly study?: ResearchStudy;
-  readonly error?: ApplicationError;
-}
-
-export interface DeleteStudyRequest {
-  readonly studyId: string;
-  readonly context: ResearchContext;
-}
-
-export interface DeleteStudyResponse {
-  readonly success: boolean;
-  readonly error?: ApplicationError;
+  insights: ResearchInsight[];
+  success: boolean;
+  message: string;
+  metadata: {
+    sourceArtifacts: string[];
+    aiAgent: string;
+    processingTime: number;
+    insightCount: number;
+  };
 }
 
 // ============================================================================
-// Supporting Types
+// Command Interfaces
 // ============================================================================
 
-export interface StudyMetadata {
-  readonly tags: string[];
-  readonly owner: string;
-  readonly team: string[];
-  readonly deadline?: Date;
-  readonly priority: Priority;
+/**
+ * Base interface for all commands
+ */
+export interface ICommand {
+  readonly name: string;
+  readonly description: string;
+  readonly arguments: CommandArgument[];
+  readonly options: CommandOption[];
+  execute(args: string[], options: Record<string, any>): Promise<CommandResult>;
 }
 
-export interface SourceMetadata {
-  readonly author?: string;
-  readonly publicationDate?: Date;
-  readonly credibility: CredibilityLevel;
-  readonly relevance: RelevanceLevel;
-  readonly tags: string[];
-  readonly summary?: string;
+/**
+ * Command argument definition
+ */
+export interface CommandArgument {
+  name: string;
+  description: string;
+  required: boolean;
+  type: 'string' | 'number' | 'boolean' | 'array';
+  defaultValue?: any;
 }
 
-export interface InterviewMetadata {
-  readonly duration: number;
-  readonly interviewer: string;
-  readonly method: InterviewMethod;
-  readonly language: string;
-  readonly quality: QualityRating;
-  readonly keyThemes: string[];
+/**
+ * Command option definition
+ */
+export interface CommandOption {
+  name: string;
+  description: string;
+  type: 'string' | 'number' | 'boolean' | 'array';
+  required: boolean;
+  defaultValue?: any;
+  aliases?: string[];
 }
 
-export enum CredibilityLevel {
-  HIGH = 'high',
-  MEDIUM = 'medium',
-  LOW = 'low',
-  UNKNOWN = 'unknown'
+/**
+ * Command execution result
+ */
+export interface CommandResult {
+  success: boolean;
+  message: string;
+  data?: any;
+  errors?: string[];
+  metadata?: Record<string, any>;
 }
 
-export enum RelevanceLevel {
-  HIGH = 'high',
-  MEDIUM = 'medium',
-  LOW = 'low'
+/**
+ * Command for initializing UX-Kit
+ */
+export interface IInitCommand extends ICommand {
+  execute(args: string[], options: {
+    'ai-agent'?: string;
+    'template'?: string;
+    'force'?: boolean;
+  }): Promise<CommandResult>;
 }
 
-export enum QualityRating {
-  EXCELLENT = 'excellent',
-  GOOD = 'good',
-  FAIR = 'fair',
-  POOR = 'poor'
+/**
+ * Command for creating research studies
+ */
+export interface ICreateStudyCommand extends ICommand {
+  execute(args: string[], options: {
+    'description'?: string;
+    'tags'?: string[];
+    'priority'?: Priority;
+    'team'?: string[];
+  }): Promise<CommandResult>;
 }
 
-export interface StudyFilters {
-  readonly status?: StudyStatus[];
-  readonly priority?: Priority[];
-  readonly tags?: string[];
-  readonly owner?: string;
-  readonly team?: string[];
-  readonly dateRange?: DateRange;
+/**
+ * Command for generating research questions
+ */
+export interface IGenerateQuestionsCommand extends ICommand {
+  execute(args: string[], options: {
+    'study'?: string;
+    'categories'?: QuestionCategory[];
+    'max-questions'?: number;
+  }): Promise<CommandResult>;
 }
 
-export interface DateRange {
-  readonly start: Date;
-  readonly end: Date;
+/**
+ * Command for discovering research sources
+ */
+export interface IDiscoverSourcesCommand extends ICommand {
+  execute(args: string[], options: {
+    'study'?: string;
+    'types'?: SourceType[];
+    'max-sources'?: number;
+    'auto-discover'?: boolean;
+  }): Promise<CommandResult>;
 }
 
-export interface PaginationOptions {
-  readonly page: number;
-  readonly limit: number;
-  readonly sortBy?: string;
-  readonly sortOrder?: SortOrder;
+/**
+ * Command for summarizing research sources
+ */
+export interface ISummarizeSourceCommand extends ICommand {
+  execute(args: string[], options: {
+    'study'?: string;
+    'focus-areas'?: string[];
+    'max-length'?: number;
+  }): Promise<CommandResult>;
 }
 
-export interface PaginationInfo {
-  readonly page: number;
-  readonly limit: number;
-  readonly total: number;
-  readonly totalPages: number;
-  readonly hasNext: boolean;
-  readonly hasPrevious: boolean;
+/**
+ * Command for formatting interview transcripts
+ */
+export interface IFormatInterviewCommand extends ICommand {
+  execute(args: string[], options: {
+    'study'?: string;
+    'participant'?: string;
+    'focus-areas'?: string[];
+  }): Promise<CommandResult>;
 }
 
-export enum SortOrder {
-  ASC = 'asc',
-  DESC = 'desc'
-}
-
-export enum StudyStatus {
-  DRAFT = 'draft',
-  ACTIVE = 'active',
-  COMPLETED = 'completed',
-  ARCHIVED = 'archived'
+/**
+ * Command for synthesizing research insights
+ */
+export interface ISynthesizeInsightsCommand extends ICommand {
+  execute(args: string[], options: {
+    'study'?: string;
+    'format'?: string;
+    'focus-areas'?: string[];
+    'categories'?: InsightCategory[];
+    'min-confidence'?: number;
+  }): Promise<CommandResult>;
 }
 
 // ============================================================================
 // Application Services
 // ============================================================================
 
-export interface IApplicationService {
-  readonly name: string;
-  readonly version: string;
+/**
+ * Service for managing research workflows
+ */
+export interface IResearchWorkflowService {
+  initializeProject(config: ProjectConfig): Promise<void>;
+  createStudy(request: CreateStudyRequest): Promise<ResearchStudyDirectory>;
+  generateQuestions(request: GenerateQuestionsRequest): Promise<ResearchQuestion[]>;
+  discoverSources(request: DiscoverSourcesRequest): Promise<ResearchSource[]>;
+  summarizeSource(request: SummarizeSourceRequest): Promise<ResearchSummary>;
+  formatInterview(request: FormatInterviewRequest): Promise<Interview>;
+  synthesizeInsights(request: SynthesizeInsightsRequest): Promise<ResearchInsight[]>;
 }
 
-export interface IStudyApplicationService extends IApplicationService {
-  createStudy(request: CreateStudyRequest): Promise<CreateStudyResponse>;
-  listStudies(request: ListStudiesRequest): Promise<ListStudiesResponse>;
-  getStudy(request: GetStudyRequest): Promise<GetStudyResponse>;
-  updateStudy(request: UpdateStudyRequest): Promise<UpdateStudyResponse>;
-  deleteStudy(request: DeleteStudyRequest): Promise<DeleteStudyResponse>;
+/**
+ * Service for managing AI agent interactions
+ */
+export interface IAIAgentService {
+  generateQuestions(prompt: string, context: ResearchContext): Promise<ResearchQuestion[]>;
+  discoverSources(query: string, context: ResearchContext): Promise<ResearchSource[]>;
+  summarizeContent(content: string, context: ResearchContext): Promise<ResearchSummary>;
+  formatInterview(transcript: string, context: ResearchContext): Promise<Interview>;
+  synthesizeInsights(artifacts: string[], context: ResearchContext): Promise<ResearchInsight[]>;
+  isAvailable(): Promise<boolean>;
+  getCapabilities(): Promise<AIAgentCapabilities>;
 }
 
-export interface IResearchApplicationService extends IApplicationService {
-  generateQuestions(request: GenerateQuestionsRequest): Promise<GenerateQuestionsResponse>;
-  processSources(request: ProcessSourcesRequest): Promise<ProcessSourcesResponse>;
-  summarizeSource(request: SummarizeSourceRequest): Promise<SummarizeSourceResponse>;
-  formatInterview(request: FormatInterviewRequest): Promise<FormatInterviewResponse>;
-  synthesizeInsights(request: SynthesizeInsightsRequest): Promise<SynthesizeInsightsResponse>;
+/**
+ * Service for managing file operations
+ */
+export interface IFileService {
+  createStudyDirectory(study: ResearchStudyDirectory): Promise<void>;
+  generateQuestionsFile(studyId: string, questions: ResearchQuestion[]): Promise<string>;
+  generateSourcesFile(studyId: string, sources: ResearchSource[]): Promise<string>;
+  generateSummaryFile(sourceId: string, summary: ResearchSummary): Promise<string>;
+  generateInterviewFile(studyId: string, participantId: string, interview: Interview): Promise<string>;
+  generateInsightsFile(studyId: string, insights: ResearchInsight[]): Promise<string>;
+  readFile(path: string): Promise<string>;
+  writeFile(path: string, content: string): Promise<void>;
+  exists(path: string): Promise<boolean>;
+  createDirectory(path: string): Promise<void>;
+}
+
+/**
+ * Service for managing templates
+ */
+export interface ITemplateService {
+  loadTemplate(name: string): Promise<string>;
+  renderTemplate(template: string, data: Record<string, any>): Promise<string>;
+  validateTemplate(template: string): Promise<boolean>;
+  getAvailableTemplates(): Promise<TemplateInfo[]>;
+  createTemplate(name: string, content: string): Promise<void>;
+  updateTemplate(name: string, content: string): Promise<void>;
+  deleteTemplate(name: string): Promise<void>;
+}
+
+/**
+ * Service for managing configuration
+ */
+export interface IConfigurationService {
+  loadConfig(): Promise<UXKitConfig>;
+  saveConfig(config: UXKitConfig): Promise<void>;
+  getValue(key: string): Promise<any>;
+  setValue(key: string, value: any): Promise<void>;
+  resetConfig(): Promise<void>;
+  validateConfig(config: UXKitConfig): Promise<boolean>;
 }
 
 // ============================================================================
-// Command Handlers
+// Data Transfer Objects
 // ============================================================================
 
-export interface ICommandHandler<TRequest, TResponse> {
-  handle(request: TRequest): Promise<TResponse>;
+/**
+ * Project configuration
+ */
+export interface ProjectConfig {
+  name: string;
+  description?: string;
+  aiAgent: {
+    provider: string;
+    settings: Record<string, any>;
+  };
+  storage: {
+    basePath: string;
+    format: 'markdown' | 'json' | 'yaml';
+  };
+  research: {
+    defaultTemplates: string[];
+    autoSave: boolean;
+  };
 }
 
-export interface ICommandBus {
-  execute<TRequest, TResponse>(
-    command: string,
-    request: TRequest
-  ): Promise<TResponse>;
+/**
+ * UX-Kit configuration
+ */
+export interface UXKitConfig {
+  version: string;
+  aiAgent: {
+    provider: 'cursor' | 'codex' | 'custom';
+    settings: Record<string, any>;
+    timeout: number;
+    retries: number;
+  };
+  storage: {
+    basePath: string;
+    format: 'markdown' | 'json' | 'yaml';
+    autoSave: boolean;
+    backup: boolean;
+  };
+  research: {
+    defaultTemplates: string[];
+    autoDiscovery: boolean;
+    qualityThreshold: number;
+  };
+  ui: {
+    theme: 'light' | 'dark' | 'auto';
+    verbose: boolean;
+    progress: boolean;
+  };
 }
 
-export interface IQueryHandler<TRequest, TResponse> {
-  handle(request: TRequest): Promise<TResponse>;
+/**
+ * Research context for AI agent operations
+ */
+export interface ResearchContext {
+  studyId: string;
+  studyName: string;
+  studyDescription?: string;
+  existingArtifacts: string[];
+  focusAreas?: string[];
+  constraints?: Record<string, any>;
 }
 
-export interface IQueryBus {
-  execute<TRequest, TResponse>(
-    query: string,
-    request: TRequest
-  ): Promise<TResponse>;
+/**
+ * AI agent capabilities
+ */
+export interface AIAgentCapabilities {
+  name: string;
+  version: string;
+  supportedOperations: string[];
+  maxContentLength: number;
+  responseTime: number;
+  reliability: number;
+}
+
+/**
+ * Template information
+ */
+export interface TemplateInfo {
+  name: string;
+  description: string;
+  type: string;
+  path: string;
+  variables: TemplateVariable[];
+  metadata: TemplateMetadata;
+}
+
+/**
+ * Template variable definition
+ */
+export interface TemplateVariable {
+  name: string;
+  type: 'string' | 'number' | 'boolean' | 'array' | 'object';
+  required: boolean;
+  defaultValue?: any;
+  description: string;
+}
+
+/**
+ * Template metadata
+ */
+export interface TemplateMetadata {
+  version: string;
+  author: string;
+  createdAt: Date;
+  updatedAt: Date;
+  tags: string[];
 }
 
 // ============================================================================
-// Event Handlers
+// Application Events
 // ============================================================================
 
-export interface IEventHandler<TEvent> {
-  handle(event: TEvent): Promise<void>;
-}
-
-export interface IEventBus {
-  publish(event: DomainEvent): Promise<void>;
-  subscribe<TEvent>(
-    eventType: string,
-    handler: IEventHandler<TEvent>
-  ): void;
-  unsubscribe(eventType: string, handler: IEventHandler<any>): void;
-}
-
-export interface DomainEvent {
+/**
+ * Base interface for application events
+ */
+export interface ApplicationEvent {
   readonly id: string;
   readonly type: string;
-  readonly aggregateId: string;
-  readonly occurredAt: Date;
-  readonly data: Record<string, any>;
+  readonly timestamp: Date;
+  readonly correlationId: string;
+}
+
+/**
+ * Event fired when a command is executed
+ */
+export interface CommandExecutedEvent extends ApplicationEvent {
+  readonly type: 'CommandExecuted';
+  readonly command: string;
+  readonly args: string[];
+  readonly options: Record<string, any>;
+  readonly result: CommandResult;
+  readonly executionTime: number;
+}
+
+/**
+ * Event fired when a use case is executed
+ */
+export interface UseCaseExecutedEvent extends ApplicationEvent {
+  readonly type: 'UseCaseExecuted';
+  readonly useCase: string;
+  readonly request: any;
+  readonly response: any;
+  readonly executionTime: number;
+}
+
+/**
+ * Event fired when AI agent communication occurs
+ */
+export interface AIAgentCommunicationEvent extends ApplicationEvent {
+  readonly type: 'AIAgentCommunication';
+  readonly agent: string;
+  readonly operation: string;
+  readonly request: any;
+  readonly response: any;
+  readonly executionTime: number;
+  readonly success: boolean;
+}
+
+/**
+ * Event fired when file operations occur
+ */
+export interface FileOperationEvent extends ApplicationEvent {
+  readonly type: 'FileOperation';
+  readonly operation: 'create' | 'read' | 'update' | 'delete';
+  readonly path: string;
+  readonly success: boolean;
+  readonly executionTime: number;
 }
 
 // ============================================================================
-// Error Handling
+// Application Exceptions
 // ============================================================================
 
-export interface ApplicationError {
-  readonly code: string;
-  readonly message: string;
-  readonly details?: Record<string, any>;
-  readonly cause?: Error;
-}
-
-export class UseCaseError extends Error {
+/**
+ * Base class for application exceptions
+ */
+export abstract class ApplicationException extends Error {
+  abstract readonly code: string;
+  abstract readonly statusCode: number;
+  
   constructor(
-    public readonly code: string,
     message: string,
-    public readonly details?: Record<string, any>,
-    public readonly cause?: Error
+    public readonly context?: Record<string, any>
   ) {
     super(message);
-    this.name = 'UseCaseError';
+    this.name = this.constructor.name;
   }
 }
 
-export class ValidationError extends UseCaseError {
-  constructor(
-    message: string,
-    public readonly field: string,
-    details?: Record<string, any>
-  ) {
-    super('VALIDATION_ERROR', message, details);
+/**
+ * Exception thrown when a use case fails
+ */
+export class UseCaseException extends ApplicationException {
+  readonly code = 'USE_CASE_ERROR';
+  readonly statusCode = 500;
+  
+  constructor(useCase: string, operation: string, originalError: Error) {
+    super(
+      `Use case '${useCase}' failed during '${operation}': ${originalError.message}`,
+      { useCase, operation, originalError: originalError.message }
+    );
   }
 }
 
-export class NotFoundError extends UseCaseError {
-  constructor(
-    resource: string,
-    identifier: string,
-    details?: Record<string, any>
-  ) {
-    super('NOT_FOUND_ERROR', `${resource} with identifier '${identifier}' not found`, details);
+/**
+ * Exception thrown when a command fails
+ */
+export class CommandException extends ApplicationException {
+  readonly code = 'COMMAND_ERROR';
+  readonly statusCode = 500;
+  
+  constructor(command: string, args: string[], originalError: Error) {
+    super(
+      `Command '${command}' failed with args [${args.join(', ')}]: ${originalError.message}`,
+      { command, args, originalError: originalError.message }
+    );
   }
 }
 
-export class ConflictError extends UseCaseError {
-  constructor(
-    message: string,
-    details?: Record<string, any>
-  ) {
-    super('CONFLICT_ERROR', message, details);
+/**
+ * Exception thrown when AI agent communication fails
+ */
+export class AIAgentCommunicationException extends ApplicationException {
+  readonly code = 'AI_AGENT_COMMUNICATION_ERROR';
+  readonly statusCode = 502;
+  
+  constructor(agent: string, operation: string, originalError: Error) {
+    super(
+      `AI agent '${agent}' communication failed during '${operation}': ${originalError.message}`,
+      { agent, operation, originalError: originalError.message }
+    );
   }
 }
 
-export class UnauthorizedError extends UseCaseError {
-  constructor(
-    message: string = 'Unauthorized access',
-    details?: Record<string, any>
-  ) {
-    super('UNAUTHORIZED_ERROR', message, details);
+/**
+ * Exception thrown when file operations fail
+ */
+export class FileOperationException extends ApplicationException {
+  readonly code = 'FILE_OPERATION_ERROR';
+  readonly statusCode = 500;
+  
+  constructor(operation: string, path: string, originalError: Error) {
+    super(
+      `File operation '${operation}' failed for path '${path}': ${originalError.message}`,
+      { operation, path, originalError: originalError.message }
+    );
   }
 }
 
-// ============================================================================
-// Progress Tracking
-// ============================================================================
-
-export interface IProgressTracker {
-  start(taskId: string, description: string): void;
-  update(taskId: string, progress: number, message?: string): void;
-  complete(taskId: string, message?: string): void;
-  fail(taskId: string, error: Error): void;
+/**
+ * Exception thrown when template operations fail
+ */
+export class TemplateException extends ApplicationException {
+  readonly code = 'TEMPLATE_ERROR';
+  readonly statusCode = 500;
+  
+  constructor(operation: string, template: string, originalError: Error) {
+    super(
+      `Template operation '${operation}' failed for template '${template}': ${originalError.message}`,
+      { operation, template, originalError: originalError.message }
+    );
+  }
 }
 
-export interface ProgressInfo {
-  readonly taskId: string;
-  readonly description: string;
-  readonly progress: number;
-  readonly message?: string;
-  readonly status: ProgressStatus;
-  readonly startedAt: Date;
-  readonly completedAt?: Date;
-  readonly error?: Error;
-}
-
-export enum ProgressStatus {
-  PENDING = 'pending',
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
-  FAILED = 'failed'
-}
-
-// ============================================================================
-// Configuration Management
-// ============================================================================
-
-export interface IConfigurationManager {
-  get<T>(key: string): T | undefined;
-  set<T>(key: string, value: T): void;
-  has(key: string): boolean;
-  delete(key: string): void;
-  getAll(): Record<string, any>;
-  load(configPath: string): Promise<void>;
-  save(configPath: string): Promise<void>;
-}
-
-// ============================================================================
-// Logging
-// ============================================================================
-
-export interface ILogger {
-  debug(message: string, context?: Record<string, any>): void;
-  info(message: string, context?: Record<string, any>): void;
-  warn(message: string, context?: Record<string, any>): void;
-  error(message: string, error?: Error, context?: Record<string, any>): void;
-}
-
-export interface LogContext {
-  readonly correlationId: string;
-  readonly userId?: string;
-  readonly studyId?: string;
-  readonly command?: string;
-  readonly timestamp: Date;
-  readonly metadata?: Record<string, any>;
+/**
+ * Exception thrown when configuration operations fail
+ */
+export class ConfigurationException extends ApplicationException {
+  readonly code = 'CONFIGURATION_ERROR';
+  readonly statusCode = 500;
+  
+  constructor(operation: string, key: string, originalError: Error) {
+    super(
+      `Configuration operation '${operation}' failed for key '${key}': ${originalError.message}`,
+      { operation, key, originalError: originalError.message }
+    );
+  }
 }

@@ -1,34 +1,35 @@
 /**
  * Domain Layer Contracts
  * 
- * These interfaces define the core business logic contracts
- * for the UX-Kit domain layer. They represent the purest
- * form of business rules and are independent of any
- * external concerns.
+ * This file defines the core domain interfaces and types for the UX-Kit TypeScript CLI.
+ * These contracts represent the business logic and entities that are independent of
+ * external concerns like infrastructure, presentation, or specific implementations.
+ * 
+ * The domain layer follows simple architecture principles and protocol-oriented design
+ * to ensure extensibility and maintainability, inspired by GitHub's spec-kit approach.
  */
 
 // ============================================================================
 // Core Domain Entities
 // ============================================================================
 
-export interface ResearchStudy {
+/**
+ * Represents a research study directory - the central entity in the UX research domain
+ */
+export interface ResearchStudyDirectory {
   readonly id: string;
   readonly name: string;
   readonly description: string;
   readonly createdAt: Date;
   readonly updatedAt: Date;
   readonly status: StudyStatus;
+  readonly path: string;
   readonly metadata: StudyMetadata;
 }
 
-export interface StudyMetadata {
-  readonly tags: string[];
-  readonly owner: string;
-  readonly team: string[];
-  readonly deadline?: Date;
-  readonly priority: Priority;
-}
-
+/**
+ * Status of a research study
+ */
 export enum StudyStatus {
   DRAFT = 'draft',
   ACTIVE = 'active',
@@ -36,372 +37,635 @@ export enum StudyStatus {
   ARCHIVED = 'archived'
 }
 
+/**
+ * Additional metadata for a research study
+ */
+export interface StudyMetadata {
+  readonly tags: string[];
+  readonly priority: Priority;
+  readonly estimatedDuration?: number;
+  readonly actualDuration?: number;
+  readonly teamMembers: string[];
+}
+
+/**
+ * Priority levels for research studies and artifacts
+ */
 export enum Priority {
-  CRITICAL = 'critical',
-  HIGH = 'high',
+  LOW = 'low',
   MEDIUM = 'medium',
-  LOW = 'low'
+  HIGH = 'high',
+  CRITICAL = 'critical'
 }
 
 // ============================================================================
-// Research Question Contracts
+// Research Artifacts
 // ============================================================================
 
+/**
+ * Represents a research question
+ */
 export interface ResearchQuestion {
   readonly id: string;
-  readonly studyId: string;
   readonly question: string;
   readonly priority: Priority;
   readonly category: QuestionCategory;
-  readonly status: QuestionStatus;
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
-  readonly context: QuestionContext;
+  readonly context?: string;
 }
 
-export interface QuestionContext {
-  readonly assumptions: string[];
-  readonly successCriteria: string[];
-  readonly relatedQuestions: string[];
-}
-
+/**
+ * Categories for research questions
+ */
 export enum QuestionCategory {
   USER_BEHAVIOR = 'user_behavior',
   USABILITY = 'usability',
-  SATISFACTION = 'satisfaction',
-  PERFORMANCE = 'performance',
   ACCESSIBILITY = 'accessibility',
-  BUSINESS_IMPACT = 'business_impact'
+  PERFORMANCE = 'performance',
+  CONTENT = 'content',
+  NAVIGATION = 'navigation',
+  FEEDBACK = 'feedback',
+  OTHER = 'other'
 }
 
-export enum QuestionStatus {
-  DRAFT = 'draft',
-  ACTIVE = 'active',
-  ANSWERED = 'answered',
-  DEPRECATED = 'deprecated'
-}
-
-// ============================================================================
-// Research Source Contracts
-// ============================================================================
-
+/**
+ * Represents a research source
+ */
 export interface ResearchSource {
   readonly id: string;
-  readonly studyId: string;
   readonly title: string;
   readonly url?: string;
   readonly filePath?: string;
   readonly type: SourceType;
   readonly addedAt: Date;
   readonly metadata: SourceMetadata;
-  readonly content?: string;
 }
 
-export interface SourceMetadata {
-  readonly author?: string;
-  readonly publicationDate?: Date;
-  readonly credibility: CredibilityLevel;
-  readonly relevance: RelevanceLevel;
-  readonly tags: string[];
-  readonly summary?: string;
-}
-
+/**
+ * Types of research sources
+ */
 export enum SourceType {
-  WEB_ARTICLE = 'web_article',
+  WEB = 'web',
   DOCUMENT = 'document',
   VIDEO = 'video',
   AUDIO = 'audio',
-  DATA_FILE = 'data_file',
-  INTERVIEW = 'interview',
-  SURVEY = 'survey',
-  ANALYTICS = 'analytics'
+  IMAGE = 'image',
+  OTHER = 'other'
 }
 
-export enum CredibilityLevel {
-  HIGH = 'high',
-  MEDIUM = 'medium',
-  LOW = 'low',
-  UNKNOWN = 'unknown'
+/**
+ * Metadata for research sources
+ */
+export interface SourceMetadata {
+  readonly description?: string;
+  readonly tags: string[];
+  readonly relevance: RelevanceLevel;
+  readonly credibility: CredibilityLevel;
 }
 
+/**
+ * Relevance levels for sources
+ */
 export enum RelevanceLevel {
-  HIGH = 'high',
+  LOW = 'low',
   MEDIUM = 'medium',
-  LOW = 'low'
+  HIGH = 'high'
 }
 
-// ============================================================================
-// Research Summary Contracts
-// ============================================================================
+/**
+ * Credibility levels for sources
+ */
+export enum CredibilityLevel {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  PEER_REVIEWED = 'peer_reviewed'
+}
 
+/**
+ * Represents a research summary
+ */
 export interface ResearchSummary {
   readonly id: string;
-  readonly sourceId: string;
   readonly content: string;
   readonly keyPoints: string[];
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
+  readonly insights: string[];
+  readonly recommendations: string[];
   readonly metadata: SummaryMetadata;
 }
 
+/**
+ * Metadata for research summaries
+ */
 export interface SummaryMetadata {
   readonly wordCount: number;
-  readonly confidence: number;
-  readonly method: SummaryMethod;
-  readonly language: string;
-  readonly keyTopics: string[];
+  readonly readingTime: number;
+  readonly confidence: ConfidenceLevel;
+  readonly topics: string[];
 }
 
-export enum SummaryMethod {
-  AI_GENERATED = 'ai_generated',
-  MANUAL = 'manual',
-  HYBRID = 'hybrid'
+/**
+ * Confidence levels for AI-generated content
+ */
+export enum ConfidenceLevel {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high'
 }
 
-// ============================================================================
-// Interview Contracts
-// ============================================================================
-
+/**
+ * Represents an interview
+ */
 export interface Interview {
   readonly id: string;
-  readonly studyId: string;
   readonly participantId: string;
   readonly transcript: string;
   readonly insights: string[];
-  readonly conductedAt: Date;
+  readonly quotes: InterviewQuote[];
   readonly metadata: InterviewMetadata;
 }
 
+/**
+ * Represents a quote from an interview
+ */
+export interface InterviewQuote {
+  readonly id: string;
+  readonly text: string;
+  readonly timestamp?: number;
+  readonly speaker: 'participant' | 'interviewer';
+  readonly sentiment: Sentiment;
+  readonly importance: Priority;
+}
+
+/**
+ * Sentiment analysis results
+ */
+export enum Sentiment {
+  POSITIVE = 'positive',
+  NEUTRAL = 'neutral',
+  NEGATIVE = 'negative',
+  MIXED = 'mixed'
+}
+
+/**
+ * Metadata for interviews
+ */
 export interface InterviewMetadata {
   readonly duration: number;
-  readonly interviewer: string;
-  readonly method: InterviewMethod;
-  readonly language: string;
-  readonly quality: QualityRating;
+  readonly participantInfo: ParticipantInfo;
+  readonly topics: string[];
   readonly keyThemes: string[];
 }
 
-export enum InterviewMethod {
-  STRUCTURED = 'structured',
-  SEMI_STRUCTURED = 'semi_structured',
-  UNSTRUCTURED = 'unstructured',
-  FOCUS_GROUP = 'focus_group'
+/**
+ * Information about interview participants
+ */
+export interface ParticipantInfo {
+  readonly id: string;
+  readonly demographics?: Demographics;
+  readonly experience?: Experience;
 }
 
-export enum QualityRating {
-  EXCELLENT = 'excellent',
-  GOOD = 'good',
-  FAIR = 'fair',
-  POOR = 'poor'
+/**
+ * Participant demographics
+ */
+export interface Demographics {
+  readonly age?: string;
+  readonly gender?: string;
+  readonly location?: string;
+  readonly occupation?: string;
 }
 
-// ============================================================================
-// Research Insight Contracts
-// ============================================================================
+/**
+ * Participant experience information
+ */
+export interface Experience {
+  readonly level: ExperienceLevel;
+  readonly domain?: string;
+  readonly years?: number;
+}
 
+/**
+ * Experience levels
+ */
+export enum ExperienceLevel {
+  BEGINNER = 'beginner',
+  INTERMEDIATE = 'intermediate',
+  ADVANCED = 'advanced',
+  EXPERT = 'expert'
+}
+
+/**
+ * Represents a research insight
+ */
 export interface ResearchInsight {
   readonly id: string;
-  readonly studyId: string;
   readonly title: string;
   readonly description: string;
   readonly evidence: string[];
   readonly priority: Priority;
   readonly category: InsightCategory;
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
+  readonly confidence: ConfidenceLevel;
+  readonly impact: ImpactLevel;
+  readonly effort: EffortLevel;
+  readonly recommendations: string[];
   readonly metadata: InsightMetadata;
 }
 
-export interface InsightMetadata {
-  readonly confidence: number;
-  readonly impact: ImpactLevel;
-  readonly effort: EffortLevel;
-  readonly sourceCount: number;
-  readonly tags: string[];
-  readonly recommendations: string[];
-}
-
+/**
+ * Categories for research insights
+ */
 export enum InsightCategory {
   USER_NEED = 'user_need',
   PAIN_POINT = 'pain_point',
   OPPORTUNITY = 'opportunity',
   BEHAVIOR_PATTERN = 'behavior_pattern',
-  PREFERENCE = 'preference',
-  BARRIER = 'barrier'
+  USABILITY_ISSUE = 'usability_issue',
+  ACCESSIBILITY_ISSUE = 'accessibility_issue',
+  PERFORMANCE_ISSUE = 'performance_issue',
+  CONTENT_ISSUE = 'content_issue',
+  OTHER = 'other'
 }
 
+/**
+ * Impact levels for insights
+ */
 export enum ImpactLevel {
-  HIGH = 'high',
+  LOW = 'low',
   MEDIUM = 'medium',
-  LOW = 'low'
+  HIGH = 'high',
+  CRITICAL = 'critical'
 }
 
+/**
+ * Effort levels for implementing insights
+ */
 export enum EffortLevel {
-  HIGH = 'high',
+  LOW = 'low',
   MEDIUM = 'medium',
-  LOW = 'low'
+  HIGH = 'high',
+  VERY_HIGH = 'very_high'
+}
+
+/**
+ * Metadata for research insights
+ */
+export interface InsightMetadata {
+  readonly sourceCount: number;
+  readonly evidenceStrength: EvidenceStrength;
+  readonly validationStatus: ValidationStatus;
+  readonly assignedTo?: string;
+  readonly dueDate?: Date;
+}
+
+/**
+ * Evidence strength levels
+ */
+export enum EvidenceStrength {
+  WEAK = 'weak',
+  MODERATE = 'moderate',
+  STRONG = 'strong',
+  VERY_STRONG = 'very_strong'
+}
+
+/**
+ * Validation status for insights
+ */
+export enum ValidationStatus {
+  UNVALIDATED = 'unvalidated',
+  IN_PROGRESS = 'in_progress',
+  VALIDATED = 'validated',
+  REJECTED = 'rejected'
 }
 
 // ============================================================================
-// Domain Value Objects
+// Domain Services
 // ============================================================================
 
-export interface ResearchContext {
-  readonly studyId: string;
-  readonly userId: string;
-  readonly sessionId: string;
-  readonly timestamp: Date;
-  readonly metadata: Record<string, any>;
+/**
+ * Service for managing research studies
+ */
+export interface IStudyService {
+  createStudy(name: string, description?: string): Promise<ResearchStudyDirectory>;
+  getStudy(id: string): Promise<ResearchStudyDirectory | null>;
+  updateStudy(id: string, updates: Partial<ResearchStudyDirectory>): Promise<ResearchStudyDirectory>;
+  deleteStudy(id: string): Promise<void>;
+  listStudies(): Promise<ResearchStudyDirectory[]>;
 }
 
-export type ResearchArtifact = 
-  | ResearchQuestion 
-  | ResearchSource 
-  | ResearchSummary 
-  | Interview 
-  | ResearchInsight;
-
-// ============================================================================
-// Domain Services Contracts
-// ============================================================================
-
-export interface IStudyDomainService {
-  canCreateStudy(name: string, description: string): boolean;
-  canUpdateStudy(study: ResearchStudy, updates: Partial<ResearchStudy>): boolean;
-  canDeleteStudy(study: ResearchStudy): boolean;
-  validateStudyMetadata(metadata: StudyMetadata): ValidationResult;
+/**
+ * Service for managing research questions
+ */
+export interface IQuestionService {
+  generateQuestions(studyId: string, prompt: string): Promise<ResearchQuestion[]>;
+  addQuestion(studyId: string, question: Omit<ResearchQuestion, 'id'>): Promise<ResearchQuestion>;
+  updateQuestion(id: string, updates: Partial<ResearchQuestion>): Promise<ResearchQuestion>;
+  deleteQuestion(id: string): Promise<void>;
+  getQuestions(studyId: string): Promise<ResearchQuestion[]>;
 }
 
-export interface IQuestionDomainService {
-  canCreateQuestion(studyId: string, question: string): boolean;
-  canUpdateQuestion(question: ResearchQuestion, updates: Partial<ResearchQuestion>): boolean;
-  canDeleteQuestion(question: ResearchQuestion): boolean;
-  validateQuestionContext(context: QuestionContext): ValidationResult;
+/**
+ * Service for managing research sources
+ */
+export interface ISourceService {
+  addSource(studyId: string, source: Omit<ResearchSource, 'id' | 'addedAt'>): Promise<ResearchSource>;
+  updateSource(id: string, updates: Partial<ResearchSource>): Promise<ResearchSource>;
+  deleteSource(id: string): Promise<void>;
+  getSources(studyId: string): Promise<ResearchSource[]>;
+  discoverSources(studyId: string, query: string): Promise<ResearchSource[]>;
 }
 
-export interface ISourceDomainService {
-  canAddSource(studyId: string, source: ResearchSource): boolean;
-  canUpdateSource(source: ResearchSource, updates: Partial<ResearchSource>): boolean;
-  canDeleteSource(source: ResearchSource): boolean;
-  validateSourceMetadata(metadata: SourceMetadata): ValidationResult;
+/**
+ * Service for managing research summaries
+ */
+export interface ISummaryService {
+  generateSummary(sourceId: string, content: string): Promise<ResearchSummary>;
+  updateSummary(id: string, updates: Partial<ResearchSummary>): Promise<ResearchSummary>;
+  deleteSummary(id: string): Promise<void>;
+  getSummary(id: string): Promise<ResearchSummary | null>;
+  getSummaries(studyId: string): Promise<ResearchSummary[]>;
 }
 
-export interface ISummaryDomainService {
-  canCreateSummary(sourceId: string, content: string): boolean;
-  canUpdateSummary(summary: ResearchSummary, updates: Partial<ResearchSummary>): boolean;
-  canDeleteSummary(summary: ResearchSummary): boolean;
-  validateSummaryContent(content: string): ValidationResult;
+/**
+ * Service for managing interviews
+ */
+export interface IInterviewService {
+  formatInterview(studyId: string, participantId: string, transcript: string): Promise<Interview>;
+  updateInterview(id: string, updates: Partial<Interview>): Promise<Interview>;
+  deleteInterview(id: string): Promise<void>;
+  getInterview(id: string): Promise<Interview | null>;
+  getInterviews(studyId: string): Promise<Interview[]>;
 }
 
-export interface IInterviewDomainService {
-  canCreateInterview(studyId: string, participantId: string): boolean;
-  canUpdateInterview(interview: Interview, updates: Partial<Interview>): boolean;
-  canDeleteInterview(interview: Interview): boolean;
-  validateInterviewMetadata(metadata: InterviewMetadata): ValidationResult;
-}
-
-export interface IInsightDomainService {
-  canCreateInsight(studyId: string, title: string): boolean;
-  canUpdateInsight(insight: ResearchInsight, updates: Partial<ResearchInsight>): boolean;
-  canDeleteInsight(insight: ResearchInsight): boolean;
-  validateInsightMetadata(metadata: InsightMetadata): ValidationResult;
-}
-
-// ============================================================================
-// Validation Contracts
-// ============================================================================
-
-export interface ValidationResult {
-  readonly isValid: boolean;
-  readonly errors: ValidationError[];
-}
-
-export interface ValidationError {
-  readonly field: string;
-  readonly message: string;
-  readonly code: string;
+/**
+ * Service for managing research insights
+ */
+export interface IInsightService {
+  synthesizeInsights(studyId: string, artifacts: string[]): Promise<ResearchInsight[]>;
+  addInsight(studyId: string, insight: Omit<ResearchInsight, 'id'>): Promise<ResearchInsight>;
+  updateInsight(id: string, updates: Partial<ResearchInsight>): Promise<ResearchInsight>;
+  deleteInsight(id: string): Promise<void>;
+  getInsights(studyId: string): Promise<ResearchInsight[]>;
+  validateInsight(id: string, status: ValidationStatus): Promise<ResearchInsight>;
 }
 
 // ============================================================================
 // Domain Events
 // ============================================================================
 
+/**
+ * Base interface for domain events
+ */
 export interface DomainEvent {
   readonly id: string;
   readonly type: string;
+  readonly timestamp: Date;
   readonly aggregateId: string;
-  readonly occurredAt: Date;
-  readonly data: Record<string, any>;
+  readonly version: number;
 }
 
+/**
+ * Event fired when a study is created
+ */
 export interface StudyCreatedEvent extends DomainEvent {
   readonly type: 'StudyCreated';
-  readonly data: {
-    readonly study: ResearchStudy;
-  };
+  readonly study: ResearchStudyDirectory;
 }
 
+/**
+ * Event fired when a study is updated
+ */
 export interface StudyUpdatedEvent extends DomainEvent {
   readonly type: 'StudyUpdated';
-  readonly data: {
-    readonly study: ResearchStudy;
-    readonly changes: Record<string, any>;
-  };
+  readonly studyId: string;
+  readonly changes: Partial<ResearchStudyDirectory>;
 }
 
+/**
+ * Event fired when a study is deleted
+ */
 export interface StudyDeletedEvent extends DomainEvent {
   readonly type: 'StudyDeleted';
-  readonly data: {
-    readonly studyId: string;
-  };
+  readonly studyId: string;
 }
 
-export interface QuestionGeneratedEvent extends DomainEvent {
-  readonly type: 'QuestionGenerated';
-  readonly data: {
-    readonly studyId: string;
-    readonly questions: ResearchQuestion[];
-  };
+/**
+ * Event fired when questions are generated
+ */
+export interface QuestionsGeneratedEvent extends DomainEvent {
+  readonly type: 'QuestionsGenerated';
+  readonly studyId: string;
+  readonly questions: ResearchQuestion[];
+  readonly prompt: string;
 }
 
-export interface SourceAddedEvent extends DomainEvent {
-  readonly type: 'SourceAdded';
-  readonly data: {
-    readonly studyId: string;
-    readonly source: ResearchSource;
-  };
+/**
+ * Event fired when sources are discovered
+ */
+export interface SourcesDiscoveredEvent extends DomainEvent {
+  readonly type: 'SourcesDiscovered';
+  readonly studyId: string;
+  readonly sources: ResearchSource[];
+  readonly query: string;
 }
 
-export interface SummaryCreatedEvent extends DomainEvent {
-  readonly type: 'SummaryCreated';
-  readonly data: {
-    readonly sourceId: string;
-    readonly summary: ResearchSummary;
-  };
+/**
+ * Event fired when a summary is generated
+ */
+export interface SummaryGeneratedEvent extends DomainEvent {
+  readonly type: 'SummaryGenerated';
+  readonly sourceId: string;
+  readonly summary: ResearchSummary;
 }
 
+/**
+ * Event fired when an interview is formatted
+ */
 export interface InterviewFormattedEvent extends DomainEvent {
   readonly type: 'InterviewFormatted';
-  readonly data: {
-    readonly studyId: string;
-    readonly interview: Interview;
-  };
+  readonly studyId: string;
+  readonly participantId: string;
+  readonly interview: Interview;
 }
 
+/**
+ * Event fired when insights are synthesized
+ */
 export interface InsightsSynthesizedEvent extends DomainEvent {
   readonly type: 'InsightsSynthesized';
-  readonly data: {
-    readonly studyId: string;
-    readonly insights: ResearchInsight[];
-  };
+  readonly studyId: string;
+  readonly insights: ResearchInsight[];
+  readonly sourceArtifacts: string[];
 }
 
-export type UXKitDomainEvent = 
-  | StudyCreatedEvent
-  | StudyUpdatedEvent
-  | StudyDeletedEvent
-  | QuestionGeneratedEvent
-  | SourceAddedEvent
-  | SummaryCreatedEvent
-  | InterviewFormattedEvent
-  | InsightsSynthesizedEvent;
+// ============================================================================
+// Domain Exceptions
+// ============================================================================
+
+/**
+ * Base class for domain exceptions
+ */
+export abstract class DomainException extends Error {
+  abstract readonly code: string;
+  abstract readonly statusCode: number;
+  
+  constructor(
+    message: string,
+    public readonly context?: Record<string, any>
+  ) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
+/**
+ * Exception thrown when a study is not found
+ */
+export class StudyNotFoundException extends DomainException {
+  readonly code = 'STUDY_NOT_FOUND';
+  readonly statusCode = 404;
+  
+  constructor(studyId: string) {
+    super(`Study with ID '${studyId}' not found`, { studyId });
+  }
+}
+
+/**
+ * Exception thrown when a study name is invalid
+ */
+export class InvalidStudyNameException extends DomainException {
+  readonly code = 'INVALID_STUDY_NAME';
+  readonly statusCode = 400;
+  
+  constructor(name: string) {
+    super(`Invalid study name: '${name}'`, { name });
+  }
+}
+
+/**
+ * Exception thrown when a study is in an invalid state for an operation
+ */
+export class InvalidStudyStateException extends DomainException {
+  readonly code = 'INVALID_STUDY_STATE';
+  readonly statusCode = 400;
+  
+  constructor(studyId: string, currentState: StudyStatus, requiredState: StudyStatus) {
+    super(
+      `Study '${studyId}' is in state '${currentState}' but operation requires '${requiredState}'`,
+      { studyId, currentState, requiredState }
+    );
+  }
+}
+
+/**
+ * Exception thrown when a research artifact is not found
+ */
+export class ArtifactNotFoundException extends DomainException {
+  readonly code = 'ARTIFACT_NOT_FOUND';
+  readonly statusCode = 404;
+  
+  constructor(artifactType: string, artifactId: string) {
+    super(`${artifactType} with ID '${artifactId}' not found`, { artifactType, artifactId });
+  }
+}
+
+/**
+ * Exception thrown when AI agent communication fails
+ */
+export class AIAgentException extends DomainException {
+  readonly code = 'AI_AGENT_ERROR';
+  readonly statusCode = 502;
+  
+  constructor(agent: string, operation: string, originalError: Error) {
+    super(
+      `AI agent '${agent}' failed during '${operation}': ${originalError.message}`,
+      { agent, operation, originalError: originalError.message }
+    );
+  }
+}
+
+// ============================================================================
+// Value Objects
+// ============================================================================
+
+/**
+ * Represents a study ID value object
+ */
+export class StudyId {
+  constructor(public readonly value: string) {
+    if (!this.isValid(value)) {
+      throw new InvalidStudyNameException(value);
+    }
+  }
+  
+  private isValid(value: string): boolean {
+    return typeof value === 'string' && value.length > 0 && value.length <= 100;
+  }
+  
+  equals(other: StudyId): boolean {
+    return this.value === other.value;
+  }
+  
+  toString(): string {
+    return this.value;
+  }
+}
+
+/**
+ * Represents a participant ID value object
+ */
+export class ParticipantId {
+  constructor(public readonly value: string) {
+    if (!this.isValid(value)) {
+      throw new Error(`Invalid participant ID: ${value}`);
+    }
+  }
+  
+  private isValid(value: string): boolean {
+    return typeof value === 'string' && value.length > 0 && value.length <= 50;
+  }
+  
+  equals(other: ParticipantId): boolean {
+    return this.value === other.value;
+  }
+  
+  toString(): string {
+    return this.value;
+  }
+}
+
+/**
+ * Represents a file path value object
+ */
+export class FilePath {
+  constructor(public readonly value: string) {
+    if (!this.isValid(value)) {
+      throw new Error(`Invalid file path: ${value}`);
+    }
+  }
+  
+  private isValid(value: string): boolean {
+    return typeof value === 'string' && value.length > 0;
+  }
+  
+  getDirectory(): string {
+    return this.value.substring(0, this.value.lastIndexOf('/'));
+  }
+  
+  getFileName(): string {
+    return this.value.substring(this.value.lastIndexOf('/') + 1);
+  }
+  
+  getExtension(): string {
+    const fileName = this.getFileName();
+    const lastDot = fileName.lastIndexOf('.');
+    return lastDot > 0 ? fileName.substring(lastDot + 1) : '';
+  }
+  
+  equals(other: FilePath): boolean {
+    return this.value === other.value;
+  }
+  
+  toString(): string {
+    return this.value;
+  }
+}

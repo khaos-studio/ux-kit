@@ -1,18 +1,23 @@
 # UX-Kit Data Model Specification
 
-## Domain Entities
+## Overview
 
-### Core Research Entities
+This document defines the data model for the UX-Kit TypeScript CLI implementation, following a simple file-based approach inspired by GitHub's spec-kit. The system generates text files and scripts to support AI agent research workflows in IDEs.
 
-#### ResearchStudy
+## File Structure Model
+
+### Research Study Directory
+Central directory representing a complete research effort.
+
 ```typescript
-interface ResearchStudy {
+interface ResearchStudyDirectory {
   id: string;                    // UUID v4
   name: string;                  // Human-readable study name
-  description: string;           // Study description
+  description?: string;          // Optional study description
   createdAt: Date;              // Creation timestamp
   updatedAt: Date;              // Last modification timestamp
   status: StudyStatus;          // Current study status
+  path: string;                 // File system path
   metadata: StudyMetadata;      // Additional study information
 }
 
@@ -25,174 +30,243 @@ enum StudyStatus {
 
 interface StudyMetadata {
   tags: string[];               // Study tags for categorization
-  owner: string;                // Study owner/creator
-  team: string[];               // Team members with access
-  deadline?: Date;              // Optional study deadline
   priority: Priority;           // Study priority level
+  estimatedDuration?: number;   // Estimated duration in days
+  actualDuration?: number;      // Actual duration in days
+  teamMembers: string[];        // Team member identifiers
+}
+
+enum Priority {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  CRITICAL = 'critical'
 }
 ```
 
-#### ResearchQuestion
+### Generated Files
+
+#### Questions File
 ```typescript
+interface QuestionsFile {
+  studyId: string;
+  generatedAt: Date;
+  questions: ResearchQuestion[];
+  metadata: {
+    prompt: string;
+    aiAgent: string;
+    version: string;
+  };
+}
+
 interface ResearchQuestion {
-  id: string;                   // UUID v4
-  studyId: string;              // Reference to parent study
-  question: string;             // The research question text
-  priority: Priority;           // Question priority
-  category: QuestionCategory;   // Question categorization
-  status: QuestionStatus;       // Question status
-  createdAt: Date;              // Creation timestamp
-  updatedAt: Date;              // Last modification timestamp
-  context: QuestionContext;     // Additional context information
+  id: string;
+  question: string;
+  priority: Priority;
+  category: QuestionCategory;
+  context?: string;
 }
 
 enum QuestionCategory {
   USER_BEHAVIOR = 'user_behavior',
   USABILITY = 'usability',
-  SATISFACTION = 'satisfaction',
-  PERFORMANCE = 'performance',
   ACCESSIBILITY = 'accessibility',
-  BUSINESS_IMPACT = 'business_impact'
-}
-
-enum QuestionStatus {
-  DRAFT = 'draft',
-  ACTIVE = 'active',
-  ANSWERED = 'answered',
-  DEPRECATED = 'deprecated'
-}
-
-interface QuestionContext {
-  assumptions: string[];        // Underlying assumptions
-  successCriteria: string[];    // Success criteria for the question
-  relatedQuestions: string[];   // IDs of related questions
+  PERFORMANCE = 'performance',
+  CONTENT = 'content',
+  NAVIGATION = 'navigation',
+  FEEDBACK = 'feedback',
+  OTHER = 'other'
 }
 ```
 
-#### ResearchSource
+#### Sources File
 ```typescript
+interface SourcesFile {
+  studyId: string;
+  generatedAt: Date;
+  sources: ResearchSource[];
+  metadata: {
+    autoDiscovered: boolean;
+    aiAgent: string;
+    version: string;
+  };
+}
+
 interface ResearchSource {
-  id: string;                   // UUID v4
-  studyId: string;              // Reference to parent study
-  title: string;                // Source title
-  url?: string;                 // URL if web source
-  filePath?: string;            // Local file path if file source
-  type: SourceType;             // Source type classification
-  addedAt: Date;                // When source was added
-  metadata: SourceMetadata;     // Additional source information
-  content?: string;             // Cached content (optional)
+  id: string;
+  title: string;
+  url?: string;
+  filePath?: string;
+  type: SourceType;
+  addedAt: Date;
+  metadata: SourceMetadata;
 }
 
 enum SourceType {
-  WEB_ARTICLE = 'web_article',
+  WEB = 'web',
   DOCUMENT = 'document',
   VIDEO = 'video',
   AUDIO = 'audio',
-  DATA_FILE = 'data_file',
-  INTERVIEW = 'interview',
-  SURVEY = 'survey',
-  ANALYTICS = 'analytics'
+  IMAGE = 'image',
+  OTHER = 'other'
 }
 
 interface SourceMetadata {
-  author?: string;              // Source author
-  publicationDate?: Date;       // Publication date
-  credibility: CredibilityLevel; // Source credibility assessment
-  relevance: RelevanceLevel;    // Relevance to study
-  tags: string[];               // Source tags
-  summary?: string;             // Brief source summary
-}
-
-enum CredibilityLevel {
-  HIGH = 'high',
-  MEDIUM = 'medium',
-  LOW = 'low',
-  UNKNOWN = 'unknown'
+  description?: string;
+  tags: string[];
+  relevance: RelevanceLevel;
+  credibility: CredibilityLevel;
 }
 
 enum RelevanceLevel {
-  HIGH = 'high',
+  LOW = 'low',
   MEDIUM = 'medium',
-  LOW = 'low'
+  HIGH = 'high'
+}
+
+enum CredibilityLevel {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  PEER_REVIEWED = 'peer_reviewed'
 }
 ```
 
-#### ResearchSummary
+#### Summary File
 ```typescript
+interface SummaryFile {
+  sourceId: string;
+  studyId: string;
+  generatedAt: Date;
+  summary: ResearchSummary;
+  metadata: {
+    aiAgent: string;
+    version: string;
+    processingTime: number;
+  };
+}
+
 interface ResearchSummary {
-  id: string;                   // UUID v4
-  sourceId: string;             // Reference to source
-  content: string;              // Summary content
-  keyPoints: string[];          // Extracted key points
-  createdAt: Date;              // Creation timestamp
-  updatedAt: Date;              // Last modification timestamp
-  metadata: SummaryMetadata;    // Summary metadata
+  id: string;
+  content: string;
+  keyPoints: string[];
+  insights: string[];
+  recommendations: string[];
+  metadata: SummaryMetadata;
 }
 
 interface SummaryMetadata {
-  wordCount: number;            // Summary word count
-  confidence: number;           // AI confidence score (0-1)
-  method: SummaryMethod;        // Method used for summarization
-  language: string;             // Summary language
-  keyTopics: string[];          // Identified key topics
+  wordCount: number;
+  readingTime: number;
+  confidence: ConfidenceLevel;
+  topics: string[];
 }
 
-enum SummaryMethod {
-  AI_GENERATED = 'ai_generated',
-  MANUAL = 'manual',
-  HYBRID = 'hybrid'
+enum ConfidenceLevel {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high'
 }
 ```
 
-#### Interview
+#### Interview File
 ```typescript
+interface InterviewFile {
+  studyId: string;
+  participantId: string;
+  generatedAt: Date;
+  interview: Interview;
+  metadata: {
+    aiAgent: string;
+    version: string;
+    processingTime: number;
+  };
+}
+
 interface Interview {
-  id: string;                   // UUID v4
-  studyId: string;              // Reference to parent study
-  participantId: string;        // Participant identifier
-  transcript: string;           // Interview transcript
-  insights: string[];           // Extracted insights
-  conductedAt: Date;            // Interview date/time
-  metadata: InterviewMetadata;  // Interview metadata
+  id: string;
+  participantId: string;
+  transcript: string;
+  insights: string[];
+  quotes: InterviewQuote[];
+  metadata: InterviewMetadata;
+}
+
+interface InterviewQuote {
+  id: string;
+  text: string;
+  timestamp?: number;
+  speaker: 'participant' | 'interviewer';
+  sentiment: Sentiment;
+  importance: Priority;
 }
 
 interface InterviewMetadata {
-  duration: number;             // Interview duration in minutes
-  interviewer: string;          // Interviewer name
-  method: InterviewMethod;      // Interview method
-  language: string;             // Interview language
-  quality: QualityRating;       // Interview quality rating
-  keyThemes: string[];          // Identified key themes
+  duration: number;
+  participantInfo: ParticipantInfo;
+  topics: string[];
+  keyThemes: string[];
 }
 
-enum InterviewMethod {
-  STRUCTURED = 'structured',
-  SEMI_STRUCTURED = 'semi_structured',
-  UNSTRUCTURED = 'unstructured',
-  FOCUS_GROUP = 'focus_group'
+interface ParticipantInfo {
+  id: string;
+  demographics?: Demographics;
+  experience?: Experience;
 }
 
-enum QualityRating {
-  EXCELLENT = 'excellent',
-  GOOD = 'good',
-  FAIR = 'fair',
-  POOR = 'poor'
+interface Demographics {
+  age?: string;
+  gender?: string;
+  location?: string;
+  occupation?: string;
+}
+
+interface Experience {
+  level: ExperienceLevel;
+  domain?: string;
+  years?: number;
+}
+
+enum ExperienceLevel {
+  BEGINNER = 'beginner',
+  INTERMEDIATE = 'intermediate',
+  ADVANCED = 'advanced',
+  EXPERT = 'expert'
+}
+
+enum Sentiment {
+  POSITIVE = 'positive',
+  NEUTRAL = 'neutral',
+  NEGATIVE = 'negative',
+  MIXED = 'mixed'
 }
 ```
 
-#### ResearchInsight
+#### Insights File
 ```typescript
+interface InsightsFile {
+  studyId: string;
+  generatedAt: Date;
+  insights: ResearchInsight[];
+  metadata: {
+    aiAgent: string;
+    version: string;
+    sourceArtifacts: string[];
+  };
+}
+
 interface ResearchInsight {
-  id: string;                   // UUID v4
-  studyId: string;              // Reference to parent study
-  title: string;                // Insight title
-  description: string;          // Detailed insight description
-  evidence: string[];           // Supporting evidence
-  priority: Priority;           // Insight priority
-  category: InsightCategory;    // Insight categorization
-  createdAt: Date;              // Creation timestamp
-  updatedAt: Date;              // Last modification timestamp
-  metadata: InsightMetadata;    // Insight metadata
+  id: string;
+  title: string;
+  description: string;
+  evidence: string[];
+  priority: Priority;
+  category: InsightCategory;
+  confidence: ConfidenceLevel;
+  impact: ImpactLevel;
+  effort: EffortLevel;
+  recommendations: string[];
+  metadata: InsightMetadata;
 }
 
 enum InsightCategory {
@@ -200,332 +274,244 @@ enum InsightCategory {
   PAIN_POINT = 'pain_point',
   OPPORTUNITY = 'opportunity',
   BEHAVIOR_PATTERN = 'behavior_pattern',
-  PREFERENCE = 'preference',
-  BARRIER = 'barrier'
-}
-
-interface InsightMetadata {
-  confidence: number;           // Confidence score (0-1)
-  impact: ImpactLevel;          // Potential impact level
-  effort: EffortLevel;          // Implementation effort level
-  sourceCount: number;          // Number of supporting sources
-  tags: string[];               // Insight tags
-  recommendations: string[];    // Actionable recommendations
+  USABILITY_ISSUE = 'usability_issue',
+  ACCESSIBILITY_ISSUE = 'accessibility_issue',
+  PERFORMANCE_ISSUE = 'performance_issue',
+  CONTENT_ISSUE = 'content_issue',
+  OTHER = 'other'
 }
 
 enum ImpactLevel {
-  HIGH = 'high',
+  LOW = 'low',
   MEDIUM = 'medium',
-  LOW = 'low'
+  HIGH = 'high',
+  CRITICAL = 'critical'
 }
 
 enum EffortLevel {
-  HIGH = 'high',
+  LOW = 'low',
   MEDIUM = 'medium',
-  LOW = 'low'
-}
-```
-
-### Supporting Types
-
-#### Priority
-```typescript
-enum Priority {
-  CRITICAL = 'critical',
   HIGH = 'high',
-  MEDIUM = 'medium',
-  LOW = 'low'
+  VERY_HIGH = 'very_high'
+}
+
+interface InsightMetadata {
+  sourceCount: number;
+  evidenceStrength: EvidenceStrength;
+  validationStatus: ValidationStatus;
+  assignedTo?: string;
+  dueDate?: Date;
+}
+
+enum EvidenceStrength {
+  WEAK = 'weak',
+  MODERATE = 'moderate',
+  STRONG = 'strong',
+  VERY_STRONG = 'very_strong'
+}
+
+enum ValidationStatus {
+  UNVALIDATED = 'unvalidated',
+  IN_PROGRESS = 'in_progress',
+  VALIDATED = 'validated',
+  REJECTED = 'rejected'
 }
 ```
 
-#### ResearchContext
-```typescript
-interface ResearchContext {
-  studyId: string;              // Current study context
-  userId: string;               // Current user
-  sessionId: string;            // Current session
-  timestamp: Date;              // Context timestamp
-  metadata: Record<string, any>; // Additional context data
-}
-```
+## Configuration Model
 
-#### ResearchArtifact
-```typescript
-type ResearchArtifact = 
-  | ResearchQuestion 
-  | ResearchSource 
-  | ResearchSummary 
-  | Interview 
-  | ResearchInsight;
-```
-
-## Application Layer Models
-
-### Request/Response Models
-
-#### CreateStudyRequest
-```typescript
-interface CreateStudyRequest {
-  name: string;
-  description: string;
-  metadata?: Partial<StudyMetadata>;
-}
-```
-
-#### GenerateQuestionsRequest
-```typescript
-interface GenerateQuestionsRequest {
-  studyId: string;
-  prompt: string;
-  context?: ResearchContext;
-  maxQuestions?: number;
-  categories?: QuestionCategory[];
-}
-```
-
-#### ProcessSourcesRequest
-```typescript
-interface ProcessSourcesRequest {
-  studyId: string;
-  sources: SourceInput[];
-  autoDiscover?: boolean;
-  context?: ResearchContext;
-}
-
-interface SourceInput {
-  title: string;
-  url?: string;
-  filePath?: string;
-  type: SourceType;
-  metadata?: Partial<SourceMetadata>;
-}
-```
-
-#### SummarizeSourceRequest
-```typescript
-interface SummarizeSourceRequest {
-  sourceId: string;
-  method?: SummaryMethod;
-  maxLength?: number;
-  context?: ResearchContext;
-}
-```
-
-#### FormatInterviewRequest
-```typescript
-interface FormatInterviewRequest {
-  studyId: string;
-  participantId: string;
-  transcript: string;
-  metadata?: Partial<InterviewMetadata>;
-  context?: ResearchContext;
-}
-```
-
-#### SynthesizeInsightsRequest
-```typescript
-interface SynthesizeInsightsRequest {
-  studyId: string;
-  artifacts: ResearchArtifact[];
-  format?: OutputFormat;
-  context?: ResearchContext;
-}
-
-enum OutputFormat {
-  MARKDOWN = 'markdown',
-  JSON = 'json',
-  HTML = 'html',
-  PDF = 'pdf'
-}
-```
-
-## Infrastructure Layer Models
-
-### Configuration Models
-
-#### UXKitConfig
+### UX-Kit Configuration
 ```typescript
 interface UXKitConfig {
   version: string;
-  aiAgent: AIConfig;
-  storage: StorageConfig;
-  research: ResearchConfig;
-  logging: LoggingConfig;
-}
-
-interface AIConfig {
-  provider: AIProvider;
-  settings: Record<string, any>;
-  timeout: number;
-  retryAttempts: number;
-}
-
-interface StorageConfig {
-  basePath: string;
-  format: StorageFormat;
-  compression: boolean;
-  encryption: boolean;
-}
-
-interface ResearchConfig {
-  defaultTemplates: string[];
-  autoSave: boolean;
-  maxFileSize: number;
-  supportedFormats: string[];
-}
-
-interface LoggingConfig {
-  level: LogLevel;
-  format: LogFormat;
-  output: LogOutput;
-  retention: number;
-}
-
-enum AIProvider {
-  CURSOR = 'cursor',
-  CODEX = 'codex',
-  OPENAI = 'openai',
-  ANTHROPIC = 'anthropic',
-  CUSTOM = 'custom'
-}
-
-enum StorageFormat {
-  MARKDOWN = 'markdown',
-  JSON = 'json',
-  YAML = 'yaml'
-}
-
-enum LogLevel {
-  ERROR = 'error',
-  WARN = 'warn',
-  INFO = 'info',
-  DEBUG = 'debug'
-}
-
-enum LogFormat {
-  JSON = 'json',
-  TEXT = 'text'
-}
-
-enum LogOutput {
-  CONSOLE = 'console',
-  FILE = 'file',
-  BOTH = 'both'
+  aiAgent: {
+    provider: 'cursor' | 'codex' | 'custom';
+    settings: Record<string, any>;
+    timeout: number;
+    retries: number;
+  };
+  storage: {
+    basePath: string;
+    format: 'markdown' | 'json' | 'yaml';
+    autoSave: boolean;
+    backup: boolean;
+  };
+  research: {
+    defaultTemplates: string[];
+    autoDiscovery: boolean;
+    qualityThreshold: number;
+  };
+  ui: {
+    theme: 'light' | 'dark' | 'auto';
+    verbose: boolean;
+    progress: boolean;
+  };
 }
 ```
 
-### Command Models
-
-#### CommandDefinition
+### Template Configuration
 ```typescript
-interface CommandDefinition {
+interface TemplateConfig {
   name: string;
   description: string;
-  arguments: CommandArgument[];
-  options: CommandOption[];
-  handler: ICommandHandler;
-  prerequisites: string[];
-  examples: CommandExample[];
+  type: TemplateType;
+  path: string;
+  variables: TemplateVariable[];
+  metadata: TemplateMetadata;
 }
 
-interface CommandArgument {
+enum TemplateType {
+  QUESTIONS = 'questions',
+  SOURCES = 'sources',
+  SUMMARY = 'summary',
+  INTERVIEW = 'interview',
+  INSIGHTS = 'insights',
+  CUSTOM = 'custom'
+}
+
+interface TemplateVariable {
   name: string;
-  description: string;
+  type: 'string' | 'number' | 'boolean' | 'array' | 'object';
   required: boolean;
-  type: ArgumentType;
-  validation?: ValidationRule[];
-}
-
-interface CommandOption {
-  name: string;
-  description: string;
-  short?: string;
-  long: string;
-  type: OptionType;
-  default?: any;
-  required: boolean;
-  validation?: ValidationRule[];
-}
-
-interface CommandExample {
-  command: string;
+  defaultValue?: any;
   description: string;
 }
 
-enum ArgumentType {
-  STRING = 'string',
-  NUMBER = 'number',
-  BOOLEAN = 'boolean',
-  FILE = 'file',
-  DIRECTORY = 'directory'
+interface TemplateMetadata {
+  version: string;
+  author: string;
+  createdAt: Date;
+  updatedAt: Date;
+  tags: string[];
 }
+```
 
-enum OptionType {
-  STRING = 'string',
-  NUMBER = 'number',
-  BOOLEAN = 'boolean',
-  ARRAY = 'array'
-}
+## File System Structure
 
+### Directory Layout
+```
+.uxkit/
+├── config.yaml                 # Main configuration file
+├── memory/                     # Persistent context
+│   ├── principles.md          # Research principles
+│   ├── methodologies.md       # Research methodologies
+│   └── templates/             # Custom templates
+│       ├── questions-template.md
+│       ├── sources-template.md
+│       ├── summary-template.md
+│       ├── interview-template.md
+│       └── insights-template.md
+└── studies/                    # Research studies
+    ├── 001-user-onboarding/
+    │   ├── questions.md
+    │   ├── sources.md
+    │   ├── summaries/
+    │   │   ├── source-001-summary.md
+    │   │   └── source-002-summary.md
+    │   ├── interviews/
+    │   │   ├── participant-001-interview.md
+    │   │   └── participant-002-interview.md
+    │   └── insights.md
+    └── 002-checkout-flow/
+        ├── questions.md
+        ├── sources.md
+        └── insights.md
+```
+
+### File Naming Conventions
+- **Study directories**: `{id}-{kebab-case-name}`
+- **Question files**: `questions.md`
+- **Source files**: `sources.md`
+- **Summary files**: `{source-id}-summary.md`
+- **Interview files**: `{participant-id}-interview.md`
+- **Insight files**: `insights.md`
+
+## Data Validation
+
+### File Validation Rules
+```typescript
 interface ValidationRule {
-  type: ValidationType;
+  field: string;
+  type: 'required' | 'format' | 'range' | 'enum' | 'custom';
   value?: any;
   message: string;
 }
 
-enum ValidationType {
-  REQUIRED = 'required',
-  MIN_LENGTH = 'min_length',
-  MAX_LENGTH = 'max_length',
-  PATTERN = 'pattern',
-  RANGE = 'range',
-  CUSTOM = 'custom'
+interface FileValidationSchema {
+  fileType: string;
+  rules: ValidationRule[];
+  dependencies?: string[];
 }
 ```
 
-### Error Models
-
-#### UXKitError
+### Validation Schemas
 ```typescript
-class UXKitError extends Error {
-  constructor(
-    public type: ErrorType,
-    message: string,
-    public context?: Record<string, any>,
-    public cause?: Error
-  ) {
-    super(message);
-    this.name = 'UXKitError';
+const VALIDATION_SCHEMAS: Record<string, FileValidationSchema> = {
+  questions: {
+    fileType: 'questions',
+    rules: [
+      { field: 'studyId', type: 'required', message: 'Study ID is required' },
+      { field: 'questions', type: 'required', message: 'Questions array is required' },
+      { field: 'questions[].question', type: 'required', message: 'Question text is required' }
+    ]
+  },
+  sources: {
+    fileType: 'sources',
+    rules: [
+      { field: 'studyId', type: 'required', message: 'Study ID is required' },
+      { field: 'sources', type: 'required', message: 'Sources array is required' },
+      { field: 'sources[].title', type: 'required', message: 'Source title is required' }
+    ]
   }
+  // ... other schemas
+};
+```
+
+## Data Migration
+
+### Version Management
+```typescript
+interface DataMigration {
+  fromVersion: string;
+  toVersion: string;
+  description: string;
+  steps: MigrationStep[];
 }
 
-enum ErrorType {
-  VALIDATION_ERROR = 'VALIDATION_ERROR',
-  AI_AGENT_ERROR = 'AI_AGENT_ERROR',
-  STORAGE_ERROR = 'STORAGE_ERROR',
-  CONFIGURATION_ERROR = 'CONFIGURATION_ERROR',
-  COMMAND_ERROR = 'COMMAND_ERROR',
-  NETWORK_ERROR = 'NETWORK_ERROR',
-  PERMISSION_ERROR = 'PERMISSION_ERROR',
-  NOT_FOUND_ERROR = 'NOT_FOUND_ERROR'
+interface MigrationStep {
+  type: 'transform' | 'rename' | 'add' | 'remove';
+  description: string;
+  action: (data: any) => any;
 }
 ```
 
-## Data Validation
+### Migration Examples
+```typescript
+const MIGRATIONS: DataMigration[] = [
+  {
+    fromVersion: '1.0.0',
+    toVersion: '1.1.0',
+    description: 'Add metadata to all file types',
+    steps: [
+      {
+        type: 'add',
+        description: 'Add metadata field to questions file',
+        action: (data) => ({ ...data, metadata: { version: '1.1.0' } })
+      }
+    ]
+  }
+];
+```
 
-### Validation Rules
-- All UUIDs must be valid UUID v4 format
-- Dates must be valid ISO 8601 format
-- Priority levels must be one of the defined enum values
-- File paths must be valid and accessible
-- URLs must be valid HTTP/HTTPS URLs
-- Text fields have appropriate length limits
-- Numeric fields have appropriate ranges
+## Summary
 
-### Data Integrity
-- Foreign key relationships must be maintained
-- Cascade deletion rules for related entities
-- Unique constraints on appropriate fields
-- Data consistency checks across related entities
+This data model provides a simple, file-based approach to managing UX research data that:
 
-This data model provides a comprehensive foundation for the UX-Kit TypeScript CLI implementation, ensuring type safety, data integrity, and extensibility while following clean architecture principles.
+1. **Leverages file system**: Uses directories and files instead of complex databases
+2. **Supports AI agents**: Generates structured files that AI agents can easily process
+3. **Maintains version control**: All files are version-controlled and trackable
+4. **Enables collaboration**: Files can be shared and edited by team members
+5. **Provides flexibility**: Easy to extend and modify without complex migrations
+6. **Follows spec-kit inspiration**: Similar to GitHub's spec-kit approach for structured workflows
+
+The model balances simplicity with functionality, making it easy to implement while providing all necessary features for comprehensive UX research workflows.

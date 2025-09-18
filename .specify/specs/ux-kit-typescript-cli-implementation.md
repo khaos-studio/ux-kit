@@ -12,24 +12,25 @@
 ## 1. Overview
 
 ### 1.1 Purpose
-Implement a comprehensive TypeScript-based CLI toolkit for UX research that follows clean architecture principles, protocol-oriented design, and test-driven development. The system will provide structured research workflows through slash commands, AI agent integration, and persistent artifact management.
+Implement a lightweight TypeScript CLI toolkit for UX research inspired by GitHub's spec-kit. The system will provide structured research workflows through slash commands, AI agent integration, and file-based artifact management. Unlike complex applications, this tool focuses on generating text files and scripts to support AI agent research workflows in IDEs.
 
 ### 1.2 Scope
-- TypeScript CLI application with clean architecture
-- Protocol-oriented design for extensibility
+- Lightweight TypeScript CLI application
+- File-based research artifact generation
 - TDD implementation with comprehensive test coverage
 - Integration with AI agents (Cursor, future expansion)
-- Structured research artifact management
-- Slash command system for research workflows
+- Simple text file and script generation
+- Slash command system for IDE integration
 - Cross-platform support (macOS/Linux, WSL for Windows)
+- No complex data models or entity storage
 
 ### 1.3 Success Criteria
 - CLI responds to all research commands in <2 seconds
-- 100% test coverage for core functionality
-- Clean architecture with clear separation of concerns
-- Protocol-based design enabling easy AI agent integration
+- 90%+ test coverage for core functionality
+- Simple, maintainable architecture
+- Easy AI agent integration through file-based approach
 - Successful integration with Cursor IDE
-- All research artifacts properly version-controlled
+- Generated research artifacts are properly structured
 - Extensible design for future AI agent support
 
 ---
@@ -37,24 +38,23 @@ Implement a comprehensive TypeScript-based CLI toolkit for UX research that foll
 ## 2. Technical Requirements
 
 ### 2.1 Architecture
-**Clean Architecture Layers:**
-- **Domain Layer**: Core business logic, entities, and use cases
-- **Application Layer**: Command handlers, interfaces, and orchestration
-- **Infrastructure Layer**: File system, AI agent integration, external services
-- **Presentation Layer**: CLI interface, command parsing, output formatting
+**Simple Layered Architecture:**
+- **CLI Layer**: Command parsing, argument handling, and user interface
+- **Service Layer**: File generation, template processing, and AI agent integration
+- **Utility Layer**: File system operations, path handling, and cross-platform support
 
 **Protocol-Oriented Design:**
 - AI Agent Protocol for extensible agent integration
-- Research Artifact Protocol for consistent data handling
+- File Generator Protocol for consistent artifact creation
 - Command Protocol for standardized command execution
-- Storage Protocol for flexible persistence strategies
+- Template Protocol for flexible content generation
 
 ### 2.2 Design Patterns
 - **Command Pattern**: For research workflow commands
 - **Strategy Pattern**: For AI agent selection and execution
-- **Repository Pattern**: For artifact persistence
+- **Template Method Pattern**: For file generation workflows
 - **Factory Pattern**: For command and agent creation
-- **Observer Pattern**: For progress tracking and notifications
+- **Builder Pattern**: For constructing research artifacts
 - **Adapter Pattern**: For AI agent integration
 
 ### 2.3 Dependencies
@@ -67,7 +67,8 @@ Implement a comprehensive TypeScript-based CLI toolkit for UX research that foll
     "ora": "^7.0.0",
     "fs-extra": "^11.1.0",
     "yaml": "^2.3.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "handlebars": "^4.7.8"
   },
   "devDependencies": {
     "typescript": "^5.0.0",
@@ -84,9 +85,9 @@ Implement a comprehensive TypeScript-based CLI toolkit for UX research that foll
 
 ### 2.4 Interfaces
 - **IAgent**: AI agent communication interface
-- **IArtifactRepository**: Research artifact storage interface
+- **IFileGenerator**: Research artifact file generation interface
 - **ICommandHandler**: Command execution interface
-- **IProgressTracker**: Progress monitoring interface
+- **ITemplateEngine**: Template processing interface
 - **IConfigurationManager**: Configuration management interface
 
 ---
@@ -95,114 +96,74 @@ Implement a comprehensive TypeScript-based CLI toolkit for UX research that foll
 
 ### 3.1 Core Components
 
-#### Domain Layer
+#### CLI Layer
 ```typescript
-// Core Entities
-interface ResearchStudy {
-  id: string;
-  name: string;
-  description: string;
-  createdAt: Date;
-  updatedAt: Date;
-  status: StudyStatus;
+// Command Interface
+interface ICommand {
+  readonly name: string;
+  readonly description: string;
+  readonly arguments: CommandArgument[];
+  readonly options: CommandOption[];
+  execute(args: string[], options: Record<string, any>): Promise<void>;
 }
 
-interface ResearchQuestion {
-  id: string;
-  studyId: string;
-  question: string;
-  priority: Priority;
-  category: QuestionCategory;
-}
-
-interface ResearchSource {
-  id: string;
-  studyId: string;
-  title: string;
-  url?: string;
-  filePath?: string;
-  type: SourceType;
-  addedAt: Date;
-}
-
-interface ResearchSummary {
-  id: string;
-  sourceId: string;
-  content: string;
-  keyPoints: string[];
-  createdAt: Date;
-}
-
-interface Interview {
-  id: string;
-  studyId: string;
-  participantId: string;
-  transcript: string;
-  insights: string[];
-  conductedAt: Date;
-}
-
-interface ResearchInsight {
-  id: string;
-  studyId: string;
-  title: string;
-  description: string;
-  evidence: string[];
-  priority: Priority;
-  category: InsightCategory;
+// CLI Application
+class CLIApplication {
+  private commands: Map<string, ICommand> = new Map();
+  
+  registerCommand(command: ICommand): void;
+  execute(args: string[]): Promise<void>;
+  showHelp(): void;
 }
 ```
 
-#### Application Layer
+#### Service Layer
 ```typescript
-// Use Cases
-interface ICreateResearchStudyUseCase {
-  execute(request: CreateStudyRequest): Promise<ResearchStudy>;
+// File Generator Interface
+interface IFileGenerator {
+  generateQuestions(studyId: string, prompt: string): Promise<string>;
+  generateSources(studyId: string, sources: SourceInput[]): Promise<string>;
+  generateSummary(sourceId: string, content: string): Promise<string>;
+  generateInterview(studyId: string, transcript: string): Promise<string>;
+  generateInsights(studyId: string, artifacts: string[]): Promise<string>;
 }
 
-interface IGenerateQuestionsUseCase {
-  execute(request: GenerateQuestionsRequest): Promise<ResearchQuestion[]>;
+// Template Engine Interface
+interface ITemplateEngine {
+  render(template: string, data: Record<string, any>): string;
+  loadTemplate(name: string): string;
+  validateTemplate(template: string): boolean;
 }
 
-interface IProcessSourcesUseCase {
-  execute(request: ProcessSourcesRequest): Promise<ResearchSource[]>;
-}
-
-interface ISummarizeSourceUseCase {
-  execute(request: SummarizeSourceRequest): Promise<ResearchSummary>;
-}
-
-interface IFormatInterviewUseCase {
-  execute(request: FormatInterviewRequest): Promise<Interview>;
-}
-
-interface ISynthesizeInsightsUseCase {
-  execute(request: SynthesizeInsightsRequest): Promise<ResearchInsight[]>;
-}
-```
-
-#### Infrastructure Layer
-```typescript
-// AI Agent Protocol
+// AI Agent Interface
 interface IAgent {
   readonly name: string;
   readonly version: string;
   
-  generateQuestions(prompt: string, context: ResearchContext): Promise<ResearchQuestion[]>;
-  summarizeContent(content: string, context: ResearchContext): Promise<ResearchSummary>;
-  formatInterview(transcript: string, context: ResearchContext): Promise<Interview>;
-  synthesizeInsights(artifacts: ResearchArtifact[], context: ResearchContext): Promise<ResearchInsight[]>;
+  generateQuestions(prompt: string): Promise<string>;
+  summarizeContent(content: string): Promise<string>;
+  formatInterview(transcript: string): Promise<string>;
+  synthesizeInsights(artifacts: string[]): Promise<string>;
+}
+```
+
+#### Utility Layer
+```typescript
+// File System Service
+interface IFileSystemService {
+  createDirectory(path: string): Promise<void>;
+  writeFile(path: string, content: string): Promise<void>;
+  readFile(path: string): Promise<string>;
+  exists(path: string): Promise<boolean>;
+  listDirectory(path: string): Promise<string[]>;
 }
 
-// Storage Protocol
-interface IArtifactRepository {
-  saveStudy(study: ResearchStudy): Promise<void>;
-  getStudy(id: string): Promise<ResearchStudy | null>;
-  saveQuestions(questions: ResearchQuestion[]): Promise<void>;
-  saveSources(sources: ResearchSource[]): Promise<void>;
-  saveSummary(summary: ResearchSummary): Promise<void>;
-  saveInterview(interview: Interview): Promise<void>;
-  saveInsights(insights: ResearchInsight[]): Promise<void>;
+// Configuration Service
+interface IConfigurationService {
+  load(): Promise<UXKitConfig>;
+  save(config: UXKitConfig): Promise<void>;
+  get(key: string): any;
+  set(key: string, value: any): void;
 }
 ```
 
@@ -237,6 +198,13 @@ interface CommandDefinition {
   handler: ICommandHandler;
   prerequisites: string[];
 }
+
+interface SourceInput {
+  title: string;
+  url?: string;
+  filePath?: string;
+  type: 'web' | 'file' | 'document';
+}
 ```
 
 ### 3.3 API Specifications
@@ -263,6 +231,27 @@ uxkit study delete <id>
 uxkit config set <key> <value>
 uxkit config get <key>
 uxkit config list
+```
+
+#### File Structure Generated
+```
+.uxkit/
+├── config.yaml                 # Configuration file
+├── memory/                     # Persistent context
+│   └── principles.md
+├── templates/                  # Markdown templates
+│   ├── questions-template.md
+│   ├── sources-template.md
+│   ├── summarize-template.md
+│   ├── interview-template.md
+│   └── synthesis-template.md
+└── studies/                    # Research studies
+    └── 001-study-name/
+        ├── questions.md
+        ├── sources.md
+        ├── summaries/
+        ├── interviews/
+        └── insights.md
 ```
 
 #### Slash Commands (IDE Integration)
@@ -310,10 +299,10 @@ const SLASH_COMMANDS: SlashCommand[] = [
 enum ErrorType {
   VALIDATION_ERROR = 'VALIDATION_ERROR',
   AI_AGENT_ERROR = 'AI_AGENT_ERROR',
-  STORAGE_ERROR = 'STORAGE_ERROR',
+  FILE_SYSTEM_ERROR = 'FILE_SYSTEM_ERROR',
   CONFIGURATION_ERROR = 'CONFIGURATION_ERROR',
   COMMAND_ERROR = 'COMMAND_ERROR',
-  NETWORK_ERROR = 'NETWORK_ERROR'
+  TEMPLATE_ERROR = 'TEMPLATE_ERROR'
 }
 
 class UXKitError extends Error {
@@ -330,9 +319,9 @@ class UXKitError extends Error {
 
 #### Error Recovery Strategies
 - Graceful degradation for AI agent failures
-- Automatic retry with exponential backoff
-- Fallback to local processing when possible
+- Fallback to template-based generation when AI unavailable
 - Clear error messages with suggested actions
+- File system error handling with retry logic
 - Comprehensive logging for debugging
 
 ---
@@ -340,17 +329,17 @@ class UXKitError extends Error {
 ## 4. Testing Strategy
 
 ### 4.1 Unit Tests
-- **Domain Logic**: Test all business rules and entity behavior
-- **Use Cases**: Test application layer orchestration
 - **Command Handlers**: Test CLI command execution
+- **File Generators**: Test file generation and template processing
 - **AI Agent Integration**: Mock agent responses and test error handling
-- **Storage Operations**: Test file system operations and data persistence
+- **File System Operations**: Test file operations and directory management
+- **Configuration Management**: Test config loading and validation
 
 ### 4.2 Integration Tests
 - **End-to-End Commands**: Test complete research workflows
 - **AI Agent Communication**: Test actual agent integration
 - **File System Operations**: Test artifact creation and management
-- **Configuration Management**: Test config loading and validation
+- **Template Processing**: Test template rendering and validation
 
 ### 4.3 End-to-End Tests
 - **Complete Research Flow**: Test full research study lifecycle
@@ -372,13 +361,12 @@ class UXKitError extends Error {
 - **TypeScript Strict Mode**: Enable all strict type checking
 - **ESLint Configuration**: Enforce consistent code style
 - **Prettier Integration**: Automatic code formatting
-- **SonarQube Integration**: Code quality metrics and analysis
 - **Code Coverage**: Minimum 90% test coverage requirement
 
 ### 5.2 Performance Requirements
 - **Command Response Time**: <2 seconds for all commands
-- **Memory Usage**: <100MB for typical operations
-- **File I/O Efficiency**: Optimized for large research datasets
+- **Memory Usage**: <50MB for typical operations
+- **File I/O Efficiency**: Optimized for file generation operations
 - **AI Agent Timeout**: 30-second timeout with retry logic
 
 ### 5.3 Security Considerations
@@ -417,19 +405,16 @@ class UXKitError extends Error {
 ### 6.2 Deployment Strategy
 - **NPM Package**: Publish to npm registry for easy installation
 - **Binary Distribution**: Create standalone executables for different platforms
-- **Docker Container**: Containerized deployment option
 - **IDE Extension**: Direct integration with Cursor and other IDEs
 
 ### 6.3 Monitoring & Logging
 - **Structured Logging**: JSON-formatted logs with correlation IDs
 - **Performance Metrics**: Command execution times and resource usage
 - **Error Tracking**: Comprehensive error logging and reporting
-- **Usage Analytics**: Anonymous usage statistics for improvement
 
 ### 6.4 Rollback Strategy
 - **Version Management**: Semantic versioning with backward compatibility
 - **Configuration Migration**: Automatic config migration between versions
-- **Data Backup**: Automatic backup of research artifacts before updates
 - **Quick Rollback**: Simple command to revert to previous version
 
 ---
@@ -459,14 +444,15 @@ class UXKitError extends Error {
 - **Artifact**: Research output file (questions, sources, summaries, etc.)
 - **Research Study**: Complete research effort with all associated artifacts
 - **Slash Command**: IDE-integrated command triggered by `/research:*` syntax
-- **Protocol**: Interface definition for extensible component integration
+- **Spec-Driven Development**: Methodology inspired by GitHub's spec-kit
+- **Template Engine**: System for generating consistent research artifacts
 
 ### B. References
-- [Clean Architecture by Robert C. Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-- [Protocol-Oriented Programming in Swift](https://developer.apple.com/videos/play/wwdc2015/408/)
-- [Test-Driven Development by Kent Beck](https://www.amazon.com/Test-Driven-Development-Kent-Beck/dp/0321146530)
+- [GitHub's Spec-Kit](https://github.com/github/spec-kit) - Inspiration for spec-driven development
 - [Commander.js Documentation](https://github.com/tj/commander.js)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
+- [Handlebars Template Engine](https://handlebarsjs.com/)
+- [Test-Driven Development by Kent Beck](https://www.amazon.com/Test-Driven-Development-Kent-Beck/dp/0321146530)
 
 ### C. Examples
 
