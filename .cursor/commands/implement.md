@@ -53,7 +53,7 @@ Given the task numbers provided as arguments, do this:
    - Mark the completed task(s) as "✅ COMPLETED" in the tasks.md file
    - Update the progress tracking section
    - Update the "Next Up" task if applicable
-   - Add completion timestamp and any notes about implementation
+   - Add completion timestamp and any notes about implementation (use Terminal to get current date and time)
 
 9. **Commit Changes**: 
    - Stage all modified and new files
