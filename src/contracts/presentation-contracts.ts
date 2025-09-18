@@ -99,3 +99,80 @@ export enum LogLevel {
   ERROR = 'error',
   FATAL = 'fatal'
 }
+
+// ============================================================================
+// IDE Integration Interfaces
+// ============================================================================
+
+/**
+ * IDE integration interface
+ */
+export interface IIDEIntegration {
+  readonly name: string;
+  readonly version: string;
+  readonly supportedCommands: string[];
+  
+  registerSlashCommand(command: ISlashCommand): void;
+  unregisterSlashCommand(name: string): void;
+  getSlashCommand(name: string): ISlashCommand | null;
+  listSlashCommands(): ISlashCommand[];
+  
+  executeSlashCommand(name: string, args: string[]): Promise<void>;
+  showSlashCommandHelp(name: string): void;
+  showAllSlashCommands(): void;
+}
+
+/**
+ * Slash command interface
+ */
+export interface ISlashCommand {
+  readonly name: string;
+  readonly description: string;
+  readonly parameters: string[];
+  readonly examples: string[];
+}
+
+/**
+ * Cursor position interface
+ */
+export interface CursorPosition {
+  readonly line: number;
+  readonly character: number;
+}
+
+/**
+ * Notification types
+ */
+export enum NotificationType {
+  INFO = 'info',
+  WARNING = 'warning',
+  ERROR = 'error',
+  SUCCESS = 'success'
+}
+
+/**
+ * Cursor IDE integration interface
+ */
+export interface ICursorIntegration extends IIDEIntegration {
+  readonly name: 'cursor';
+  readonly version: string;
+  readonly supportedCommands: string[];
+  
+  registerSlashCommand(command: ISlashCommand): void;
+  unregisterSlashCommand(name: string): void;
+  getSlashCommand(name: string): ISlashCommand | null;
+  listSlashCommands(): ISlashCommand[];
+  
+  executeSlashCommand(name: string, args: string[]): Promise<void>;
+  showSlashCommandHelp(name: string): void;
+  showAllSlashCommands(): void;
+  
+  // Cursor-specific methods
+  getCurrentWorkspace(): Promise<string>;
+  getCurrentFile(): Promise<string | null>;
+  getSelection(): Promise<string | null>;
+  getCursorPosition(): Promise<CursorPosition | null>;
+  insertText(text: string, position?: CursorPosition): Promise<void>;
+  replaceSelection(text: string): Promise<void>;
+  showNotification(message: string, type?: NotificationType): Promise<void>;
+}
