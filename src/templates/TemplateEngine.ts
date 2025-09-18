@@ -68,28 +68,34 @@ export class TemplateEngine {
    */
   private renderTemplate(template: string, variables: TemplateVariables): string {
     let result = template;
+    let previousResult = '';
 
-    // Handle iteration blocks {{#each array}}...{{/each}} first
-    result = this.renderIterations(result, variables);
+    // Keep processing until no more changes occur (for nested structures)
+    while (result !== previousResult) {
+      previousResult = result;
 
-    // Handle conditional blocks {{#if condition}}...{{/if}}
-    result = this.renderConditionals(result, variables);
+      // Handle iteration blocks {{#each array}}...{{/each}} first
+      result = this.renderIterations(result, variables);
 
-    // Handle simple variable substitution {{variable}} last
-    result = result.replace(/\{\{([^}]+)\}\}/g, (match, variablePath) => {
-      const trimmedPath = variablePath.trim();
-      
-      // Skip control structures that were already processed
-      if (trimmedPath.startsWith('#if') || 
-          trimmedPath.startsWith('#each') || 
-          trimmedPath.startsWith('/if') || 
-          trimmedPath.startsWith('/each') ||
-          trimmedPath.startsWith('>')) {
-        return match;
-      }
-      
-      return this.getVariableValue(variables, trimmedPath);
-    });
+      // Handle conditional blocks {{#if condition}}...{{/if}}
+      result = this.renderConditionals(result, variables);
+
+      // Handle simple variable substitution {{variable}} last
+      result = result.replace(/\{\{([^}]+)\}\}/g, (match, variablePath) => {
+        const trimmedPath = variablePath.trim();
+        
+        // Skip control structures that were already processed
+        if (trimmedPath.startsWith('#if') || 
+            trimmedPath.startsWith('#each') || 
+            trimmedPath.startsWith('/if') || 
+            trimmedPath.startsWith('/each') ||
+            trimmedPath.startsWith('>')) {
+          return match;
+        }
+        
+        return this.getVariableValue(variables, trimmedPath);
+      });
+    }
 
     return result;
   }
@@ -137,25 +143,16 @@ export class TemplateEngine {
         const elseContent = elseMatch[2];
         
         if (isTruthy) {
-          // Render the if content
-          return ifContent.replace(/\{\{([^}]+)\}\}/g, (_varMatch: string, variablePath: string) => {
-            const trimmedPath = variablePath.trim();
-            return this.getVariableValue(variables, trimmedPath);
-          });
+          // Render the if content with full template processing
+          return this.renderTemplate(ifContent, variables);
         } else {
-          // Render the else content
-          return elseContent.replace(/\{\{([^}]+)\}\}/g, (_varMatch: string, variablePath: string) => {
-            const trimmedPath = variablePath.trim();
-            return this.getVariableValue(variables, trimmedPath);
-          });
+          // Render the else content with full template processing
+          return this.renderTemplate(elseContent, variables);
         }
       } else {
         // No else block, just render if content
         if (isTruthy) {
-          return content.replace(/\{\{([^}]+)\}\}/g, (_varMatch: string, variablePath: string) => {
-            const trimmedPath = variablePath.trim();
-            return this.getVariableValue(variables, trimmedPath);
-          });
+          return this.renderTemplate(content, variables);
         } else {
           return '';
         }
@@ -179,9 +176,29 @@ export class TemplateEngine {
         return '';
       }
 
-      return arrayValue.map(item => {
+      return arrayValue.map((item, index) => {
+        let itemContent = content;
+        
         // Replace {{this}} with the current item
-        return content.replace(/\{\{this\}\}/g, String(item));
+        itemContent = itemContent.replace(/\{\{this\}\}/g, String(item));
+        
+        // Replace object properties in the item content
+        if (typeof item === 'object' && item !== null) {
+          for (const [key, value] of Object.entries(item)) {
+            const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+            itemContent = itemContent.replace(regex, String(value));
+          }
+          
+          // Handle conditional blocks within the item
+          itemContent = this.renderConditionals(itemContent, item);
+        }
+        
+        // Handle {{#unless @last}} blocks
+        itemContent = itemContent.replace(/\{\{#unless\s+@last\}\}([\s\S]*?)\{\{\/unless\}\}/g, (_unlessMatch: string, unlessContent: string) => {
+          return index < arrayValue.length - 1 ? unlessContent : '';
+        });
+        
+        return itemContent;
       }).join('');
     });
   }
