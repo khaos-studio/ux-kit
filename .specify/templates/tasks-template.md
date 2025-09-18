@@ -1,127 +1,83 @@
-# Tasks: [FEATURE NAME]
-
-**Input**: Design documents from `/specs/[###-feature-name]/`
-**Prerequisites**: plan.md (required), research.md, data-model.md, contracts/
-
-## Execution Flow (main)
-```
-1. Load plan.md from feature directory
-   → If not found: ERROR "No implementation plan found"
-   → Extract: tech stack, libraries, structure
-2. Load optional design documents:
-   → data-model.md: Extract entities → model tasks
-   → contracts/: Each file → contract test task
-   → research.md: Extract decisions → setup tasks
-3. Generate tasks by category:
-   → Setup: project init, dependencies, linting
-   → Tests: contract tests, integration tests
-   → Core: models, services, CLI commands
-   → Integration: DB, middleware, logging
-   → Polish: unit tests, performance, docs
-4. Apply task rules:
-   → Different files = mark [P] for parallel
-   → Same file = sequential (no [P])
-   → Tests before implementation (TDD)
-5. Number tasks sequentially (T001, T002...)
-6. Generate dependency graph
-7. Create parallel execution examples
-8. Validate task completeness:
-   → All contracts have tests?
-   → All entities have models?
-   → All endpoints implemented?
-9. Return: SUCCESS (tasks ready for execution)
-```
-
-## Format: `[ID] [P?] Description`
-- **[P]**: Can run in parallel (different files, no dependencies)
-- Include exact file paths in descriptions
-
-## Path Conventions
-- **Single project**: `src/`, `tests/` at repository root
-- **Web app**: `backend/src/`, `frontend/src/`
-- **Mobile**: `api/src/`, `ios/src/` or `android/src/`
-- Paths shown below assume single project - adjust based on plan.md structure
-
-## Phase 3.1: Setup
-- [ ] T001 Create project structure per implementation plan
-- [ ] T002 Initialize [language] project with [framework] dependencies
-- [ ] T003 [P] Configure linting and formatting tools
-
-## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
-**CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
-- [ ] T004 [P] Contract test POST /api/users in tests/contract/test_users_post.py
-- [ ] T005 [P] Contract test GET /api/users/{id} in tests/contract/test_users_get.py
-- [ ] T006 [P] Integration test user registration in tests/integration/test_registration.py
-- [ ] T007 [P] Integration test auth flow in tests/integration/test_auth.py
-
-## Phase 3.3: Core Implementation (ONLY after tests are failing)
-- [ ] T008 [P] User model in src/models/user.py
-- [ ] T009 [P] UserService CRUD in src/services/user_service.py
-- [ ] T010 [P] CLI --create-user in src/cli/user_commands.py
-- [ ] T011 POST /api/users endpoint
-- [ ] T012 GET /api/users/{id} endpoint
-- [ ] T013 Input validation
-- [ ] T014 Error handling and logging
-
-## Phase 3.4: Integration
-- [ ] T015 Connect UserService to DB
-- [ ] T016 Auth middleware
-- [ ] T017 Request/response logging
-- [ ] T018 CORS and security headers
-
-## Phase 3.5: Polish
-- [ ] T019 [P] Unit tests for validation in tests/unit/test_validation.py
-- [ ] T020 Performance tests (<200ms)
-- [ ] T021 [P] Update docs/api.md
-- [ ] T022 Remove duplication
-- [ ] T023 Run manual-testing.md
-
-## Dependencies
-- Tests (T004-T007) before implementation (T008-T014)
-- T008 blocks T009, T015
-- T016 blocks T018
-- Implementation before polish (T019-T023)
-
-## Parallel Example
-```
-# Launch T004-T007 together:
-Task: "Contract test POST /api/users in tests/contract/test_users_post.py"
-Task: "Contract test GET /api/users/{id} in tests/contract/test_users_get.py"
-Task: "Integration test registration in tests/integration/test_registration.py"
-Task: "Integration test auth in tests/integration/test_auth.py"
-```
-
-## Notes
-- [P] tasks = different files, no dependencies
-- Verify tests fail before implementing
-- Commit after each task
-- Avoid: vague tasks, same file conflicts
+# Tasks Template
 
 ## Task Generation Rules
-*Applied during main() execution*
 
-1. **From Contracts**:
-   - Each contract file → contract test task [P]
-   - Each endpoint → implementation task
-   
-2. **From Data Model**:
-   - Each entity → model creation task [P]
-   - Relationships → service layer tasks
-   
-3. **From User Stories**:
-   - Each story → integration test [P]
-   - Quickstart scenarios → validation tasks
+### Task Types
+- **Setup tasks**: Project initialization, dependencies, configuration
+- **Test tasks [P]**: Contract tests, integration tests, unit tests
+- **Core tasks**: Entity creation, service implementation, CLI commands
+- **Integration tasks**: Database connections, middleware, logging
+- **Polish tasks [P]**: Performance optimization, documentation, final testing
 
-4. **Ordering**:
-   - Setup → Tests → Models → Services → Endpoints → Polish
-   - Dependencies block parallel execution
+### Parallel Execution
+- [P] = Can run in parallel with other [P] tasks
+- Tasks without [P] = Sequential execution required
+- Different files = Can be parallel [P]
+- Same file = Sequential (no [P])
 
-## Validation Checklist
-*GATE: Checked by main() before returning*
+### Task Dependencies
+1. Setup before everything
+2. Tests before implementation (TDD)
+3. Models before services
+4. Services before endpoints
+5. Core before integration
+6. Everything before polish
 
-- [ ] All contracts have corresponding tests
-- [ ] All entities have model tasks
-- [ ] All tests come before implementation
-- [ ] Parallel tasks truly independent
-- [ ] Each task specifies exact file path
-- [ ] No task modifies same file as another [P] task
+### File Organization
+- Keep source files small (< 200 lines)
+- Use composition over inheritance
+- Separate concerns into focused modules
+- One responsibility per file
+- Clear interfaces between modules
+
+## Task Format
+
+### TXXX: Task Name
+**Type**: [Setup|Test|Core|Integration|Polish]  
+**Priority**: [Critical|High|Medium|Low]  
+**Effort**: [X days|X hours]  
+**Dependencies**: [TXXX, TYYY]  
+**Parallel**: [P] (if applicable)
+
+**Description**: Brief task description
+
+**Acceptance Criteria**:
+- [ ] Specific deliverable 1
+- [ ] Specific deliverable 2
+- [ ] Specific deliverable 3
+
+**Files to Create/Modify**:
+- `path/to/file1.ts`
+- `path/to/file2.ts`
+- `tests/path/to/test1.test.ts`
+
+**Technical Tasks**:
+- [ ] Specific technical task 1
+- [ ] Specific technical task 2
+- [ ] Specific technical task 3
+
+## Parallel Execution Examples
+
+### Example 1: Contract Tests
+```bash
+# These can run in parallel
+Task agent execute T005  # Domain contract tests
+Task agent execute T006  # Application contract tests
+Task agent execute T007  # Infrastructure contract tests
+```
+
+### Example 2: Entity Implementation
+```bash
+# These can run in parallel
+Task agent execute T015  # ResearchStudy entity
+Task agent execute T016  # ResearchQuestion entity
+Task agent execute T017  # ResearchSource entity
+```
+
+### Example 3: Service Implementation
+```bash
+# These can run in parallel
+Task agent execute T025  # StudyService
+Task agent execute T026  # QuestionService
+Task agent execute T027  # SourceService
+```
