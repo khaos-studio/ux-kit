@@ -4,7 +4,7 @@ description: Implement specific tasks using TDD approach with web search support
 
 Given the task numbers provided as arguments, do this:
 
-1. **Parse Task Numbers**: Extract task identifiers (e.g., T0001, T002, T021) from the arguments. If no specific tasks are mentioned, search the current tasks.md file for the next task to be started (marked as "Next Up" or first incomplete task).
+1. **Parse Task Numbers**: Extract task identifiers (e.g., T0001, T002, T021) from the arguments. If no specific tasks are mentioned, search the current tasks.md file for the next task to be started (marked as "Next Up" or first incomplete task). Note: Tasks with trailing [P] can be performed in parallel. When there is a sequence of these you can queue in batches.
 
 2. **Load Task Details**: 
    - Read the tasks.md file from `.specify/plans/**/tasks.md`
