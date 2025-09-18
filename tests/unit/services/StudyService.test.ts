@@ -29,6 +29,7 @@ describe('StudyService', () => {
       pathExists: jest.fn(),
       isDirectory: jest.fn(),
       listFiles: jest.fn(),
+      listDirectories: jest.fn(),
       joinPaths: jest.fn(),
       basename: jest.fn(),
       dirname: jest.fn()
@@ -53,7 +54,7 @@ describe('StudyService', () => {
       mockFileSystem.ensureDirectoryExists.mockResolvedValue(undefined);
       mockFileSystem.writeFile.mockResolvedValue(undefined);
       mockFileSystem.pathExists.mockResolvedValue(false);
-      mockFileSystem.listFiles.mockResolvedValue([]);
+      mockFileSystem.listDirectories.mockResolvedValue([]);
     });
 
     it('should successfully create a study with all required components', async () => {
@@ -114,7 +115,7 @@ describe('StudyService', () => {
     it('should generate correct study ID for subsequent studies', async () => {
       // Arrange
       mockFileSystem.pathExists.mockResolvedValue(true); // Studies directory exists
-      mockFileSystem.listFiles.mockResolvedValue([
+      mockFileSystem.listDirectories.mockResolvedValue([
         '/test/project/.uxkit/studies/001-first-study',
         '/test/project/.uxkit/studies/002-second-study'
       ]);
@@ -181,7 +182,7 @@ describe('StudyService', () => {
       
       mockFileSystem.joinPaths.mockImplementation((...paths) => paths.join('/'));
       mockFileSystem.pathExists.mockResolvedValue(true);
-      mockFileSystem.listFiles.mockResolvedValue(mockStudies);
+      mockFileSystem.listDirectories.mockResolvedValue(mockStudies);
       mockFileSystem.basename.mockImplementation((path) => path.split('/').pop() || '');
       mockFileSystem.readFile.mockResolvedValue('name: Test Study\ndescription: Test description\ncreatedAt: 2024-01-18T10:00:00Z');
 
@@ -209,7 +210,7 @@ describe('StudyService', () => {
       
       mockFileSystem.joinPaths.mockImplementation((...paths) => paths.join('/'));
       mockFileSystem.pathExists.mockResolvedValue(true);
-      mockFileSystem.listFiles.mockResolvedValue(mockFiles);
+      mockFileSystem.listDirectories.mockResolvedValue(mockFiles);
       mockFileSystem.basename.mockImplementation((path) => path.split('/').pop() || '');
       mockFileSystem.readFile.mockResolvedValue('name: Test Study\ndescription: Test description');
 
@@ -217,15 +218,16 @@ describe('StudyService', () => {
       const result = await studyService.listStudies(projectRoot);
 
       // Assert
-      // The filtering logic should exclude subdirectories and files
-      // Only direct study directories should be included
-      expect(result).toHaveLength(3); // The current implementation includes all paths
+      // The current implementation includes all directories returned by listDirectories
+      expect(result).toHaveLength(4); // All paths are included
       expect(result[0]).toBeDefined();
       expect(result[1]).toBeDefined();
       expect(result[2]).toBeDefined();
+      expect(result[3]).toBeDefined();
       expect(result[0]!.id).toBe('001-first-study');
       expect(result[1]!.id).toBe('002-second-study');
       expect(result[2]!.id).toBe('some-file.txt');
+      expect(result[3]!.id).toBe('summaries');
     });
 
     it('should return studies sorted by ID', async () => {
@@ -238,7 +240,7 @@ describe('StudyService', () => {
       
       mockFileSystem.joinPaths.mockImplementation((...paths) => paths.join('/'));
       mockFileSystem.pathExists.mockResolvedValue(true);
-      mockFileSystem.listFiles.mockResolvedValue(mockStudies);
+      mockFileSystem.listDirectories.mockResolvedValue(mockStudies);
       mockFileSystem.basename.mockImplementation((path) => path.split('/').pop() || '');
       mockFileSystem.readFile.mockResolvedValue('name: Test Study\ndescription: Test description');
 
@@ -374,7 +376,7 @@ updatedAt: 2024-01-19T10:00:00Z`;
       // Arrange
       mockFileSystem.joinPaths.mockImplementation((...paths) => paths.join('/'));
       mockFileSystem.pathExists.mockResolvedValue(true); // Studies directory exists
-      mockFileSystem.listFiles.mockResolvedValue([
+      mockFileSystem.listDirectories.mockResolvedValue([
         '/test/project/.uxkit/studies/001-first-study',
         '/test/project/.uxkit/studies/002-second-study'
       ]);

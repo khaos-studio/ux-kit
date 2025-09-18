@@ -86,6 +86,16 @@ class MockFileSystemService implements IFileSystemService {
     return files;
   }
 
+  async listDirectories(path: string): Promise<string[]> {
+    const directories: string[] = [];
+    for (const dirPath of this.directories) {
+      if (dirPath.startsWith(path)) {
+        directories.push(dirPath);
+      }
+    }
+    return directories;
+  }
+
   joinPaths(...paths: string[]): string {
     return paths.join('/');
   }
