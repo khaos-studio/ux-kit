@@ -1,0 +1,28 @@
+# UX-Kit SSH Configuration
+# This file contains SSH configuration for UX-Kit integrations
+
+# GitHub configuration
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_rsa
+    IdentitiesOnly yes
+    AddKeysToAgent yes
+    UseKeychain yes
+
+# UX-Kit specific GitHub configuration
+Host uxkit-github
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/uxkit_rsa
+    IdentitiesOnly yes
+    AddKeysToAgent yes
+    UseKeychain yes
+
+# SSH connection settings
+Host *
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    TCPKeepAlive yes
+    Compression yes
+    ForwardAgent yes

@@ -1,0 +1,37 @@
+# UX-Kit Default Configuration
+version: "1.0.0"
+log_level: "info"
+cache_enabled: true
+auto_update: true
+default_editor: "code"
+theme: "default"
+
+# Research settings
+research:
+  default_study_type: "user_interview"
+  auto_save: true
+  backup_enabled: true
+  max_backups: 5
+
+# Output settings
+output:
+  format: "markdown"
+  include_timestamps: true
+  include_metadata: true
+  template_dir: "templates"
+
+# Integration settings
+integrations:
+  github:
+    enabled: true
+    auto_sync: false
+  slack:
+    enabled: false
+  notion:
+    enabled: false
+
+# Security settings
+security:
+  encrypt_sensitive_data: false
+  require_authentication: false
+  session_timeout: 3600
