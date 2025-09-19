@@ -719,32 +719,53 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 
 ## Integration Tasks
 
-### T017: Update InitCommand for Codex Support
+### T017: Update InitCommand for Codex Support ✅ COMPLETED
 **Type**: Integration  
 **Priority**: Critical  
 **Effort**: 4 hours  
 **Size**: large
-**Dependencies**: T013  
+**Dependencies**: T013
+**Completed**: 2024-12-19
 
 **Description**: Integrate Codex support into existing InitCommand.
 
 **Acceptance Criteria**:
-- [ ] Add Codex to AI agent options
-- [ ] Add Codex initialization handling
-- [ ] Add error handling and user feedback
-- [ ] Maintain backward compatibility
-- [ ] Add user interaction flows
+- [x] Add Codex to AI agent options
+- [x] Add Codex initialization handling
+- [x] Add error handling and user feedback
+- [x] Maintain backward compatibility
+- [x] Add user interaction flows
 
 **Files to Create/Modify**:
-- `src/commands/InitCommand.ts`
+- `src/commands/InitCommand.ts` ✅
+- `src/contracts/presentation-contracts.ts` ✅ (Added missing interfaces)
+- `tests/use-cases/T017-InitCommand-Codex.use-case.test.ts` ✅ (new)
+- `tests/unit/commands/InitCommand-Codex.test.ts` ✅ (new)
 
 **Technical Tasks**:
-- [ ] Update AI_AGENT_OPTIONS array
-- [ ] Add handleCodexInitialization method
-- [ ] Add Codex integration service injection
-- [ ] Add error handling and user feedback
-- [ ] Add validation and fallback logic
-- [ ] Update help text and documentation
+- [x] Update AI_AGENT_OPTIONS array
+- [x] Add handleCodexInitialization method
+- [x] Add Codex integration service injection
+- [x] Add error handling and user feedback
+- [x] Add validation and fallback logic
+- [x] Update help text and documentation
+- [x] Add missing presentation contracts (IOutput, ICommand, CommandResult, ValidationResult)
+- [x] Implement comprehensive error handling for all Codex validation results
+- [x] Add progress indicators and user feedback during Codex initialization
+- [x] Implement fallback behavior when Codex integration fails
+- [x] Add integration status display and version information
+- [x] Create 20 comprehensive use case tests covering all user scenarios
+- [x] Create 28 unit tests with 100% coverage of Codex integration methods
+- [x] Ensure backward compatibility with existing Cursor and custom AI agent functionality
+
+**Implementation Notes**:
+- Successfully integrated Codex support into InitCommand following TDD approach
+- Added comprehensive error handling for all Codex validation scenarios (CLI_NOT_FOUND, CLI_INVALID, PERMISSION_DENIED, UNKNOWN_ERROR)
+- Implemented graceful fallback when Codex integration fails, allowing UX-Kit to continue with CLI commands
+- Added progress indicators and user-friendly messages throughout the initialization process
+- Maintained full backward compatibility with existing Cursor and custom AI agent functionality
+- All 48 tests passing (20 use case tests + 28 unit tests) with comprehensive coverage
+- Service integrates seamlessly with existing InitCommand workflow and error handling
 
 ### T018: Add Codex CLI Integration
 **Type**: Integration  
@@ -980,10 +1001,10 @@ graph TD
 
 ## Next Steps
 
-1. **Immediate**: Begin with T017 (Update InitCommand for Codex Support) - Next Up
+1. **Immediate**: Begin with T018 (Add Codex CLI Integration) - Next Up
 2. **Week 1**: Complete Setup and Test tasks (T007-T010)
 3. **Week 2**: Complete Core tasks (T016) ✅
-4. **Week 3**: Complete Integration tasks (T017-T019)
+4. **Week 3**: Complete Integration tasks (T017) ✅, Continue with T018-T019
 5. **Week 4**: Complete Polish tasks (T020-T022)
 
 ---

@@ -14,8 +14,122 @@ import {
 } from './domain-contracts';
 
 // ============================================================================
+// Output Contracts
+// ============================================================================
+
+/**
+ * Interface for output operations
+ */
+export interface IOutput {
+  /**
+   * Write a line to output
+   */
+  writeln(message: string): void;
+  
+  /**
+   * Write text to output without newline
+   */
+  write(message: string): void;
+  
+  /**
+   * Write error message to output
+   */
+  writeErrorln(message: string): void;
+}
+
+// ============================================================================
 // CLI Command Contracts
 // ============================================================================
+
+/**
+ * Interface for command execution
+ */
+export interface ICommand {
+  /**
+   * Command name
+   */
+  readonly name: string;
+  
+  /**
+   * Command description
+   */
+  readonly description: string;
+  
+  /**
+   * Command usage
+   */
+  readonly usage: string;
+  
+  /**
+   * Command arguments
+   */
+  readonly arguments: readonly string[];
+  
+  /**
+   * Command options
+   */
+  readonly options: readonly any[];
+  
+  /**
+   * Command examples
+   */
+  readonly examples: readonly any[];
+  
+  /**
+   * Execute command
+   */
+  execute(args: string[], options: Record<string, any>): Promise<CommandResult>;
+  
+  /**
+   * Validate command arguments
+   */
+  validate(args: string[], options: Record<string, any>): Promise<ValidationResult>;
+  
+  /**
+   * Show help information
+   */
+  showHelp(): void;
+}
+
+/**
+ * Result of command execution
+ */
+export interface CommandResult {
+  /**
+   * Whether the command executed successfully
+   */
+  success: boolean;
+  
+  /**
+   * Result message
+   */
+  message: string;
+  
+  /**
+   * Additional data
+   */
+  data?: any;
+  
+  /**
+   * Error messages if any
+   */
+  errors?: string[];
+}
+
+/**
+ * Result of command validation
+ */
+export interface ValidationResult {
+  /**
+   * Whether validation passed
+   */
+  valid: boolean;
+  
+  /**
+   * Validation errors
+   */
+  errors: Array<{ field: string; message: string; value: any }>;
+}
 
 /**
  * Interface for CLI command execution

@@ -10,6 +10,8 @@ import { TemplateService } from '../services/TemplateService';
 import { CursorCommandGenerator } from '../services/CursorCommandGenerator';
 import { InputService } from '../utils/InputService';
 import { IOutput } from '../contracts/presentation-contracts';
+import { ICodexIntegration } from '../contracts/domain-contracts';
+import { CodexConfiguration, CodexValidationResponse, CodexValidationResult } from '../contracts/domain-contracts';
 
 export class InitCommand implements ICommand {
   readonly name = 'init';
@@ -50,7 +52,8 @@ export class InitCommand implements ICommand {
     private templateService: TemplateService,
     private cursorCommandGenerator: CursorCommandGenerator,
     private inputService: InputService,
-    private output: IOutput
+    private output: IOutput,
+    private codexIntegration?: ICodexIntegration
   ) {}
 
   async execute(args: string[], options: Record<string, any>): Promise<CommandResult> {
@@ -74,8 +77,25 @@ export class InitCommand implements ICommand {
       // Enhanced setup process with better progress indicators
       await this.setupWithProgress(projectRoot, aiAgent, options.template || 'default');
       
-      // IDE Confirmation and Cursor command generation
+      // IDE Confirmation and AI agent-specific setup
       await this.handleIdeConfirmation(projectRoot, aiAgent);
+      
+      // Handle Codex initialization if Codex is selected
+      if (aiAgent === 'codex') {
+        const codexSuccess = await this.handleCodexInitialization(projectRoot);
+        if (!codexSuccess) {
+          return {
+            success: false,
+            message: 'UX-Kit initialization completed but Codex integration failed',
+            data: {
+              projectRoot,
+              aiAgent: aiAgent,
+              template: options.template || 'default',
+              codexIntegrationFailed: true
+            }
+          };
+        }
+      }
       
       this.output.writeln('');
       this.output.writeln('🎉 UX-Kit initialized successfully!');
@@ -259,6 +279,85 @@ ${brightMagenta}                    🎨 User Experience Research & Design Toolk
       }
     } else {
       this.output.writeln(`✓ Configured for AI agent: ${aiAgent}`);
+    }
+  }
+
+  /**
+   * Handle Codex initialization and setup
+   */
+  private async handleCodexInitialization(projectRoot: string): Promise<boolean> {
+    if (!this.codexIntegration) {
+      this.output.writeErrorln('Codex integration service not available');
+      return false;
+    }
+
+    try {
+      this.output.write('🔍 Checking Codex CLI availability...');
+      
+      // Validate Codex CLI
+      const validationResponse = await this.codexIntegration.validate();
+      
+      if (validationResponse.result === CodexValidationResult.SUCCESS) {
+        this.output.writeln(' ✓');
+        this.output.write('⚙️  Initializing Codex integration...');
+        
+        // Initialize Codex with default configuration
+        const codexConfig: CodexConfiguration = {
+          enabled: true,
+          ...(validationResponse.cliPath && { cliPath: validationResponse.cliPath }),
+          validationEnabled: true,
+          fallbackToCustom: true,
+          templatePath: `${projectRoot}/.uxkit/templates/codex-commands`,
+          timeout: 30000
+        };
+        
+        await this.codexIntegration.initialize(codexConfig);
+        this.output.writeln(' ✓');
+        
+        this.output.write('📝 Generating Codex command templates...');
+        await this.codexIntegration.generateCommandTemplates();
+        this.output.writeln(' ✓');
+        
+        this.output.writeln('');
+        this.output.writeln('🎉 Codex integration ready!');
+        this.output.writeln('  📁 Command templates available in .uxkit/templates/codex-commands/');
+        this.output.writeln('  🚀 You can now use Codex commands for UX research');
+        this.output.writeln(`  💡 Codex CLI version: ${validationResponse.version || 'Unknown'}`);
+        
+        // Get and display integration status
+        const status = await this.codexIntegration.getStatus();
+        this.output.writeln(`  📊 Integration status: ${status.status}`);
+        
+        return true;
+      } else {
+        this.output.writeln(' ✗');
+        this.output.writeln('');
+        this.output.writeErrorln(`Codex CLI validation failed: ${validationResponse.errorMessage || 'Unknown error'}`);
+        
+        if (validationResponse.suggestions && validationResponse.suggestions.length > 0) {
+          this.output.writeln('Suggestions:');
+          validationResponse.suggestions.forEach((suggestion, index) => {
+            this.output.writeln(`  ${index + 1}. ${suggestion}`);
+          });
+        }
+        
+        this.output.writeln('');
+        this.output.writeln('⚠️  Codex integration will be skipped');
+        this.output.writeln('  📝 You can still use UX-Kit CLI commands');
+        this.output.writeln('  🔧 To enable Codex integration, resolve the CLI issues above');
+        
+        return false;
+      }
+    } catch (error) {
+      this.output.writeln(' ✗');
+      this.output.writeln('');
+      this.output.writeErrorln(`Failed to initialize Codex integration: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      this.output.writeln('');
+      this.output.writeln('⚠️  Codex integration will be skipped');
+      this.output.writeln('  📝 You can still use UX-Kit CLI commands');
+      this.output.writeln('  🔧 To enable Codex integration, check the error above');
+      
+      return false;
     }
   }
 
