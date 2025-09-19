@@ -1,5 +1,5 @@
 {
-  "name": "@ux-kit/cli",
+  "name": "ux-kit-cli",
   "version": "1.0.0",
   "description": "UX research CLI toolkit inspired by GitHub's spec-kit",
   "main": "dist/index.js",
