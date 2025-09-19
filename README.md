@@ -39,7 +39,7 @@ uxkit study:create --name "My UX Research"
 
 **Alternative: Direct Install**
 ```bash
-# Install directly from GitHub (may require manual dependency installation)
+# Install directly from GitHub
 npm install -g https://github.com/khaos-studio/ux-kit.git
 ```
 
