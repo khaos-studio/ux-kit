@@ -204,55 +204,97 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 - Unit tests provide 100% coverage with 53/53 tests passing
 - Total test coverage: 84/84 tests passing
 
-### T005: Infrastructure Contract Tests [P]
+### T005: Infrastructure Contract Tests [P] ✅ COMPLETED
 **Type**: Test  
 **Priority**: High  
 **Effort**: 2 hours  
 **Dependencies**: T002  
+**Completed**: 2025-09-19 00:54:08 EDT
 
 **Description**: Create unit tests for infrastructure contracts and services.
 
 **Acceptance Criteria**:
-- [ ] Test `IFileSystemService` interface
-- [ ] Test `ICLIExecutionService` interface
-- [ ] Test `ICodexCLIService` interface
-- [ ] Test `ITemplateFileService` interface
-- [ ] Test infrastructure exceptions
+- [x] Test `IFileSystemService` interface
+- [x] Test `ICLIExecutionService` interface
+- [x] Test `ICodexCLIService` interface
+- [x] Test `ITemplateFileService` interface
+- [x] Test infrastructure exceptions
 
 **Files to Create/Modify**:
-- `tests/unit/contracts/infrastructure-contracts.test.ts`
+- `tests/unit/contracts/infrastructure-contracts.test.ts` ✅
+- `src/contracts/infrastructure-contracts.ts` (copied from specs) ✅
+- `tests/use-cases/T005-InfrastructureContracts.use-case.test.ts` (new) ✅
 
 **Technical Tasks**:
-- [ ] Create test file for infrastructure contracts
-- [ ] Test file system service interface
-- [ ] Test CLI execution service interface
-- [ ] Test Codex CLI service interface
-- [ ] Achieve 100% coverage for infrastructure contracts
+- [x] Create test file for infrastructure contracts
+- [x] Test file system service interface
+- [x] Test CLI execution service interface
+- [x] Test Codex CLI service interface
+- [x] Achieve 100% coverage for infrastructure contracts
+- [x] Implement use case tests following TDD approach
+- [x] Copy infrastructure contracts to src directory for testing
+- [x] Test all infrastructure services, DTOs, and utility classes
+- [x] Test all infrastructure exceptions with proper inheritance
+- [x] Test configuration, logging, validation, and error handling services
+- [x] Test external service integration contracts
 
-### T006: Presentation Contract Tests [P]
+**Implementation Notes**:
+- Successfully created comprehensive unit tests for all infrastructure contracts
+- All service interfaces tested: IFileSystemService, ICLIExecutionService, ICodexCLIService, ITemplateFileService
+- All additional services tested: IConfigurationService, ILoggingService, IValidationService, IErrorHandlingService, IExternalServiceIntegration
+- All DTOs tested: FileStats, CLIExecutionOptions, CLIExecutionResult, ServiceStatus, ServiceRequest, ServiceResponse, ServiceError
+- All enums tested: TemplateFormat, LogLevel
+- All infrastructure exceptions tested with proper inheritance and properties
+- Infrastructure utility classes tested with comprehensive validation
+- Use case tests demonstrate TDD approach with 20/20 tests passing
+- Unit tests provide 100% coverage with 41/41 tests passing
+- Total test coverage: 61/61 tests passing
+
+### T006: Presentation Contract Tests [P] ✅ COMPLETED
 **Type**: Test  
 **Priority**: High  
 **Effort**: 2 hours  
 **Dependencies**: T002  
+**Completed**: 2025-09-19 00:54:08 EDT
 
 **Description**: Create unit tests for presentation contracts and CLI interfaces.
 
 **Acceptance Criteria**:
-- [ ] Test `ICLICommand` interface
-- [ ] Test `IUserInterface` interface
-- [ ] Test `IOutputFormatter` interface
-- [ ] Test `IInteractivePrompt` interface
-- [ ] Test presentation exceptions
+- [x] Test `ICLICommand` interface
+- [x] Test `IUserInterface` interface
+- [x] Test `IOutputFormatter` interface
+- [x] Test `IInteractivePrompt` interface
+- [x] Test presentation exceptions
 
 **Files to Create/Modify**:
-- `tests/unit/contracts/presentation-contracts.test.ts`
+- `tests/unit/contracts/presentation-contracts.test.ts` ✅
+- `src/contracts/presentation-contracts.ts` (copied from specs) ✅
+- `tests/use-cases/T006-PresentationContracts.use-case.test.ts` (new) ✅
 
 **Technical Tasks**:
-- [ ] Create test file for presentation contracts
-- [ ] Test CLI command interface
-- [ ] Test user interface service
-- [ ] Test output formatting service
-- [ ] Achieve 100% coverage for presentation contracts
+- [x] Create test file for presentation contracts
+- [x] Test CLI command interface
+- [x] Test user interface service
+- [x] Test output formatting service
+- [x] Achieve 100% coverage for presentation contracts
+- [x] Implement use case tests following TDD approach
+- [x] Copy presentation contracts to src directory for testing
+- [x] Test all presentation services, DTOs, and utility classes
+- [x] Test all presentation exceptions with proper inheritance
+- [x] Test CLI commands, user interface, output formatting, and interactive prompts
+- [x] Test progress reporting, command line interface, display services, and theme services
+
+**Implementation Notes**:
+- Successfully created comprehensive unit tests for all presentation contracts
+- All service interfaces tested: ICLICommand, IUserInterface, IOutputFormatter, IInteractivePrompt
+- All additional services tested: IProgressReporter, ICommandLineInterface, IDisplayService, IThemeService
+- All DTOs tested: CLICommandOption, CLICommandResult, ParsedArguments, ThemeColors
+- All enums tested: MessageType, OutputFormat, TextStyle
+- All presentation exceptions tested with proper inheritance and properties
+- Presentation utility classes tested with comprehensive validation
+- Use case tests demonstrate TDD approach with 21/21 tests passing
+- Unit tests provide 100% coverage with 43/43 tests passing
+- Total test coverage: 64/64 tests passing
 
 ### T007: CodexValidator Unit Tests [P]
 **Type**: Test  
@@ -775,8 +817,8 @@ graph TD
 
 ## Next Steps
 
-1. **Immediate**: Begin with T005 (Infrastructure Contract Tests) - Next Up
-2. **Week 1**: Complete Setup and Test tasks (T005-T010)
+1. **Immediate**: Begin with T007 (CodexValidator Unit Tests) - Next Up (depends on T010)
+2. **Week 1**: Complete Setup and Test tasks (T007-T010)
 3. **Week 2**: Complete Core tasks (T011-T016)
 4. **Week 3**: Complete Integration tasks (T017-T019)
 5. **Week 4**: Complete Polish tasks (T020-T022)
