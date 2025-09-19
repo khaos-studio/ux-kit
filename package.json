@@ -7,6 +7,7 @@
     "uxkit": "dist/index.js"
   },
   "scripts": {
+    "prepare": "npm install && npm run build",
     "build": "tsc",
     "build:watch": "tsc --watch",
     "test": "jest",
@@ -33,6 +34,7 @@
     "handlebars": "^4.7.8",
     "inquirer": "^9.2.0",
     "ora": "^7.0.0",
+    "typescript": "^5.0.0",
     "uuid": "^9.0.0",
     "yaml": "^2.3.0"
   },
