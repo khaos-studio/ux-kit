@@ -29,7 +29,35 @@ UX-Kit provides structured research workflows through slash commands, AI agent i
 
 ## Installation
 
-### Development Setup (Current)
+### 🚀 Remote Installation (Recommended)
+
+Install UX-Kit CLI with a single command, similar to `brew install`:
+
+```bash
+# Install latest version
+curl -fsSL https://raw.githubusercontent.com/org/ux-kit/main/install.sh | bash
+
+# Install specific version
+curl -fsSL https://raw.githubusercontent.com/org/ux-kit/main/install.sh | bash -s -- --version 1.2.3
+
+# Install with custom options
+curl -fsSL https://raw.githubusercontent.com/org/ux-kit/main/install.sh | bash -s -- --install-path /usr/local/bin --verbose
+```
+
+**Requirements:**
+- macOS or Linux
+- SSH access to private GitHub repository (already configured)
+- Node.js 18+ (automatically installed if missing)
+- Git (automatically installed if missing)
+
+**What the installer does:**
+- ✅ Detects your operating system and architecture
+- ✅ Installs required dependencies (Node.js, Git)
+- ✅ Downloads pre-compiled UX-Kit CLI binary
+- ✅ Sets up configuration and environment variables
+- ✅ Verifies installation and provides usage instructions
+
+### Development Setup (For Contributors)
 
 ```bash
 # Clone the repository
@@ -77,6 +105,7 @@ node dist/index.js --help
 - **Enhanced UX**: Emojis, colors, and engaging visual feedback throughout the process
 
 ### 🔄 **In Development**
+- **Remote Installation Support**: Easy one-command installation similar to `brew install` with automated setup
 - Advanced template features and customization
 - Additional AI agent integrations
 - Enhanced slash command functionality
