@@ -1,0 +1,49 @@
+name: Build and Commit
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-commit:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run tests
+      run: npm test
+    
+    - name: Build project
+      run: npm run build
+    
+    - name: Check if dist directory has changes
+      id: check-dist
+      run: |
+        if [ -d "dist" ] && [ -n "$(git status --porcelain dist/)" ]; then
+          echo "has-changes=true" >> $GITHUB_OUTPUT
+        else
+          echo "has-changes=false" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Commit built files
+      if: steps.check-dist.outputs.has-changes == 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add dist/
+        git commit -m "chore: build dist files [skip ci]" || exit 0
+        git push
