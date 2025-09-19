@@ -1,274 +1,281 @@
-# Quickstart Guide: Codex Support Integration
+# Quickstart Guide: Remote Install Support
 
 ## Overview
 
-This quickstart guide provides step-by-step instructions for implementing Codex support integration in UX-Kit CLI. The implementation follows the existing Cursor integration patterns and maintains backward compatibility.
+This guide provides a quick start for implementing remote installation support for the UX Kit CLI. The implementation follows a modular architecture with clear separation of concerns and comprehensive error handling.
 
-## Prerequisites
+## Architecture Overview
 
-- Node.js 18+ and npm/yarn
-- TypeScript 5.0+
-- Existing UX-Kit codebase
-- OpenAI Codex CLI (optional, for validation)
-
-## Implementation Steps
-
-### Step 1: Update AI Agent Selection
-
-#### 1.1 Modify InitCommand
-
-Update the AI agent selection in `src/commands/InitCommand.ts`:
-
-```typescript
-// Add Codex to AI agent options
-const AI_AGENT_OPTIONS = [
-  { name: 'Cursor', value: 'cursor' },
-  { name: 'Codex', value: 'codex' },
-  { name: 'Custom', value: 'custom' }
-];
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Installation Script                      │
+│                     (install.sh)                            │
+└─────────────────┬───────────────────────────────────────────┘
+                  │
+┌─────────────────┴───────────────────────────────────────────┐
+│                Core Components                             │
+├─────────────────┬─────────────────┬─────────────────────────┤
+│ System Detector │ Dependency Mgr  │ Binary Manager          │
+├─────────────────┼─────────────────┼─────────────────────────┤
+│ Config Manager  │ Security Mgr    │ Progress Tracker        │
+└─────────────────┴─────────────────┴─────────────────────────┘
+                  │
+┌─────────────────┴───────────────────────────────────────────┐
+│                External Services                           │
+├─────────────────┬─────────────────┬─────────────────────────┤
+│ GitHub API      │ Package Mgrs    │ File System             │
+└─────────────────┴─────────────────┴─────────────────────────┘
 ```
 
-#### 1.2 Add Codex Selection Logic
+## Implementation Phases
 
-```typescript
-private async handleAIAgentSelection(): Promise<string> {
-  const { aiAgent } = await this.inputService.prompt({
-    type: 'select',
-    name: 'aiAgent',
-    message: 'Select your AI agent:',
-    choices: AI_AGENT_OPTIONS
-  });
+### Phase 1: Core Infrastructure
+1. **System Detection Module**
+   - Detect OS, architecture, and distribution
+   - Check system requirements and dependencies
+   - Validate SSH access and permissions
 
-  if (aiAgent === 'codex') {
-    await this.handleCodexInitialization();
-  }
+2. **Dependency Manager**
+   - Install Node.js, Git, and other dependencies
+   - Handle different package managers (Homebrew, APT, YUM)
+   - Provide fallback installation methods
 
-  return aiAgent;
-}
-```
+3. **Configuration Manager**
+   - Set up user configuration and environment variables
+   - Create necessary directories and files
+   - Configure SSH access if needed
 
-### Step 2: Create Codex Validation Service
+### Phase 2: Binary Management
+1. **GitHub Integration**
+   - Fetch release information from GitHub API
+   - Download pre-compiled binaries
+   - Verify checksums and signatures
 
-#### 2.1 Create CodexValidator
+2. **Binary Installer**
+   - Install binaries to system PATH
+   - Create symlinks and set permissions
+   - Handle version management
 
-Create `src/services/CodexValidator.ts`:
+### Phase 3: Error Handling & Security
+1. **Error Recovery**
+   - Comprehensive error handling with clear messages
+   - Retry logic with exponential backoff
+   - Fallback mechanisms for common issues
 
-```typescript
-import { ICodexValidator, CodexValidationResponse } from '../contracts/domain-contracts';
-import { ICLIExecutionService } from '../contracts/infrastructure-contracts';
+2. **Security Implementation**
+   - Verify binary checksums and signatures
+   - Validate SSH keys and permissions
+   - Sanitize inputs and file paths
 
-export class CodexValidator implements ICodexValidator {
-  constructor(private cliService: ICLIExecutionService) {}
+## Key Implementation Files
 
-  async validateCodexCLI(): Promise<CodexValidationResponse> {
-    try {
-      const isAvailable = await this.isCodexAvailable();
-      if (!isAvailable) {
-        return {
-          result: 'CLI_NOT_FOUND',
-          errorMessage: 'Codex CLI not found in PATH',
-          suggestions: [
-            'Install OpenAI Codex CLI',
-            'Add Codex CLI to your PATH',
-            'Use custom agent instead'
-          ],
-          timestamp: new Date()
-        };
-      }
+### Core Scripts
+- `install.sh` - Main installation script
+- `uninstall.sh` - Uninstallation script
+- `update.sh` - Update script
 
-      const version = await this.getCodexVersion();
-      return {
-        result: 'SUCCESS',
-        cliPath: await this.getCodexPath(),
-        version,
-        timestamp: new Date()
-      };
-    } catch (error) {
-      return {
-        result: 'UNKNOWN_ERROR',
-        errorMessage: error.message,
-        suggestions: ['Check Codex CLI installation'],
-        timestamp: new Date()
-      };
-    }
-  }
+### Core Modules
+- `system-detector.sh` - System detection logic
+- `dependency-manager.sh` - Dependency installation
+- `binary-manager.sh` - Binary download and installation
+- `config-manager.sh` - Configuration setup
+- `security-manager.sh` - Security validation
 
-  async isCodexAvailable(): Promise<boolean> {
-    return this.cliService.isCommandAvailable('codex');
-  }
+### Utility Scripts
+- `utils/common.sh` - Common utility functions
+- `utils/logger.sh` - Logging utilities
+- `utils/error-handler.sh` - Error handling utilities
 
-  async getCodexPath(): Promise<string | null> {
-    // Implementation to find Codex CLI path
-    return null;
-  }
+## Development Workflow
 
-  async getCodexVersion(): Promise<string | null> {
-    try {
-      const result = await this.cliService.executeCommand('codex', ['--version']);
-      return result.success ? result.stdout.trim() : null;
-    } catch {
-      return null;
-    }
-  }
-}
-```
-
-### Step 3: Create Codex Command Generator
-
-#### 3.1 Create CodexCommandGenerator
-
-Create `src/services/CodexCommandGenerator.ts`:
-
-```typescript
-import { ICodexCommandGenerator, CodexCommandTemplate, CodexConfiguration } from '../contracts/domain-contracts';
-import { IFileSystemService } from '../contracts/infrastructure-contracts';
-
-export class CodexCommandGenerator implements ICodexCommandGenerator {
-  constructor(private fileSystem: IFileSystemService) {}
-
-  async generateTemplates(config: CodexConfiguration): Promise<void> {
-    const templates = this.getDefaultTemplates();
-    
-    for (const template of templates) {
-      await this.generateTemplateFile(template, config.templatePath);
-    }
-  }
-
-  async getTemplate(name: string): Promise<CodexCommandTemplate | null> {
-    const templates = this.getDefaultTemplates();
-    return templates.find(t => t.name === name) || null;
-  }
-
-  async listTemplates(): Promise<readonly CodexCommandTemplate[]> {
-    return this.getDefaultTemplates();
-  }
-
-  validateTemplate(template: CodexCommandTemplate): boolean {
-    return !!(
-      template.name &&
-      template.description &&
-      template.command &&
-      template.parameters &&
-      template.examples &&
-      template.category
-    );
-  }
-
-  private getDefaultTemplates(): readonly CodexCommandTemplate[] {
-    return [
-      {
-        name: 'codex-research',
-        description: 'Generate research questions using Codex',
-        command: 'codex research --topic "{topic}" --format "{format}"',
-        parameters: [
-          {
-            name: 'topic',
-            type: 'string',
-            required: true,
-            description: 'Research topic'
-          },
-          {
-            name: 'format',
-            type: 'string',
-            required: false,
-            description: 'Output format',
-            defaultValue: 'markdown'
-          }
-        ],
-        examples: [
-          'codex research --topic "user authentication"',
-          'codex research --topic "mobile UX" --format "json"'
-        ],
-        category: 'research',
-        version: '1.0.0'
-      }
-    ];
-  }
-
-  private async generateTemplateFile(template: CodexCommandTemplate, outputPath: string): Promise<void> {
-    const content = this.formatTemplateAsMarkdown(template);
-    const filePath = `${outputPath}/${template.name}.md`;
-    
-    await this.fileSystem.createDirectory(outputPath);
-    await this.fileSystem.writeFile(filePath, content);
-  }
-
-  private formatTemplateAsMarkdown(template: CodexCommandTemplate): string {
-    return `# ${template.name}
-
-${template.description}
-
-## Command
-
-\`\`\`bash
-${template.command}
-\`\`\`
-
-## Parameters
-
-${template.parameters.map(param => 
-  `- **${param.name}** (${param.type}${param.required ? ', required' : ''}): ${param.description}`
-).join('\n')}
-
-## Examples
-
-${template.examples.map(example => `\`\`\`bash\n${example}\n\`\`\``).join('\n\n')}
-
-## Category
-
-${template.category}
-`;
-  }
-}
-```
-
-## Testing the Implementation
-
-### 1. Unit Tests
-
+### 1. Setup Development Environment
 ```bash
-npm test -- --testPathPattern=Codex
-```
+# Clone repository
+git clone <repository-url>
+cd ux-kit
 
-### 2. Integration Tests
+# Create development branch
+git checkout -b feature/remote-install-implementation
 
-```bash
-npm run test:integration -- --testNamePattern="Codex"
-```
-
-### 3. Manual Testing
-
-```bash
-# Test initialization with Codex
+# Set up development environment
+npm install
 npm run build
-./dist/cli/CLIApplication.js init
-
-# Select "Codex" as AI agent
-# Verify templates are generated
-# Check error handling when Codex CLI is not available
 ```
 
-## Deployment Checklist
+### 2. Implement Core Components
+```bash
+# Create installation script structure
+mkdir -p scripts/install
+mkdir -p scripts/utils
+mkdir -p scripts/modules
 
-- [ ] All unit tests pass
-- [ ] Integration tests pass
-- [ ] Manual testing completed
-- [ ] Documentation updated
-- [ ] Backward compatibility verified
-- [ ] Performance requirements met
-- [ ] Error handling tested
-- [ ] Code review completed
+# Implement system detection
+touch scripts/modules/system-detector.sh
+touch scripts/modules/dependency-manager.sh
+touch scripts/modules/binary-manager.sh
+```
+
+### 3. Add Tests
+```bash
+# Create test structure
+mkdir -p tests/install
+mkdir -p tests/modules
+
+# Add test files
+touch tests/install/install.test.sh
+touch tests/modules/system-detector.test.sh
+```
+
+### 4. Integration Testing
+```bash
+# Test on different platforms
+docker run -it ubuntu:20.04 bash
+docker run -it alpine:latest bash
+docker run -it centos:8 bash
+
+# Test installation script
+curl -fsSL <install-url> | bash
+```
+
+## Configuration
+
+### Environment Variables
+```bash
+# Installation options
+export UXKIT_INSTALL_PATH="/usr/local/bin"
+export UXKIT_VERSION="latest"
+export UXKIT_VERBOSE="true"
+
+# GitHub configuration
+export GITHUB_TOKEN="your-token"
+export GITHUB_OWNER="your-org"
+export GITHUB_REPO="ux-kit"
+```
+
+### Configuration Files
+```yaml
+# ~/.uxkit/config.yaml
+install:
+  path: "/usr/local/bin"
+  version: "latest"
+  auto_update: true
+
+security:
+  verify_checksums: true
+  verify_signatures: true
+
+logging:
+  level: "info"
+  file: "/var/log/uxkit-install.log"
+```
+
+## Testing Strategy
+
+### Unit Tests
+```bash
+# Test individual modules
+./tests/modules/system-detector.test.sh
+./tests/modules/dependency-manager.test.sh
+./tests/modules/binary-manager.test.sh
+```
+
+### Integration Tests
+```bash
+# Test complete installation flow
+./tests/install/install.test.sh
+./tests/install/uninstall.test.sh
+./tests/install/update.test.sh
+```
+
+### End-to-End Tests
+```bash
+# Test on clean systems
+docker run -it ubuntu:20.04 bash -c "curl -fsSL <install-url> | bash"
+docker run -it alpine:latest bash -c "curl -fsSL <install-url> | bash"
+```
+
+## Deployment
+
+### GitHub Actions Workflow
+```yaml
+name: Build and Release
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build binaries
+        run: |
+          ./scripts/build-binaries.sh
+      - name: Create release
+        run: |
+          ./scripts/create-release.sh
+```
+
+### Release Process
+1. **Build Binaries**: Compile for multiple platforms
+2. **Create Release**: Generate GitHub release with assets
+3. **Update Install Script**: Update script with new version
+4. **Test Installation**: Verify installation works correctly
+5. **Documentation**: Update documentation and examples
+
+## Monitoring and Maintenance
+
+### Installation Analytics
+- Track installation success/failure rates
+- Monitor download statistics
+- Log common error patterns
+- Collect user feedback
+
+### Maintenance Tasks
+- Regular security updates
+- Dependency updates
+- Performance optimizations
+- Bug fixes and improvements
+
+## Troubleshooting
+
+### Common Issues
+1. **SSH Access Problems**
+   - Verify SSH key configuration
+   - Test SSH connection to GitHub
+   - Check SSH agent configuration
+
+2. **Permission Errors**
+   - Ensure proper file permissions
+   - Check sudo requirements
+   - Verify directory ownership
+
+3. **Network Issues**
+   - Check internet connectivity
+   - Verify GitHub API access
+   - Test download URLs
+
+4. **Dependency Problems**
+   - Check package manager availability
+   - Verify dependency versions
+   - Test manual installation
+
+### Debug Mode
+```bash
+# Enable verbose logging
+curl -fsSL <install-url> | bash -s -- --verbose
+
+# Debug installation
+UXKIT_DEBUG=true curl -fsSL <install-url> | bash
+```
 
 ## Next Steps
 
-1. **Phase 2**: Implement advanced Codex features
-2. **Phase 3**: Add Codex-specific configuration options
-3. **Future**: Support for additional AI agents
+1. **Implement Core Modules**: Start with system detection and dependency management
+2. **Add Security Features**: Implement checksum verification and signature validation
+3. **Create Test Suite**: Develop comprehensive test coverage
+4. **Deploy and Monitor**: Set up CI/CD pipeline and monitoring
+5. **Iterate and Improve**: Collect feedback and continuously improve
 
-## Support
-
-For issues with Codex integration:
-1. Check the troubleshooting section in README
-2. Verify Codex CLI installation
-3. Review error messages and suggestions
-4. Use the `--verbose` flag for detailed logging
+This quickstart guide provides the foundation for implementing remote installation support. Follow the phases sequentially and ensure each component is thoroughly tested before moving to the next phase.
