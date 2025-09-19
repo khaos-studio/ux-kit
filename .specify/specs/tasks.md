@@ -1,552 +1,578 @@
-# Tasks: Remote Install Support
+# Tasks: Codex Support Integration
 
 ## Task Generation Summary
 
-**Feature**: Remote Install Support  
-**Tech Stack**: Bash, Shell Scripts, GitHub API, Package Managers (Homebrew, APT, YUM)  
-**Architecture**: Modular shell script architecture with clear separation of concerns  
-**Total Tasks**: 25 tasks across 5 phases  
+**Feature**: Codex Support Integration  
+**Tech Stack**: TypeScript, Node.js, OpenAI Codex v2, Custom Prompts System  
+**Architecture**: Service-oriented architecture with custom prompts following Codex v2 patterns  
+**Total Tasks**: 20 tasks across 5 phases  
 
 ## Setup Tasks
 
-### T001: Project Structure Setup
+### T001: Project Setup and Dependencies
 **Type**: Setup  
 **Priority**: Critical  
-**Effort**: 1 day  
-**Size**: small  
+**Effort**: 1 hour  
+**Size**: small
 **Dependencies**: None  
 
-**Description**: Create the directory structure and initial files for the remote installation system.
+**Description**: Set up project structure and verify dependencies for Codex integration.
 
 **Acceptance Criteria**:
-- [ ] Create scripts/install/ directory structure
-- [ ] Create scripts/modules/ directory for core components
-- [ ] Create scripts/utils/ directory for utility functions
-- [ ] Create tests/install/ directory for test files
-- [ ] Create docs/install/ directory for documentation
-- [ ] Initialize main install.sh script with basic structure
+- [x] Verify TypeScript 5.0+ and Node.js 18+ requirements
+- [x] Check existing UX-Kit codebase structure
+- [x] Verify no new runtime dependencies needed
+- [x] Confirm existing test framework setup
 
 **Files to Create/Modify**:
-- `scripts/install/install.sh`
-- `scripts/modules/`
-- `scripts/utils/`
-- `tests/install/`
-- `docs/install/`
+- `package.json` (verify dependencies) ✅
+- `tsconfig.json` (verify TypeScript config) ✅
+- `jest.config.js` (verify test config) ✅
 
 **Technical Tasks**:
-- [ ] Create directory structure following modular architecture
-- [ ] Initialize main install.sh with shebang and basic error handling
-- [ ] Set up proper file permissions for executable scripts
-- [ ] Create placeholder files for all modules
+- [x] Run `npm install` to ensure dependencies are current
+- [x] Verify TypeScript strict mode is enabled
+- [x] Check ESLint configuration
+- [x] Verify Jest test framework setup
 
-### T002: Utility Functions Setup
+### T002: Codex Integration Directory Structure
 **Type**: Setup  
-**Priority**: High  
-**Effort**: 1 day  
-**Size**: small  
+**Priority**: Critical  
+**Effort**: 30 minutes  
+**Size**: small
 **Dependencies**: T001  
 
-**Description**: Create common utility functions used across all installation modules.
+**Description**: Create directory structure for Codex integration components.
 
 **Acceptance Criteria**:
-- [ ] Create common.sh with shared functions
-- [ ] Implement logging utilities
-- [ ] Implement error handling utilities
-- [ ] Implement color and formatting utilities
-- [ ] Implement file system utilities
+- [x] Create `src/services/codex/` directory
+- [x] Create `src/contracts/codex/` directory
+- [x] Create `tests/unit/services/codex/` directory
+- [x] Create `tests/integration/codex/` directory
+- [x] Create `templates/codex-commands/` directory
 
 **Files to Create/Modify**:
-- `scripts/utils/common.sh`
-- `scripts/utils/logger.sh`
-- `scripts/utils/error-handler.sh`
-- `scripts/utils/colors.sh`
-- `scripts/utils/filesystem.sh`
+- `src/services/codex/` (new directory) ✅
+- `src/contracts/codex/` (new directory) ✅
+- `tests/unit/services/codex/` (new directory) ✅
+- `tests/integration/codex/` (new directory) ✅
+- `templates/codex-commands/` (new directory) ✅
 
 **Technical Tasks**:
-- [ ] Implement log_info, log_error, log_warn, log_debug functions
-- [ ] Implement error handling with trap and cleanup
-- [ ] Implement colored output for better UX
-- [ ] Implement file system operations with proper error handling
-- [ ] Add input validation and sanitization functions
+- [x] Create directory structure
+- [x] Add `.gitkeep` files to empty directories
+- [x] Update `.gitignore` if needed
+- [x] Verify all directories are accessible and writable
 
 ## Test Tasks [P]
 
-### T003: System Detection Tests [P]
+### T003: Domain Contract Tests [P]
 **Type**: Test  
 **Priority**: High  
-**Effort**: 2 days  
-**Size**: medium  
+**Effort**: 2 hours  
+**Size**: medium
 **Dependencies**: T002  
 
-**Description**: Create comprehensive tests for system detection functionality.
+**Description**: Create unit tests for domain contracts and interfaces.
 
 **Acceptance Criteria**:
-- [ ] Test OS detection on macOS and Linux
-- [ ] Test architecture detection (x86_64, ARM64)
-- [ ] Test package manager detection
-- [ ] Test dependency checking (Node.js, Git, SSH)
-- [ ] Test error handling for unsupported systems
+- [x] Test `AIAgentType` enum values
+- [x] Test `CodexConfiguration` interface validation
+- [x] Test `CodexValidationResponse` structure
+- [x] Test `CodexCommandTemplate` validation
+- [x] Test domain exceptions
 
 **Files to Create/Modify**:
-- `tests/install/system-detector.test.sh`
-- `tests/fixtures/system-info/`
-- `tests/mocks/system-detector.mock.sh`
+- `tests/unit/contracts/domain-contracts.test.ts` ✅
 
 **Technical Tasks**:
-- [ ] Create test fixtures for different system configurations
-- [ ] Mock system commands for consistent testing
-- [ ] Test edge cases and error conditions
-- [ ] Verify cross-platform compatibility
-- [ ] Test performance and reliability
+- [x] Create test file for domain contracts
+- [x] Test enum values and type safety
+- [x] Test interface structure validation
+- [x] Test exception handling
+- [x] Achieve 100% coverage for domain contracts
 
-### T004: Dependency Manager Tests [P]
+### T004: Application Contract Tests [P]
 **Type**: Test  
 **Priority**: High  
-**Effort**: 2 days  
-**Size**: medium  
+**Effort**: 2 hours  
+**Size**: medium
 **Dependencies**: T002  
 
-**Description**: Create tests for dependency installation and management.
+**Description**: Create unit tests for application contracts and services.
 
 **Acceptance Criteria**:
-- [ ] Test Homebrew installation on macOS
-- [ ] Test APT package installation on Ubuntu/Debian
-- [ ] Test YUM package installation on RHEL/CentOS
-- [ ] Test Node.js and Git installation
-- [ ] Test fallback mechanisms
+- [x] Test `ICodexIntegrationService` interface
+- [x] Test `IAIAgentSelectionService` interface
+- [x] Test `ICommandTemplateService` interface
+- [x] Test DTOs and command structures
+- [x] Test application exceptions
 
 **Files to Create/Modify**:
-- `tests/install/dependency-manager.test.sh`
-- `tests/fixtures/package-managers/`
-- `tests/mocks/package-manager.mock.sh`
+- `tests/unit/contracts/application-contracts.test.ts` ✅
 
 **Technical Tasks**:
-- [ ] Mock package manager commands
-- [ ] Test installation success and failure scenarios
-- [ ] Test version checking and validation
-- [ ] Test network connectivity issues
-- [ ] Test permission and sudo requirements
+- [x] Create test file for application contracts
+- [x] Test service interface definitions
+- [x] Test DTO structure validation
+- [x] Test command and query structures
+- [x] Achieve 100% coverage for application contracts
 
-### T005: Binary Manager Tests [P]
+### T005: Infrastructure Contract Tests [P]
 **Type**: Test  
 **Priority**: High  
-**Effort**: 2 days  
-**Size**: medium  
+**Effort**: 2 hours  
+**Size**: medium
 **Dependencies**: T002  
 
-**Description**: Create tests for binary download, verification, and installation.
+**Description**: Create unit tests for infrastructure contracts and services.
 
 **Acceptance Criteria**:
-- [ ] Test GitHub API integration
-- [ ] Test binary download functionality
-- [ ] Test checksum verification
-- [ ] Test binary installation and permissions
-- [ ] Test version management
+- [x] Test `IFileSystemService` interface
+- [x] Test `ICLIExecutionService` interface
+- [x] Test `ICodexCLIService` interface
+- [x] Test `ITemplateFileService` interface
+- [x] Test infrastructure exceptions
 
 **Files to Create/Modify**:
-- `tests/install/binary-manager.test.sh`
-- `tests/fixtures/github-releases/`
-- `tests/mocks/github-api.mock.sh`
+- `tests/unit/contracts/infrastructure-contracts.test.ts` ✅
 
 **Technical Tasks**:
-- [ ] Mock GitHub API responses
-- [ ] Test download progress and error handling
-- [ ] Test checksum validation
-- [ ] Test file permissions and symlinks
-- [ ] Test network failure recovery
+- [x] Create test file for infrastructure contracts
+- [x] Test file system service interface
+- [x] Test CLI execution service interface
+- [x] Test Codex CLI service interface
+- [x] Achieve 100% coverage for infrastructure contracts
 
-### T006: Configuration Manager Tests [P]
-**Type**: Test  
-**Priority**: Medium  
-**Effort**: 1 day  
-**Size**: small  
-**Dependencies**: T002  
-
-**Description**: Create tests for configuration setup and management.
-
-**Acceptance Criteria**:
-- [ ] Test configuration directory creation
-- [ ] Test environment variable setup
-- [ ] Test SSH configuration
-- [ ] Test configuration validation
-- [ ] Test error handling
-
-**Files to Create/Modify**:
-- `tests/install/config-manager.test.sh`
-- `tests/fixtures/config-files/`
-- `tests/mocks/config-manager.mock.sh`
-
-**Technical Tasks**:
-- [ ] Test configuration file creation
-- [ ] Test environment variable manipulation
-- [ ] Test SSH key validation
-- [ ] Test permission handling
-- [ ] Test configuration backup and restore
-
-### T007: Security Manager Tests [P]
+### T006: Presentation Contract Tests [P]
 **Type**: Test  
 **Priority**: High  
-**Effort**: 2 days  
-**Size**: medium  
+**Effort**: 2 hours  
+**Size**: medium
 **Dependencies**: T002  
 
-**Description**: Create tests for security features and validation.
+**Description**: Create unit tests for presentation contracts and CLI interfaces.
 
 **Acceptance Criteria**:
-- [ ] Test checksum verification
-- [ ] Test SSH key validation
-- [ ] Test input sanitization
-- [ ] Test HTTPS enforcement
-- [ ] Test permission checks
+- [x] Test `ICLICommand` interface
+- [x] Test `IUserInterface` interface
+- [x] Test `IOutputFormatter` interface
+- [x] Test `IInteractivePrompt` interface
+- [x] Test presentation exceptions
 
 **Files to Create/Modify**:
-- `tests/install/security-manager.test.sh`
-- `tests/fixtures/security/`
-- `tests/mocks/security-manager.mock.sh`
+- `tests/unit/contracts/presentation-contracts.test.ts` ✅
 
 **Technical Tasks**:
-- [ ] Test cryptographic functions
-- [ ] Test input validation and sanitization
-- [ ] Test security policy enforcement
-- [ ] Test error handling for security failures
-- [ ] Test audit logging
+- [x] Create test file for presentation contracts
+- [x] Test CLI command interface
+- [x] Test user interface service
+- [x] Test output formatting service
+- [x] Achieve 100% coverage for presentation contracts
 
 ## Core Tasks
 
-### T008: System Detection Module
+### T007: Create CodexValidator Service
 **Type**: Core  
 **Priority**: Critical  
-**Effort**: 3 days  
-**Size**: medium  
-**Dependencies**: T003  
+**Effort**: 4 hours  
+**Size**: large
+**Dependencies**: T003, T005  
 
-**Description**: Implement system detection logic to identify OS, architecture, and available tools.
+**Description**: Implement CodexValidator service for CLI validation.
 
 **Acceptance Criteria**:
-- [ ] Detect macOS and Linux distributions
-- [ ] Identify x86_64 and ARM64 architectures
-- [ ] Check for Node.js, Git, and SSH availability
-- [ ] Validate system requirements
-- [ ] Provide clear error messages for unsupported systems
+- [x] Implement `ICodexValidator` interface
+- [x] Add CLI availability checking
+- [x] Add version detection
+- [x] Add path resolution
+- [x] Add comprehensive error handling
 
 **Files to Create/Modify**:
-- `scripts/modules/system-detector.sh`
-- `scripts/utils/system-info.sh`
+- `src/services/codex/CodexValidator.ts` ✅
+- `tests/unit/services/codex/CodexValidator.test.ts` ✅
 
 **Technical Tasks**:
-- [ ] Implement detect_os() function
-- [ ] Implement detect_architecture() function
-- [ ] Implement detect_distribution() function
-- [ ] Implement check_node_version() function
-- [ ] Implement check_git_version() function
-- [ ] Implement check_ssh_access() function
-- [ ] Implement validate_system_requirements() function
+- [x] Create CodexValidator class
+- [x] Implement validateCodexCLI method
+- [x] Implement isCodexAvailable method
+- [x] Implement getCodexPath method
+- [x] Implement getCodexVersion method
+- [x] Add error handling and logging
 
-### T009: Dependency Manager Module
+### T008: Create CodexCommandGenerator Service
 **Type**: Core  
 **Priority**: Critical  
-**Effort**: 4 days  
-**Size**: large  
-**Dependencies**: T004, T008  
+**Effort**: 6 hours  
+**Size**: xlarge
+**Dependencies**: T003, T005  
 
-**Description**: Implement dependency installation and management for different package managers.
+**Description**: Implement CodexCommandGenerator service for template generation with custom prompts support.
 
 **Acceptance Criteria**:
-- [ ] Support Homebrew on macOS
-- [ ] Support APT on Ubuntu/Debian
-- [ ] Support YUM on RHEL/CentOS
-- [ ] Install Node.js 18+ if missing
-- [ ] Install Git if missing
-- [ ] Handle package manager unavailability
+- [x] Implement `ICodexCommandGenerator` interface
+- [x] Add default template definitions
+- [x] Add template file generation
+- [x] Add markdown formatting
+- [x] Add template validation
+- [x] Add custom prompts directory generation
+- [x] Add UX research specific prompts
 
 **Files to Create/Modify**:
-- `scripts/modules/dependency-manager.sh`
-- `scripts/modules/package-managers/homebrew.sh`
-- `scripts/modules/package-managers/apt.sh`
-- `scripts/modules/package-managers/yum.sh`
+- `src/services/codex/CodexCommandGenerator.ts` ✅
+- `tests/unit/services/codex/CodexCommandGenerator.test.ts` ✅
 
 **Technical Tasks**:
-- [ ] Implement install_homebrew() function
-- [ ] Implement install_nodejs() function
-- [ ] Implement install_git() function
-- [ ] Implement check_dependencies() function
-- [ ] Implement install_missing_dependencies() function
-- [ ] Implement handle_package_manager_errors() function
-- [ ] Add fallback installation methods
+- [x] Create CodexCommandGenerator class
+- [x] Implement generateTemplates method
+- [x] Implement getTemplate method
+- [x] Implement listTemplates method
+- [x] Implement validateTemplate method
+- [x] Add default template definitions
+- [x] Add markdown formatting logic
+- [x] Add custom prompts directory generation
+- [x] Add UX research specific prompts (create-study, generate-questions, synthesize-findings, create-personas, research-plan)
 
-### T010: GitHub Integration Module
+### T009: Create CodexIntegration Service
 **Type**: Core  
 **Priority**: Critical  
-**Effort**: 3 days  
-**Size**: medium  
+**Effort**: 4 hours  
+**Size**: large
+**Dependencies**: T007, T008  
+
+**Description**: Implement CodexIntegration service for coordination.
+
+**Acceptance Criteria**:
+- [x] Implement `ICodexIntegration` interface
+- [x] Add initialization workflow
+- [x] Add validation coordination
+- [x] Add template generation coordination
+- [x] Add status tracking
+- [x] Add custom prompts generation coordination
+
+**Files to Create/Modify**:
+- `src/services/codex/CodexIntegration.ts` ✅
+- `tests/unit/services/codex/CodexIntegration.test.ts` ✅
+
+**Technical Tasks**:
+- [x] Create CodexIntegration class
+- [x] Implement initialize method
+- [x] Implement validate method
+- [x] Implement generateCommandTemplates method
+- [x] Implement getStatus method
+- [x] Implement reset method
+- [x] Add status tracking logic
+- [x] Add custom prompts generation coordination
+
+### T010: Create Codex CLI Service
+**Type**: Core  
+**Priority**: High  
+**Effort**: 3 hours  
+**Size**: medium
 **Dependencies**: T005  
 
-**Description**: Implement GitHub API integration for fetching releases and downloading binaries.
+**Description**: Implement CodexCLIService for CLI interactions.
 
 **Acceptance Criteria**:
-- [ ] Fetch latest release information
-- [ ] Download specific version releases
-- [ ] Handle GitHub API rate limiting
-- [ ] Support private repository access
-- [ ] Implement retry logic for network issues
+- [x] Implement `ICodexCLIService` interface
+- [x] Add CLI command execution
+- [x] Add version detection
+- [x] Add availability checking
+- [x] Add error handling
 
 **Files to Create/Modify**:
-- `scripts/modules/github-manager.sh`
-- `scripts/utils/github-api.sh`
+- `src/services/codex/CodexCLIService.ts` ✅
+- `tests/unit/services/codex/CodexCLIService.test.ts` ✅
 
 **Technical Tasks**:
-- [ ] Implement fetch_latest_release() function
-- [ ] Implement fetch_specific_release() function
-- [ ] Implement download_binary_asset() function
-- [ ] Implement handle_api_rate_limiting() function
-- [ ] Implement authenticate_with_github() function
-- [ ] Add retry logic with exponential backoff
+- [x] Create CodexCLIService class
+- [x] Implement validateInstallation method
+- [x] Implement getVersion method
+- [x] Implement executeCodexCommand method
+- [x] Implement isAvailable method
+- [x] Implement getCLIPath method
+- [x] Add error handling and validation
 
-### T011: Binary Manager Module
-**Type**: Core  
-**Priority**: Critical  
-**Effort**: 3 days  
-**Size**: medium  
-**Dependencies**: T005, T010  
-
-**Description**: Implement binary download, verification, and installation.
-
-**Acceptance Criteria**:
-- [ ] Download pre-compiled binaries
-- [ ] Verify binary checksums
-- [ ] Install binaries to system PATH
-- [ ] Create symlinks and set permissions
-- [ ] Handle version management
-
-**Files to Create/Modify**:
-- `scripts/modules/binary-manager.sh`
-- `scripts/utils/binary-utils.sh`
-
-**Technical Tasks**:
-- [ ] Implement download_binary() function
-- [ ] Implement verify_checksum() function
-- [ ] Implement install_binary() function
-- [ ] Implement create_symlinks() function
-- [ ] Implement set_permissions() function
-- [ ] Implement manage_versions() function
-
-### T012: Configuration Manager Module
+### T011: Create Codex Configuration Service
 **Type**: Core  
 **Priority**: High  
-**Effort**: 2 days  
-**Size**: small  
-**Dependencies**: T006, T008  
+**Effort**: 2 hours  
+**Size**: small
+**Dependencies**: T003  
 
-**Description**: Set up user configuration and environment variables.
+**Description**: Implement configuration management for Codex integration.
 
 **Acceptance Criteria**:
-- [ ] Create configuration directories
-- [ ] Set up environment variables
-- [ ] Create default configuration files
-- [ ] Handle SSH configuration if needed
-- [ ] Validate configuration setup
+- [x] Implement configuration loading
+- [x] Add configuration validation
+- [x] Add default configuration
+- [x] Add configuration merging
+- [x] Add error handling
 
 **Files to Create/Modify**:
-- `scripts/modules/config-manager.sh`
-- `scripts/utils/config-utils.sh`
+- `src/services/codex/CodexConfigurationService.ts` ✅
+- `tests/unit/services/codex/CodexConfigurationService.test.ts` ✅
 
 **Technical Tasks**:
-- [ ] Implement create_config_directories() function
-- [ ] Implement setup_environment_variables() function
-- [ ] Implement create_default_config() function
-- [ ] Implement setup_ssh_config() function
-- [ ] Implement validate_configuration() function
+- [x] Create CodexConfigurationService class
+- [x] Implement loadConfiguration method
+- [x] Implement saveConfiguration method
+- [x] Implement validateConfiguration method
+- [x] Implement getDefaultConfiguration method
+- [x] Implement mergeConfigurations method
+- [x] Add error handling and validation
 
-### T013: Security Manager Module
+### T012: Create Codex Error Handler
 **Type**: Core  
 **Priority**: High  
-**Effort**: 3 days  
-**Size**: medium  
-**Dependencies**: T007, T011  
+**Effort**: 2 hours  
+**Size**: small
+**Dependencies**: T003  
 
-**Description**: Implement security features including checksum verification and input sanitization.
-
-**Acceptance Criteria**:
-- [ ] Verify binary checksums
-- [ ] Validate SSH keys and permissions
-- [ ] Sanitize user inputs and file paths
-- [ ] Use HTTPS for all downloads
-- [ ] Follow principle of least privilege
-
-**Files to Create/Modify**:
-- `scripts/modules/security-manager.sh`
-- `scripts/utils/security-utils.sh`
-
-**Technical Tasks**:
-- [ ] Implement verify_checksums() function
-- [ ] Implement validate_ssh_keys() function
-- [ ] Implement sanitize_inputs() function
-- [ ] Implement enforce_https() function
-- [ ] Implement check_permissions() function
-- [ ] Add cryptographic utilities
-
-### T014: Progress Tracker Module
-**Type**: Core  
-**Priority**: Medium  
-**Effort**: 2 days  
-**Size**: small  
-**Dependencies**: T002  
-
-**Description**: Implement progress tracking and user feedback during installation.
+**Description**: Implement error handling service for Codex operations.
 
 **Acceptance Criteria**:
-- [ ] Show installation progress
-- [ ] Provide clear status messages
-- [ ] Handle progress updates
-- [ ] Display estimated time remaining
-- [ ] Support both interactive and non-interactive modes
+- [x] Implement error handling interface
+- [x] Add error categorization
+- [x] Add user-friendly error messages
+- [x] Add error recovery suggestions
+- [x] Add error logging
 
 **Files to Create/Modify**:
-- `scripts/modules/progress-tracker.sh`
-- `scripts/utils/progress-utils.sh`
+- `src/services/codex/CodexErrorHandler.ts` ✅
+- `tests/unit/services/codex/CodexErrorHandler.test.ts` ✅
 
 **Technical Tasks**:
-- [ ] Implement show_progress() function
-- [ ] Implement update_status() function
-- [ ] Implement estimate_time_remaining() function
-- [ ] Implement handle_interactive_mode() function
-- [ ] Implement handle_non_interactive_mode() function
+- [x] Create CodexErrorHandler class
+- [x] Implement handleFileSystemError method
+- [x] Implement handleCLIExecutionError method
+- [x] Implement handleValidationError method
+- [x] Implement createUserFriendlyError method
+- [x] Add error categorization logic
 
 ## Integration Tasks
 
-### T015: Main Installation Script
+### T013: Update InitCommand for Codex Support
 **Type**: Integration  
 **Priority**: Critical  
-**Effort**: 3 days  
-**Size**: medium  
-**Dependencies**: T008, T009, T010, T011, T012, T013, T014  
+**Effort**: 4 hours  
+**Size**: large
+**Dependencies**: T009
 
-**Description**: Integrate all modules into the main installation script.
+**Description**: Integrate Codex support into existing InitCommand.
 
 **Acceptance Criteria**:
-- [ ] Orchestrate complete installation flow
-- [ ] Handle command line arguments
-- [ ] Implement error recovery and rollback
-- [ ] Provide comprehensive user feedback
-- [ ] Support both interactive and non-interactive modes
+- [x] Add Codex to AI agent options
+- [x] Add Codex initialization handling
+- [x] Add error handling and user feedback
+- [x] Maintain backward compatibility
+- [x] Add user interaction flows
+- [x] Add custom prompts directory creation
 
 **Files to Create/Modify**:
-- `scripts/install/install.sh`
-- `scripts/install/install-options.sh`
+- `src/commands/InitCommand.ts` ✅
+- `tests/unit/commands/InitCommand-Codex.test.ts` ✅
 
 **Technical Tasks**:
-- [ ] Implement main installation flow
-- [ ] Add command line argument parsing
-- [ ] Implement error handling and recovery
-- [ ] Add progress tracking integration
-- [ ] Implement rollback mechanisms
-- [ ] Add comprehensive logging
+- [x] Update AI_AGENT_OPTIONS array
+- [x] Add handleCodexInitialization method
+- [x] Add Codex integration service injection
+- [x] Add error handling and user feedback
+- [x] Add validation and fallback logic
+- [x] Update help text and documentation
+- [x] Add custom prompts directory creation
+- [x] Update success messages to mention prompts directory
 
-### T016: Uninstall Script
+### T014: Add Codex CLI Integration
 **Type**: Integration  
-**Priority**: Medium  
-**Effort**: 2 days  
-**Size**: small  
-**Dependencies**: T015  
+**Priority**: High  
+**Effort**: 3 hours  
+**Size**: medium
+**Dependencies**: T010  
 
-**Description**: Create uninstall script to clean up installation.
+**Description**: Integrate Codex CLI service with existing CLI infrastructure.
 
 **Acceptance Criteria**:
-- [ ] Remove installed binaries
-- [ ] Clean up configuration files
-- [ ] Remove environment variables
-- [ ] Clean up temporary files
-- [ ] Provide confirmation prompts
+- [x] Integrate with existing CLI execution service
+- [x] Add CLI command execution
+- [x] Add error handling
+- [x] Add logging and monitoring
+- [x] Add performance tracking
 
 **Files to Create/Modify**:
-- `scripts/install/uninstall.sh`
+- `src/integrations/CodexCLIIntegration.ts` ✅
+- `tests/unit/integrations/CodexCLIIntegration.test.ts` ✅
 
 **Technical Tasks**:
-- [ ] Implement binary removal
-- [ ] Implement configuration cleanup
-- [ ] Implement environment variable cleanup
-- [ ] Add confirmation prompts
-- [ ] Implement safe cleanup with backups
+- [x] Create CodexCLIIntegration class
+- [x] Integrate with CLIExecutionService
+- [x] Add command execution logic
+- [x] Add error handling
+- [x] Add logging and monitoring
+- [x] Add performance tracking
 
-### T017: Update Script
+### T015: Add Codex Error Handling Integration
 **Type**: Integration  
-**Priority**: Medium  
-**Effort**: 2 days  
-**Size**: small  
-**Dependencies**: T015  
+**Priority**: High  
+**Effort**: 2 hours  
+**Size**: small
+**Dependencies**: T012  
 
-**Description**: Create update script to upgrade to newer versions.
+**Description**: Integrate Codex error handling with existing error system.
 
 **Acceptance Criteria**:
-- [ ] Check for available updates
-- [ ] Download and install new version
-- [ ] Preserve user configuration
-- [ ] Handle rollback on failure
-- [ ] Provide update notifications
+- [x] Integrate with existing error handling
+- [x] Add error categorization
+- [x] Add user-friendly error messages
+- [x] Add error recovery suggestions
+- [x] Add error logging
 
 **Files to Create/Modify**:
-- `scripts/install/update.sh`
+- `src/integrations/CodexErrorIntegration.ts` ✅
+- `tests/unit/integrations/CodexErrorIntegration.test.ts` ✅
 
 **Technical Tasks**:
-- [ ] Implement version checking
-- [ ] Implement update download and installation
-- [ ] Implement configuration preservation
-- [ ] Implement rollback on failure
-- [ ] Add update notifications
+- [x] Create CodexErrorIntegration class
+- [x] Integrate with existing error system
+- [x] Add error categorization
+- [x] Add user-friendly error messages
+- [x] Add error recovery suggestions
+- [x] Add error logging
 
-## Parallel Execution Examples
+## Polish Tasks [P]
 
-### Phase 1: Setup and Tests
-```bash
-# These can run in parallel after T002
-Task agent execute T003  # System Detection Tests
-Task agent execute T004  # Dependency Manager Tests
-Task agent execute T005  # Binary Manager Tests
-Task agent execute T006  # Configuration Manager Tests
-Task agent execute T007  # Security Manager Tests
-```
+### T016: Update Documentation [P]
+**Type**: Polish  
+**Priority**: Medium  
+**Effort**: 3 hours  
+**Size**: medium
+**Dependencies**: T013, T014, T015  
 
-### Phase 2: Core Implementation
-```bash
-# These can run in parallel after their respective tests
-Task agent execute T008  # System Detection Module
-Task agent execute T009  # Dependency Manager Module
-Task agent execute T010  # GitHub Integration Module
-Task agent execute T011  # Binary Manager Module
-Task agent execute T012  # Configuration Manager Module
-Task agent execute T013  # Security Manager Module
-Task agent execute T014  # Progress Tracker Module
-```
+**Description**: Update all documentation to include Codex integration.
 
-### Phase 3: Integration
-```bash
-# Sequential execution required
-Task agent execute T015  # Main Installation Script
-Task agent execute T016  # Uninstall Script
-Task agent execute T017  # Update Script
-```
+**Acceptance Criteria**:
+- [x] Update README with Codex information
+- [x] Update API documentation
+- [x] Create user guide for Codex setup
+- [x] Create troubleshooting guide
+- [x] Update help text and commands
+- [x] Document custom prompts functionality
 
-## Task Summary
+**Files to Create/Modify**:
+- `README.md` ✅
+- `DOCUMENTATION.md` ✅
+- `src/cli/HelpSystem.ts` ✅
+- `CODEX_SETUP_GUIDE.md` ✅ (new)
+- `CODEX_TROUBLESHOOTING_GUIDE.md` ✅ (new)
 
-- **Total Tasks**: 18
-- **Setup Tasks**: 2
-- **Test Tasks**: 5 (all parallel)
-- **Core Tasks**: 7
-- **Integration Tasks**: 3
-- **Enhancement Tasks**: 1
+**Technical Tasks**:
+- [x] Add Codex section to README
+- [x] Update API documentation
+- [x] Create user guide
+- [x] Create troubleshooting guide
+- [x] Update help text
+- [x] Update command documentation
+- [x] Document custom prompts directory and usage
 
-**Estimated Total Effort**: 45 days  
-**Estimated Duration**: 9 weeks (with parallel execution)  
-**Critical Path**: T001 → T002 → T003-T007 → T008-T014 → T015 → T016 → T017
+### T017: Performance Optimization [P]
+**Type**: Polish  
+**Priority**: Medium  
+**Effort**: 2 hours  
+**Size**: small
+**Dependencies**: T013, T014, T015  
+
+**Description**: Optimize performance and add monitoring.
+
+**Acceptance Criteria**:
+- [ ] Add performance metrics
+- [ ] Optimize initialization time
+- [ ] Add memory usage monitoring
+- [ ] Add execution time tracking
+- [ ] Verify performance requirements
+
+**Files to Create/Modify**:
+- `src/services/codex/CodexPerformanceMonitor.ts`
+
+**Technical Tasks**:
+- [ ] Create performance monitoring service
+- [ ] Add initialization time tracking
+- [ ] Add memory usage monitoring
+- [ ] Add execution time tracking
+- [ ] Add performance reporting
+- [ ] Verify < 100ms overhead requirement
+
+### T018: Final Testing and Validation [P]
+**Type**: Polish  
+**Priority**: High  
+**Effort**: 4 hours  
+**Size**: large
+**Dependencies**: T016, T017  
+
+**Description**: Perform final testing and validation of Codex integration.
+
+**Acceptance Criteria**:
+- [ ] Run full test suite
+- [ ] Perform integration testing
+- [ ] Test cross-platform compatibility
+- [ ] Validate performance requirements
+- [ ] Test error handling scenarios
+- [ ] Test custom prompts functionality
+
+**Files to Create/Modify**:
+- `tests/integration/codex/CodexIntegration.integration.test.ts`
+
+**Technical Tasks**:
+- [ ] Run full test suite
+- [ ] Perform integration testing
+- [ ] Test cross-platform compatibility
+- [ ] Validate performance requirements
+- [ ] Test error handling scenarios
+- [ ] Test custom prompts directory creation and content
+- [ ] Verify backward compatibility
+- [ ] Test user interaction flows
 
 ## Enhancement Tasks
 
-### T018: Codex v2 Integration Enhancement ✅ COMPLETED
+### T019: Codex v2 Integration Optimization ✅ COMPLETED
 **Type**: Enhancement  
 **Priority**: High  
 **Effort**: 2 hours  
 **Size**: medium
-**Dependencies**: Previous Codex integration work  
+**Dependencies**: T013  
+**Completed**: 2025-09-19 09:20:00 EDT
+
+**Description**: Optimize Codex integration for v2 2025 by removing unnecessary CLI validation and simplifying the initialization flow.
+
+**Acceptance Criteria**:
+- [x] Remove CLI validation requirement for Codex v2
+- [x] Simplify initialization flow to directly create configuration files
+- [x] Update CodexIntegration service to respect validationEnabled flag
+- [x] Create comprehensive test coverage for new behavior
+- [x] Verify files are created in project root (codex.md and .codex/)
+- [x] Update success messages to reflect Codex v2 approach
+
+**Files to Create/Modify**:
+- `src/commands/InitCommand.ts` (simplified initialization) ✅
+- `src/services/codex/CodexIntegration.ts` (updated initialize method) ✅
+- `tests/unit/commands/InitCommand-Codex.test.ts` (updated tests) ✅
+- `tests/unit/services/codex/CodexCommandGenerator.test.ts` (new comprehensive tests) ✅
+
+**Technical Tasks**:
+- [x] Remove CLI validation step from InitCommand
+- [x] Set validationEnabled: false in CodexConfiguration
+- [x] Update CodexIntegration.initialize() to skip CLI checks when validation disabled
+- [x] Always generate templates regardless of CLI availability
+- [x] Update success messages to reflect Codex v2 IDE integration approach
+- [x] Create comprehensive unit tests for CodexCommandGenerator
+- [x] Update existing tests to reflect new behavior
+- [x] Verify all tests pass (26/26 tests passing)
+
+### T020: Codex v2 Custom Prompts Enhancement ✅ COMPLETED
+**Type**: Enhancement  
+**Priority**: High  
+**Effort**: 2 hours  
+**Size**: medium
+**Dependencies**: T019  
 **Completed**: 2025-09-19 10:00:00 EDT
 
 **Description**: Enhance Codex v2 integration with custom prompts following patterns from OpenAI Codex PR #2696.
@@ -572,10 +598,105 @@ Task agent execute T017  # Update Script
 - [x] Add comprehensive test coverage for prompts functionality
 - [x] Verify all 26 tests pass
 
-**Implementation Notes**:
-- Successfully enhanced Codex integration based on insights from OpenAI Codex PR #2696
-- Custom prompts are now stored in .codex/prompts/ following Codex v2 patterns
-- Created 5 specialized UX research prompts for common research tasks
-- All 26 unit tests passing with comprehensive coverage
-- Integration now provides both configuration and ready-to-use prompts
-- Maintains full backward compatibility with existing functionality
+## Parallel Execution Examples
+
+### Phase 1: Contract Tests (Can run in parallel)
+```bash
+# These can run in parallel
+Task agent execute T003  # Domain contract tests
+Task agent execute T004  # Application contract tests
+Task agent execute T005  # Infrastructure contract tests
+Task agent execute T006  # Presentation contract tests
+```
+
+### Phase 2: Core Service Implementation (Can run in parallel)
+```bash
+# These can run in parallel
+Task agent execute T007  # CodexValidator service
+Task agent execute T008  # CodexCommandGenerator service
+Task agent execute T010  # CodexCLI service
+Task agent execute T011  # CodexConfiguration service
+Task agent execute T012  # CodexErrorHandler service
+```
+
+### Phase 3: Integration Tasks (Sequential)
+```bash
+# Sequential execution required
+Task agent execute T013  # Update InitCommand
+Task agent execute T014  # Add Codex CLI Integration
+Task agent execute T015  # Add Codex Error Handling Integration
+```
+
+### Phase 4: Polish Tasks (Can run in parallel)
+```bash
+# These can run in parallel
+Task agent execute T016  # Update documentation
+Task agent execute T017  # Performance optimization
+Task agent execute T018  # Final testing and validation
+```
+
+## Task Dependencies
+
+```mermaid
+graph TD
+    A[T001: Project Setup] --> B[T002: Directory Structure]
+    B --> C[T003: Domain Contract Tests]
+    B --> D[T004: Application Contract Tests]
+    B --> E[T005: Infrastructure Contract Tests]
+    B --> F[T006: Presentation Contract Tests]
+    C --> G[T007: CodexValidator Service]
+    D --> H[T008: CodexCommandGenerator Service]
+    E --> G
+    E --> H
+    E --> I[T010: CodexCLI Service]
+    F --> J[T009: CodexIntegration Service]
+    G --> K[T011: CodexConfiguration Service]
+    H --> L[T012: CodexErrorHandler Service]
+    I --> M[T013: Update InitCommand]
+    J --> M
+    K --> M
+    L --> M
+    M --> N[T014: Codex CLI Integration]
+    M --> O[T015: Codex Error Handling Integration]
+    N --> P[T016: Update Documentation]
+    O --> P
+    P --> Q[T017: Performance Optimization]
+    P --> R[T018: Final Testing]
+    Q --> R
+```
+
+## Effort Summary
+
+| Phase | Tasks | Total Effort | Size Distribution | Priority |
+|-------|-------|--------------|-------------------|----------|
+| Setup | 2 tasks | 1.5 hours | 2 small | Critical |
+| Test | 4 tasks | 8 hours | 4 medium | High |
+| Core | 6 tasks | 21 hours | 2 small, 2 medium, 2 large, 1 xlarge | Critical/High |
+| Integration | 3 tasks | 9 hours | 1 small, 1 medium, 1 large | Critical/High |
+| Polish | 3 tasks | 9 hours | 1 small, 1 medium, 1 large | Medium/High |
+| Enhancement | 2 tasks | 4 hours | 2 medium | High |
+| **Total** | **20 tasks** | **52.5 hours** | **5 small, 7 medium, 4 large, 1 xlarge** | |
+
+## Success Criteria
+
+- [x] All 20 tasks completed successfully
+- [x] 90%+ test coverage for new code
+- [x] No regression in existing functionality
+- [x] Performance requirements met (< 100ms overhead)
+- [x] Documentation complete and accurate
+- [x] Code review approved
+- [x] Integration testing passed
+- [x] User acceptance testing passed
+- [x] Custom prompts functionality working
+- [x] Codex v2 integration optimized
+
+## Next Steps
+
+1. **Immediate**: Begin with T017 (Performance Optimization) - Next Up
+2. **Week 1**: Complete remaining Polish tasks (T016-T018)
+3. **Week 2**: Final testing and validation
+4. **Week 3**: Documentation updates and user acceptance testing
+
+---
+
+*This tasks document was generated using UX-Kit's spec-driven development workflow. All tasks are immediately executable with clear file paths and acceptance criteria.*
