@@ -21,10 +21,11 @@ UX-Kit provides structured research workflows through slash commands, AI agent i
 
 - **160 tests passing** (100% success rate)
 - **44 TypeScript files** with 4,021 lines of code
-- **Working CLI** with study management commands (init, create, list, show, delete)
+- **Complete CLI** with 10 commands (study management + research workflow)
 - **Professional templates** with Handlebars-style syntax
 - **Cross-platform support** for macOS, Linux, and WSL
 - **Real file system operations** with proper directory structure creation
+- **Full research workflow** from questions to synthesis
 
 ## Installation
 
@@ -56,15 +57,19 @@ node dist/index.js --help
 - **Study Details**: `node dist/index.js show <study-id>` - Shows detailed study information
 - **Study Deletion**: `node dist/index.js delete <study-id>` - Removes studies
 - **Research Questions**: `node dist/index.js questions "prompt" --study <study-id>` - Generates research questions
+- **Research Sources**: `node dist/index.js sources --study <study-id>` - Collects and organizes research sources
+- **Research Synthesis**: `node dist/index.js synthesize --study <study-id>` - Synthesizes insights from all artifacts
+- **Source Summaries**: `node dist/index.js summarize <source-id> --study <study-id>` - Generates summaries for research sources
+- **Interview Processing**: `node dist/index.js interview "transcript" --study <study-id>` - Processes interview transcripts
 - **Help System**: `node dist/index.js --help` - Shows available commands
 - **Template System**: Handlebars-style templates for research artifacts
 - **File Generation**: Professional Markdown files with proper formatting
 - **Cross-Platform**: Works on macOS, Linux, and WSL
 
 ### 🔄 **In Development**
-- Research workflow commands (sources, synthesis, summarize, interview)
-- AI agent integration
+- AI agent integration for enhanced question generation
 - Slash command system for IDE integration
+- Advanced template features and customization
 
 ### Future: NPM Package (Planned)
 
@@ -129,14 +134,18 @@ node dist/index.js --help
 - **File Generation**: Markdown files with professional formatting ✅ **Implemented**
 - **Directory Management**: Organized study structure with metadata ✅ **Implemented**
 - **Cross-Platform Support**: Works on macOS, Linux, and WSL ✅ **Implemented**
+- **Question Generation**: Structured research questions with primary/secondary categorization ✅ **Implemented**
+- **Source Collection**: Automatic discovery and categorization of research sources ✅ **Implemented**
+- **Interview Processing**: Transcript analysis with participant profiling ✅ **Implemented**
+- **Research Synthesis**: Comprehensive insights with actionable recommendations ✅ **Implemented**
+- **Source Summarization**: Generate summaries for individual research sources ✅ **Implemented**
 
-### Planned Features (Not Yet Implemented)
+### Advanced Features (Planned)
 
-- **Question Generation**: Structured research questions with primary/secondary categorization
-- **Source Collection**: Automatic discovery and categorization of research sources
-- **Interview Processing**: Transcript analysis with participant profiling
-- **Research Synthesis**: Comprehensive insights with actionable recommendations
+- **AI Agent Integration**: Enhanced question generation with Cursor, Codex, or custom agents
 - **Executive Summaries**: Stakeholder-ready summaries with key findings
+- **Advanced Templates**: More sophisticated Handlebars templates with conditional logic
+- **Slash Command System**: IDE integration for seamless workflow
 
 ### Technical Features
 
@@ -194,7 +203,19 @@ node dist/index.js show 001-e-commerce-checkout-optimization
 # 5. Generate research questions
 node dist/index.js questions "How do users experience our checkout flow?" --study 001-e-commerce-checkout-optimization
 
-# 6. Delete a study when done
+# 6. Collect research sources
+node dist/index.js sources --study 001-e-commerce-checkout-optimization
+
+# 7. Process interview transcripts
+node dist/index.js interview "User interview transcript content..." --study 001-e-commerce-checkout-optimization
+
+# 8. Generate source summaries
+node dist/index.js summarize source-123 --study 001-e-commerce-checkout-optimization
+
+# 9. Synthesize insights from all artifacts
+node dist/index.js synthesize --study 001-e-commerce-checkout-optimization
+
+# 10. Delete a study when done
 node dist/index.js delete 001-e-commerce-checkout-optimization
 ```
 
