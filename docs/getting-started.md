@@ -27,8 +27,14 @@ By the end of this guide, you'll:
 ### Step 1: Install UX-Kit
 
 ```bash
-# Install directly from GitHub repository
-npm install -g https://github.com/khaos-studio/ux-kit.git
+# Clone the repository
+git clone https://github.com/khaos-studio/ux-kit.git
+cd ux-kit
+
+# Install dependencies and build
+npm install
+npm run build
+npm link
 ```
 
 ### Step 2: Verify Installation
@@ -38,24 +44,6 @@ uxkit --help
 ```
 
 You should see the UX-Kit help menu. If you get an error, check that Node.js is installed correctly.
-
-### Alternative: Clone and Install Locally
-
-If you prefer to clone the repository:
-
-```bash
-# Clone the repository
-git clone https://github.com/khaos-studio/ux-kit.git
-cd ux-kit
-
-# Install dependencies and build
-npm install
-npm run build
-npm link
-
-# Verify installation
-uxkit --help
-```
 
 ## Your First Research Study
 

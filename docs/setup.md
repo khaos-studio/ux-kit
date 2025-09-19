@@ -4,17 +4,7 @@ This guide will help you install and configure UX-Kit CLI for your UX research w
 
 ## Installation
 
-### Option 1: Direct GitHub Installation (Recommended)
-
-```bash
-# Install directly from GitHub repository
-npm install -g https://github.com/khaos-studio/ux-kit.git
-
-# Verify installation
-uxkit --help
-```
-
-### Option 2: Clone and Install Locally
+### Option 1: Clone and Install (Recommended)
 
 ```bash
 # Clone the repository
@@ -34,7 +24,7 @@ npm link
 uxkit --help
 ```
 
-### Option 3: Development Setup
+### Option 2: Development Setup
 
 ```bash
 # Clone the repository
