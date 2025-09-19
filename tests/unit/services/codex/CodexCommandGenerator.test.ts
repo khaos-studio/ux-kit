@@ -25,7 +25,7 @@ describe('CodexCommandGenerator', () => {
       writeFile: jest.fn(),
       readFile: jest.fn(),
       fileExists: jest.fn(),
-      directoryExists: jest.fn(),
+      pathExists: jest.fn(),
       createDirectory: jest.fn(),
       deleteFile: jest.fn(),
       deleteDirectory: jest.fn(),
@@ -37,7 +37,6 @@ describe('CodexCommandGenerator', () => {
       ensureDirectoryExists: jest.fn(),
       joinPaths: jest.fn(),
       dirname: jest.fn(),
-      pathExists: jest.fn(),
       basename: jest.fn()
     } as any;
 
@@ -53,7 +52,7 @@ describe('CodexCommandGenerator', () => {
   describe('generateTemplates', () => {
 
     it('should create codex.md file in project root', async () => {
-      mockFileSystemService.directoryExists.mockResolvedValue(false);
+      mockFileSystemService.pathExists.mockResolvedValue(false);
       mockFileSystemService.createDirectory.mockResolvedValue();
       mockFileSystemService.writeFile.mockResolvedValue();
 
@@ -66,18 +65,18 @@ describe('CodexCommandGenerator', () => {
     });
 
     it('should create .codex directory in project root', async () => {
-      mockFileSystemService.directoryExists.mockResolvedValue(false);
+      mockFileSystemService.pathExists.mockResolvedValue(false);
       mockFileSystemService.createDirectory.mockResolvedValue();
       mockFileSystemService.writeFile.mockResolvedValue();
 
       await codexCommandGenerator.generateTemplates(mockConfig);
 
-      expect(mockFileSystemService.directoryExists).toHaveBeenCalledWith('/test/project/.codex');
-      expect(mockFileSystemService.createDirectory).toHaveBeenCalledWith('/test/project/.codex');
+      expect(mockFileSystemService.pathExists).toHaveBeenCalledWith('/test/project/.codex');
+      expect(mockFileSystemService.createDirectory).toHaveBeenCalledWith('/test/project/.codex', true);
     });
 
     it('should not create .codex directory if it already exists', async () => {
-      mockFileSystemService.directoryExists.mockResolvedValue(true);
+      mockFileSystemService.pathExists.mockResolvedValue(true);
       mockFileSystemService.writeFile.mockResolvedValue();
 
       await codexCommandGenerator.generateTemplates(mockConfig);
@@ -86,18 +85,18 @@ describe('CodexCommandGenerator', () => {
     });
 
     it('should create prompts directory in .codex', async () => {
-      mockFileSystemService.directoryExists.mockResolvedValue(false);
+      mockFileSystemService.pathExists.mockResolvedValue(false);
       mockFileSystemService.createDirectory.mockResolvedValue();
       mockFileSystemService.writeFile.mockResolvedValue();
 
       await codexCommandGenerator.generateTemplates(mockConfig);
 
-      expect(mockFileSystemService.directoryExists).toHaveBeenCalledWith('/test/project/.codex/prompts');
-      expect(mockFileSystemService.createDirectory).toHaveBeenCalledWith('/test/project/.codex/prompts');
+      expect(mockFileSystemService.pathExists).toHaveBeenCalledWith('/test/project/.codex/prompts');
+      expect(mockFileSystemService.createDirectory).toHaveBeenCalledWith('/test/project/.codex/prompts', true);
     });
 
     it('should create UX research prompt files', async () => {
-      mockFileSystemService.directoryExists.mockResolvedValue(false);
+      mockFileSystemService.pathExists.mockResolvedValue(false);
       mockFileSystemService.createDirectory.mockResolvedValue();
       mockFileSystemService.writeFile.mockResolvedValue();
 
@@ -119,7 +118,7 @@ describe('CodexCommandGenerator', () => {
     });
 
     it('should create README.md in .codex directory', async () => {
-      mockFileSystemService.directoryExists.mockResolvedValue(false);
+      mockFileSystemService.pathExists.mockResolvedValue(false);
       mockFileSystemService.createDirectory.mockResolvedValue();
       mockFileSystemService.writeFile.mockResolvedValue();
 
@@ -140,7 +139,7 @@ describe('CodexCommandGenerator', () => {
         timeout: 30000
       };
 
-      mockFileSystemService.directoryExists.mockResolvedValue(false);
+      mockFileSystemService.pathExists.mockResolvedValue(false);
       mockFileSystemService.createDirectory.mockResolvedValue();
       mockFileSystemService.writeFile.mockResolvedValue();
 
@@ -153,7 +152,7 @@ describe('CodexCommandGenerator', () => {
     });
 
     it('should handle file system errors gracefully', async () => {
-      mockFileSystemService.directoryExists.mockResolvedValue(false);
+      mockFileSystemService.pathExists.mockResolvedValue(false);
       mockFileSystemService.createDirectory.mockRejectedValue(new Error('Permission denied'));
 
       await expect(codexCommandGenerator.generateTemplates(mockConfig))
@@ -161,7 +160,7 @@ describe('CodexCommandGenerator', () => {
     });
 
     it('should handle write file errors gracefully', async () => {
-      mockFileSystemService.directoryExists.mockResolvedValue(false);
+      mockFileSystemService.pathExists.mockResolvedValue(false);
       mockFileSystemService.createDirectory.mockResolvedValue();
       mockFileSystemService.writeFile.mockRejectedValue(new Error('Disk full'));
 
@@ -280,7 +279,7 @@ describe('CodexCommandGenerator', () => {
         timeout: 30000
       };
 
-      mockFileSystemService.directoryExists.mockResolvedValue(false);
+      mockFileSystemService.pathExists.mockResolvedValue(false);
       mockFileSystemService.createDirectory.mockResolvedValue();
       mockFileSystemService.writeFile.mockResolvedValue();
 
@@ -301,7 +300,7 @@ describe('CodexCommandGenerator', () => {
         timeout: 30000
       };
 
-      mockFileSystemService.directoryExists.mockResolvedValue(false);
+      mockFileSystemService.pathExists.mockResolvedValue(false);
       mockFileSystemService.createDirectory.mockResolvedValue();
       mockFileSystemService.writeFile.mockResolvedValue();
 
@@ -322,7 +321,7 @@ describe('CodexCommandGenerator', () => {
         timeout: 30000
       };
 
-      mockFileSystemService.directoryExists.mockResolvedValue(false);
+      mockFileSystemService.pathExists.mockResolvedValue(false);
       mockFileSystemService.createDirectory.mockResolvedValue();
       mockFileSystemService.writeFile.mockResolvedValue();
 
@@ -335,7 +334,7 @@ describe('CodexCommandGenerator', () => {
     });
 
     it('should handle non-Error exceptions', async () => {
-      mockFileSystemService.directoryExists.mockResolvedValue(false);
+      mockFileSystemService.pathExists.mockResolvedValue(false);
       mockFileSystemService.createDirectory.mockRejectedValue('String error');
 
       await expect(codexCommandGenerator.generateTemplates(mockConfig))
@@ -345,15 +344,15 @@ describe('CodexCommandGenerator', () => {
 
   describe('Integration with File System', () => {
     it('should create all required files in correct order', async () => {
-      mockFileSystemService.directoryExists.mockResolvedValue(false);
+      mockFileSystemService.pathExists.mockResolvedValue(false);
       mockFileSystemService.createDirectory.mockResolvedValue();
       mockFileSystemService.writeFile.mockResolvedValue();
 
       await codexCommandGenerator.generateTemplates(mockConfig);
 
       // Verify directory creation first
-      expect(mockFileSystemService.directoryExists).toHaveBeenCalledWith('/test/project/.codex');
-      expect(mockFileSystemService.createDirectory).toHaveBeenCalledWith('/test/project/.codex');
+      expect(mockFileSystemService.pathExists).toHaveBeenCalledWith('/test/project/.codex');
+      expect(mockFileSystemService.createDirectory).toHaveBeenCalledWith('/test/project/.codex', true);
 
       // Verify both files are created
       expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
@@ -367,7 +366,7 @@ describe('CodexCommandGenerator', () => {
     });
 
     it('should handle partial failures gracefully', async () => {
-      mockFileSystemService.directoryExists.mockResolvedValue(false);
+      mockFileSystemService.pathExists.mockResolvedValue(false);
       mockFileSystemService.createDirectory.mockResolvedValue();
       mockFileSystemService.writeFile
         .mockResolvedValueOnce() // First write succeeds

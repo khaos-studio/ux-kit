@@ -41,14 +41,14 @@ export class CodexCommandGenerator implements ICodexCommandGenerator {
       const codexDir = `${projectRoot}/.codex`;
       const promptsDir = `${codexDir}/prompts`;
       
-      const codexDirExists = await this.fileSystemService.directoryExists(codexDir);
+      const codexDirExists = await this.fileSystemService.pathExists(codexDir);
       if (!codexDirExists) {
-        await this.fileSystemService.createDirectory(codexDir);
+        await this.fileSystemService.createDirectory(codexDir, true);
       }
       
-      const promptsDirExists = await this.fileSystemService.directoryExists(promptsDir);
+      const promptsDirExists = await this.fileSystemService.pathExists(promptsDir);
       if (!promptsDirExists) {
-        await this.fileSystemService.createDirectory(promptsDir);
+        await this.fileSystemService.createDirectory(promptsDir, true);
       }
       
       // Create UX research specific prompts following Codex v2 pattern

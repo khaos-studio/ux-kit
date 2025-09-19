@@ -26,14 +26,14 @@ export interface IFileSystemService {
   fileExists(path: string): Promise<boolean>;
   
   /**
-   * Check if directory exists
+   * Check if path exists (file or directory)
    */
-  directoryExists(path: string): Promise<boolean>;
+  pathExists(path: string): Promise<boolean>;
   
   /**
    * Create directory recursively
    */
-  createDirectory(path: string): Promise<void>;
+  createDirectory(path: string, recursive?: boolean): Promise<void>;
   
   /**
    * Read file content

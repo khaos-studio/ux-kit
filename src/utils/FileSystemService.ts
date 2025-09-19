@@ -54,6 +54,18 @@ export class FileSystemService implements IFileSystemService {
   }
 
   /**
+   * Check if a file exists
+   */
+  async fileExists(path: string): Promise<boolean> {
+    try {
+      await FileUtils.getFileStats(path);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
    * Check if a path exists
    */
   async pathExists(path: string): Promise<boolean> {
@@ -67,6 +79,17 @@ export class FileSystemService implements IFileSystemService {
       } catch {
         return false;
       }
+    }
+  }
+
+  /**
+   * Get file statistics
+   */
+  async getFileStats(path: string): Promise<any> {
+    try {
+      return await FileUtils.getFileStats(path);
+    } catch {
+      return await DirectoryUtils.getDirectoryStats(path);
     }
   }
 
