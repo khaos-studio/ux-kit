@@ -552,31 +552,56 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 - Proper TypeScript typing and error handling throughout
 - Comprehensive status tracking with CodexIntegrationStatus enum support
 
-### T014: Create Codex CLI Service
+### T014: Create Codex CLI Service ✅ COMPLETED
 **Type**: Core  
 **Priority**: High  
 **Effort**: 3 hours  
 **Dependencies**: T005  
+**Completed**: 2025-09-19 02:22:53 EDT
 
 **Description**: Implement CodexCLIService for CLI interactions.
 
 **Acceptance Criteria**:
-- [ ] Implement `ICodexCLIService` interface
-- [ ] Add CLI command execution
-- [ ] Add version detection
-- [ ] Add availability checking
-- [ ] Add error handling
+- [x] Implement `ICodexCLIService` interface
+- [x] Add CLI command execution
+- [x] Add version detection
+- [x] Add availability checking
+- [x] Add error handling
 
 **Files to Create/Modify**:
-- `src/services/codex/CodexCLIService.ts`
+- `src/services/codex/CodexCLIService.ts` ✅
+- `tests/use-cases/T014-CodexCLIService.use-case.test.ts` (new) ✅
+- `tests/unit/services/codex/CodexCLIService.test.ts` (new) ✅
 
 **Technical Tasks**:
-- [ ] Create CodexCLIService class
-- [ ] Implement validateInstallation method
-- [ ] Implement getVersion method
-- [ ] Implement executeCodexCommand method
-- [ ] Implement isAvailable method
-- [ ] Implement getCLIPath method
+- [x] Create CodexCLIService class
+- [x] Implement validateInstallation method
+- [x] Implement getVersion method
+- [x] Implement executeCodexCommand method
+- [x] Implement isAvailable method
+- [x] Implement getCLIPath method
+- [x] Implement TDD approach with use case tests first
+- [x] Add comprehensive unit tests with 100% coverage
+- [x] Add comprehensive error handling and validation
+- [x] Add cross-platform CLI path resolution
+- [x] Add timeout handling and error recovery
+- [x] Integrate with ICLIExecutionService for all operations
+
+**Implementation Notes**:
+- Successfully implemented CodexCLIService following TDD approach
+- All ICodexCLIService interface methods implemented: validateInstallation, getVersion, executeCodexCommand, isAvailable, getCLIPath
+- Comprehensive CLI interaction functionality with robust error handling
+- Cross-platform support for CLI path resolution (Unix `which`, Windows `where`)
+- Comprehensive error handling for CLI_NOT_FOUND, CLI_INVALID, PERMISSION_DENIED, and UNKNOWN_ERROR scenarios
+- Timeout handling with proper error messages and suggestions
+- Version parsing with regex-based extraction and error handling
+- Command execution with proper argument passing and error handling
+- Use case tests: 28/28 passing - Complete user scenarios and expected behavior
+- Unit tests: 31/31 passing - 100% coverage of all service methods
+- Total test coverage: 59/59 tests passing
+- Service integrates with ICLIExecutionService for all CLI operations
+- Proper TypeScript typing and error handling throughout
+- Comprehensive error handling with helpful suggestions for users
 
 ### T015: Create Codex Configuration Service
 **Type**: Core  
@@ -887,9 +912,9 @@ graph TD
 
 ## Next Steps
 
-1. **Immediate**: Begin with T014 (Create Codex CLI Service) - Next Up
+1. **Immediate**: Begin with T015 (Create Codex Configuration Service) - Next Up
 2. **Week 1**: Complete Setup and Test tasks (T007-T010)
-3. **Week 2**: Complete Core tasks (T014-T016)
+3. **Week 2**: Complete Core tasks (T015-T016)
 4. **Week 3**: Complete Integration tasks (T017-T019)
 5. **Week 4**: Complete Polish tasks (T020-T022)
 
