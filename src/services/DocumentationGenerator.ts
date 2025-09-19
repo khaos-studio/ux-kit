@@ -93,7 +93,7 @@ Welcome to the UX-Kit documentation! This comprehensive guide will help you unde
 
 ## Quick Start
 
-1. **Installation**: \`npm install -g @ux-kit/cli\`
+1. **Installation**: \`npm install -g https://github.com/khaos-studio/ux-kit.git\`
 2. **Initialize**: \`uxkit init\`
 3. **Create Study**: \`uxkit study create "My Research Study"\`
 4. **Generate Questions**: \`uxkit research questions\`

@@ -25,7 +25,17 @@ UX-Kit is a research empowerment system that leverages AI tools like Cursor IDE 
 ## 🚀 Quick Start
 
 ```bash
-npm install -g @ux-kit/cli
+# Install directly from GitHub
+npm install -g https://github.com/khaos-studio/ux-kit.git
+
+# Or clone and install locally
+git clone https://github.com/khaos-studio/ux-kit.git
+cd ux-kit
+npm install
+npm run build
+npm link
+
+# Initialize and create your first study
 uxkit init
 uxkit study:create --name "My UX Research"
 ```
