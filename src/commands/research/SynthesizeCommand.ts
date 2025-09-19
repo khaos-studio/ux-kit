@@ -9,9 +9,9 @@ import { ResearchService } from '../../services/ResearchService';
 import { IOutput } from '../../contracts/presentation-contracts';
 
 export class SynthesizeCommand implements ICommand {
-  readonly name = 'synthesize';
+  readonly name = 'research:synthesize';
   readonly description = 'Synthesize insights from all research artifacts';
-  readonly usage = 'uxkit synthesize [options]';
+  readonly usage = 'uxkit research:synthesize [options]';
   readonly arguments: Array<{ name: string; description: string; required: boolean; type: 'string' | 'number' | 'boolean' }> = [];
   readonly options = [
     {
@@ -32,7 +32,7 @@ export class SynthesizeCommand implements ICommand {
   readonly examples = [
     {
       description: 'Synthesize insights for a study',
-      command: 'uxkit synthesize --study 001-user-research'
+      command: 'uxkit research:synthesize --study 001-user-research'
     }
   ];
 

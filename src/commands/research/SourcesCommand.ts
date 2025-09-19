@@ -10,9 +10,9 @@ import { Source } from '../../services/FileGenerator';
 import { IOutput } from '../../contracts/presentation-contracts';
 
 export class SourcesCommand implements ICommand {
-  readonly name = 'sources';
+  readonly name = 'research:sources';
   readonly description = 'Collect and organize research sources for a study';
-  readonly usage = 'uxkit sources [options]';
+  readonly usage = 'uxkit research:sources [options]';
   readonly arguments: Array<{ name: string; description: string; required: boolean; type: 'string' | 'number' | 'boolean' }> = [];
   readonly options = [
     {
@@ -46,11 +46,11 @@ export class SourcesCommand implements ICommand {
   readonly examples = [
     {
       description: 'Add sources to a study',
-      command: 'uxkit sources --study 001-user-research --sources \'[{"title":"User Interview","type":"interview","url":"https://example.com"}]\''
+      command: 'uxkit research:sources --study 001-user-research --sources \'[{"title":"User Interview","type":"interview","url":"https://example.com"}]\''
     },
     {
       description: 'Auto-discover sources in project',
-      command: 'uxkit sources --study 001-user-research --autoDiscover'
+      command: 'uxkit research:sources --study 001-user-research --autoDiscover'
     }
   ];
 

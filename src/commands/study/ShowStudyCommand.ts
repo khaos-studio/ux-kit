@@ -9,7 +9,7 @@ import { StudyService } from '../../services/StudyService';
 import { IOutput } from '../../contracts/presentation-contracts';
 
 export class ShowStudyCommand implements ICommand {
-  readonly name = 'show';
+  readonly name = 'study:show';
   readonly description = 'Show detailed information about a study';
   readonly usage = 'uxkit study show <study-id> [options]';
   readonly arguments = [

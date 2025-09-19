@@ -9,18 +9,18 @@ import { StudyService } from '../../services/StudyService';
 import { IOutput } from '../../contracts/presentation-contracts';
 
 export class CreateStudyCommand implements ICommand {
-  readonly name = 'create';
+  readonly name = 'study:create';
   readonly description = 'Create a new research study';
-  readonly usage = 'uxkit study create <name> [options]';
-  readonly arguments = [
+  readonly usage = 'uxkit study:create [options]';
+  readonly arguments: Array<{ name: string; description: string; required: boolean; type: 'string' | 'number' | 'boolean' }> = [];
+  readonly options = [
     {
       name: 'name',
       description: 'Name of the study',
+      type: 'string' as const,
       required: true,
-      type: 'string' as const
-    }
-  ];
-  readonly options = [
+      aliases: ['n']
+    },
     {
       name: 'description',
       description: 'Description of the study',
@@ -32,11 +32,11 @@ export class CreateStudyCommand implements ICommand {
   readonly examples = [
     {
       description: 'Create a basic study',
-      command: 'uxkit study create "User Onboarding Research"'
+      command: 'uxkit study:create --name "User Onboarding Research"'
     },
     {
       description: 'Create a study with description',
-      command: 'uxkit study create "User Onboarding Research" --description "Research into improving the new user onboarding flow"'
+      command: 'uxkit study:create --name "User Onboarding Research" --description "Research into improving the new user onboarding flow"'
     }
   ];
 
@@ -48,8 +48,12 @@ export class CreateStudyCommand implements ICommand {
   async execute(args: string[], options: Record<string, any>): Promise<CommandResult> {
     try {
       const projectRoot = options.projectRoot || process.cwd();
-      const studyName = args[0] || '';
+      const studyName = options.name || '';
       const description = options.description || '';
+
+      if (!studyName) {
+        return { success: false, message: 'Study name is required. Use --name option.' };
+      }
 
       this.output.writeln(`Creating study: ${studyName}`);
       

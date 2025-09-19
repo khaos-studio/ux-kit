@@ -9,17 +9,10 @@ import { ResearchService } from '../../services/ResearchService';
 import { IOutput } from '../../contracts/presentation-contracts';
 
 export class SummarizeCommand implements ICommand {
-  readonly name = 'summarize';
+  readonly name = 'research:summarize';
   readonly description = 'Generate a summary for a research source';
-  readonly usage = 'uxkit summarize <sourceId> [options]';
-  readonly arguments = [
-    {
-      name: 'sourceId',
-      description: 'Source ID to summarize',
-      required: true,
-      type: 'string' as const
-    }
-  ];
+  readonly usage = 'uxkit research:summarize [options]';
+  readonly arguments: Array<{ name: string; description: string; required: boolean; type: 'string' | 'number' | 'boolean' }> = [];
   readonly options = [
     {
       name: 'study',
@@ -27,6 +20,12 @@ export class SummarizeCommand implements ICommand {
       type: 'string' as const,
       required: true,
       aliases: ['s']
+    },
+    {
+      name: 'sourceId',
+      description: 'Source ID to summarize',
+      type: 'string' as const,
+      required: true
     },
     {
       name: 'projectRoot',
@@ -39,7 +38,7 @@ export class SummarizeCommand implements ICommand {
   readonly examples = [
     {
       description: 'Summarize a research source',
-      command: 'uxkit summarize source-123 --study 001-user-research'
+      command: 'uxkit research:summarize --study 001-user-research --sourceId source-123'
     }
   ];
 

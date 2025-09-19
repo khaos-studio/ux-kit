@@ -9,9 +9,9 @@ import { StudyService } from '../../services/StudyService';
 import { IOutput } from '../../contracts/presentation-contracts';
 
 export class ListStudiesCommand implements ICommand {
-  readonly name = 'list';
+  readonly name = 'study:list';
   readonly description = 'List all research studies';
-  readonly usage = 'uxkit study list [options]';
+  readonly usage = 'uxkit study:list [options]';
   readonly arguments = [];
   readonly options = [
     {

@@ -5,6 +5,10 @@
  * command handlers and managing command lifecycle.
  */
 
+import { ResearchService } from '../services/ResearchService';
+import { StudyService } from '../services/StudyService';
+import { FileSystemService } from '../utils/FileSystemService';
+
 export interface CommandExecutionContext {
   workspace: string;
   currentFile?: string | null;
@@ -24,8 +28,12 @@ export interface CommandExecutionResult {
  */
 export class CommandExecutor {
   private commandHandlers: Map<string, (args: string[], context: CommandExecutionContext) => Promise<CommandExecutionResult>> = new Map();
+  private researchService: ResearchService;
+  private studyService: StudyService;
 
-  constructor() {
+  constructor(researchService: ResearchService, studyService: StudyService) {
+    this.researchService = researchService;
+    this.studyService = studyService;
     this.initializeCommandHandlers();
   }
 
@@ -103,26 +111,37 @@ export class CommandExecutor {
     // Parse arguments
     const params = this.parseArguments(args);
     const study = params.study;
-    const topic = params.topic;
-    const count = parseInt(params.count) || 5;
-    const format = params.format || 'markdown';
+    const topic = params.topic || context.selection || 'Research questions';
 
-    if (!study || !topic) {
+    if (!study) {
       return {
         success: false,
-        error: 'Required parameters: study and topic'
+        error: 'Required parameter: study'
       };
     }
 
-    // Generate research questions (mock implementation)
-    const questions = this.generateResearchQuestions(topic, count);
-    const output = this.formatQuestions(questions, format);
+    try {
+      // Use the real ResearchService to generate questions
+      const result = await this.researchService.generateQuestions(study, topic, context.workspace);
 
-    return {
-      success: true,
-      output: `Research questions generated for study "${study}" on topic "${topic}":\n\n${output}`,
-      metadata: { study, topic, count: parseInt(params.count) || 5, format, workspace: context.workspace }
-    };
+      if (result.success) {
+        return {
+          success: true,
+          output: `Research questions generated for study "${study}":\n\nFile created: ${result.filePath}`,
+          metadata: { study, topic, filePath: result.filePath, workspace: context.workspace }
+        };
+      } else {
+        return {
+          success: false,
+          error: result.message || 'Failed to generate research questions'
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
+      };
+    }
   }
 
   /**
@@ -131,25 +150,38 @@ export class CommandExecutor {
   private async handleResearchSources(args: string[], context: CommandExecutionContext): Promise<CommandExecutionResult> {
     const params = this.parseArguments(args);
     const study = params.study;
-    const keywords = params.keywords;
-    const limit = params.limit || 10;
+    const autoDiscover = params.autoDiscover === 'true' || params.autoDiscover === true;
 
-    if (!study || !keywords) {
+    if (!study) {
       return {
         success: false,
-        error: 'Required parameters: study and keywords'
+        error: 'Required parameter: study'
       };
     }
 
-    // Generate research sources (mock implementation)
-    const sources = this.generateResearchSources(keywords, limit);
-    const output = this.formatSources(sources);
+    try {
+      // Use the real ResearchService to collect sources
+      const sources: any[] = []; // Empty sources array for now
+      const result = await this.researchService.collectSources(study, sources, context.workspace, autoDiscover);
 
-    return {
-      success: true,
-      output: `Research sources gathered for study "${study}" with keywords "${keywords}":\n\n${output}`,
-      metadata: { study, keywords, limit, workspace: context.workspace }
-    };
+      if (result.success) {
+        return {
+          success: true,
+          output: `Research sources collected for study "${study}":\n\nFile created: ${result.filePath}`,
+          metadata: { study, autoDiscover, filePath: result.filePath, workspace: context.workspace }
+        };
+      } else {
+        return {
+          success: false,
+          error: result.message || 'Failed to collect research sources'
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
+      };
+    }
   }
 
   /**
@@ -241,26 +273,30 @@ export class CommandExecutor {
   private async handleStudyCreate(args: string[], context: CommandExecutionContext): Promise<CommandExecutionResult> {
     const params = this.parseArguments(args);
     const name = params.name;
-    const description = params.description;
-    const template = params.template || 'standard';
-    const format = params.format || 'markdown';
+    const description = params.description || 'Research study';
 
-    if (!name || !description) {
+    if (!name) {
       return {
         success: false,
-        error: 'Required parameters: name and description'
+        error: 'Required parameter: name'
       };
     }
 
-    // Create study (mock implementation)
-    const study = this.createStudy(name, description, template);
-    const output = this.formatStudy(study, format);
+    try {
+      // Use the real StudyService to create a study
+      const study = await this.studyService.createStudy(name, description, context.workspace);
 
-    return {
-      success: true,
-      output: `Study "${name}" created successfully:\n\n${output}`,
-      metadata: { name, description, template, format, workspace: context.workspace }
-    };
+      return {
+        success: true,
+        output: `Study "${name}" created successfully:\n\nID: ${study.id}\nDirectory: ${study.basePath}`,
+        metadata: { name, description, studyId: study.id, directoryPath: study.basePath, workspace: context.workspace }
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
+      };
+    }
   }
 
   /**

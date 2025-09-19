@@ -9,17 +9,10 @@ import { ResearchService } from '../../services/ResearchService';
 import { IOutput } from '../../contracts/presentation-contracts';
 
 export class InterviewCommand implements ICommand {
-  readonly name = 'interview';
+  readonly name = 'research:interview';
   readonly description = 'Process and format an interview transcript';
-  readonly usage = 'uxkit interview <transcript> [options]';
-  readonly arguments = [
-    {
-      name: 'transcript',
-      description: 'Interview transcript content or file path',
-      required: true,
-      type: 'string' as const
-    }
-  ];
+  readonly usage = 'uxkit research:interview [options]';
+  readonly arguments: Array<{ name: string; description: string; required: boolean; type: 'string' | 'number' | 'boolean' }> = [];
   readonly options = [
     {
       name: 'study',
@@ -27,6 +20,12 @@ export class InterviewCommand implements ICommand {
       type: 'string' as const,
       required: true,
       aliases: ['s']
+    },
+    {
+      name: 'transcript',
+      description: 'Interview transcript content or file path',
+      type: 'string' as const,
+      required: true
     },
     {
       name: 'participant',
@@ -45,11 +44,11 @@ export class InterviewCommand implements ICommand {
   readonly examples = [
     {
       description: 'Process an interview transcript',
-      command: 'uxkit interview "Interview transcript content..." --study 001-user-research'
+      command: 'uxkit research:interview --study 001-user-research --transcript "Interview transcript content..."'
     },
     {
       description: 'Process interview with specific participant ID',
-      command: 'uxkit interview "Interview transcript content..." --study 001-user-research --participant P001'
+      command: 'uxkit research:interview --study 001-user-research --transcript "Interview transcript content..." --participant P001'
     }
   ];
 

@@ -52,15 +52,15 @@ node dist/index.js --help
 
 ### ✅ **Working Features**
 - **Project Initialization**: `node dist/index.js init` - Sets up UX-Kit directory structure
-- **Study Creation**: `node dist/index.js create "Study Name"` - Creates new research studies
-- **Study Listing**: `node dist/index.js list` - Lists all research studies
-- **Study Details**: `node dist/index.js show <study-id>` - Shows detailed study information
-- **Study Deletion**: `node dist/index.js delete <study-id>` - Removes studies
-- **Research Questions**: `node dist/index.js questions "prompt" --study <study-id>` - Generates research questions
-- **Research Sources**: `node dist/index.js sources --study <study-id>` - Collects and organizes research sources
-- **Research Synthesis**: `node dist/index.js synthesize --study <study-id>` - Synthesizes insights from all artifacts
-- **Source Summaries**: `node dist/index.js summarize <source-id> --study <study-id>` - Generates summaries for research sources
-- **Interview Processing**: `node dist/index.js interview "transcript" --study <study-id>` - Processes interview transcripts
+- **Study Creation**: `node dist/index.js study:create --name "Study Name"` - Creates new research studies
+- **Study Listing**: `node dist/index.js study:list` - Lists all research studies
+- **Study Details**: `node dist/index.js study:show <study-id>` - Shows detailed study information
+- **Study Deletion**: `node dist/index.js study:delete <study-id>` - Removes studies
+- **Research Questions**: `node dist/index.js research:questions --study <study-id> --topic "prompt"` - Generates research questions
+- **Research Sources**: `node dist/index.js research:sources --study <study-id>` - Collects and organizes research sources
+- **Research Synthesis**: `node dist/index.js research:synthesize --study <study-id>` - Synthesizes insights from all artifacts
+- **Source Summaries**: `node dist/index.js research:summarize --study <study-id> --sourceId <source-id>` - Generates summaries for research sources
+- **Interview Processing**: `node dist/index.js research:interview --study <study-id> --transcript "transcript"` - Processes interview transcripts
 - **Help System**: `node dist/index.js --help` - Shows available commands
 - **Template System**: Handlebars-style templates for research artifacts
 - **File Generation**: Professional Markdown files with proper formatting
@@ -192,31 +192,31 @@ Here's how to use UX-Kit for a complete research study:
 node dist/index.js init
 
 # 2. Create a research study
-node dist/index.js create "E-commerce Checkout Optimization" --description "Research study for optimizing checkout flow"
+node dist/index.js study:create --name "E-commerce Checkout Optimization" --description "Research study for optimizing checkout flow"
 
 # 3. List all studies
-node dist/index.js list
+node dist/index.js study:list
 
 # 4. Show study details (use the study ID from the list)
-node dist/index.js show 001-e-commerce-checkout-optimization
+node dist/index.js study:show 001-e-commerce-checkout-optimization
 
 # 5. Generate research questions
-node dist/index.js questions "How do users experience our checkout flow?" --study 001-e-commerce-checkout-optimization
+node dist/index.js research:questions --study 001-e-commerce-checkout-optimization --topic "How do users experience our checkout flow?"
 
 # 6. Collect research sources
-node dist/index.js sources --study 001-e-commerce-checkout-optimization
+node dist/index.js research:sources --study 001-e-commerce-checkout-optimization
 
 # 7. Process interview transcripts
-node dist/index.js interview "User interview transcript content..." --study 001-e-commerce-checkout-optimization
+node dist/index.js research:interview --study 001-e-commerce-checkout-optimization --transcript "User interview transcript content..."
 
 # 8. Generate source summaries
-node dist/index.js summarize source-123 --study 001-e-commerce-checkout-optimization
+node dist/index.js research:summarize --study 001-e-commerce-checkout-optimization --sourceId source-123
 
 # 9. Synthesize insights from all artifacts
-node dist/index.js synthesize --study 001-e-commerce-checkout-optimization
+node dist/index.js research:synthesize --study 001-e-commerce-checkout-optimization
 
 # 10. Delete a study when done
-node dist/index.js delete 001-e-commerce-checkout-optimization
+node dist/index.js study:delete 001-e-commerce-checkout-optimization
 ```
 
 ## 📚 Research Commands Tutorial

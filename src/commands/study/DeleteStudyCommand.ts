@@ -9,7 +9,7 @@ import { StudyService } from '../../services/StudyService';
 import { IOutput } from '../../contracts/presentation-contracts';
 
 export class DeleteStudyCommand implements ICommand {
-  readonly name = 'delete';
+  readonly name = 'study:delete';
   readonly description = 'Delete a research study';
   readonly usage = 'uxkit study delete <study-id> [options]';
   readonly arguments = [

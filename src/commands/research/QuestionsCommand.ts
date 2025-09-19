@@ -9,17 +9,10 @@ import { ResearchService } from '../../services/ResearchService';
 import { IOutput } from '../../contracts/presentation-contracts';
 
 export class QuestionsCommand implements ICommand {
-  readonly name = 'questions';
+  readonly name = 'research:questions';
   readonly description = 'Generate research questions for a study';
-  readonly usage = 'uxkit questions <prompt> [options]';
-  readonly arguments = [
-    {
-      name: 'prompt',
-      description: 'Research prompt or question to generate questions for',
-      required: true,
-      type: 'string' as const
-    }
-  ];
+  readonly usage = 'uxkit research:questions [options]';
+  readonly arguments: Array<{ name: string; description: string; required: boolean; type: 'string' | 'number' | 'boolean' }> = [];
   readonly options = [
     {
       name: 'study',
@@ -27,6 +20,13 @@ export class QuestionsCommand implements ICommand {
       type: 'string' as const,
       required: true,
       aliases: ['s']
+    },
+    {
+      name: 'topic',
+      description: 'Research topic or prompt to generate questions for',
+      type: 'string' as const,
+      required: false,
+      aliases: ['t']
     },
     {
       name: 'projectRoot',
@@ -39,7 +39,7 @@ export class QuestionsCommand implements ICommand {
   readonly examples = [
     {
       description: 'Generate questions for a study',
-      command: 'uxkit questions "How do users discover our product features?" --study 001-user-research'
+      command: 'uxkit research:questions --study 001-user-research --topic "How do users discover our product features?"'
     }
   ];
 
@@ -52,20 +52,16 @@ export class QuestionsCommand implements ICommand {
     try {
       const projectRoot = options.projectRoot || process.cwd();
       const studyId = options.study || '';
-      const prompt = args[0] || '';
+      const topic = options.topic || 'Research questions';
 
       if (!studyId) {
         return { success: false, message: 'Study ID is required. Use --study option.' };
       }
 
-      if (!prompt) {
-        return { success: false, message: 'Research prompt is required.' };
-      }
-
       this.output.writeln(`Generating research questions for study: ${studyId}`);
-      this.output.writeln(`Prompt: ${prompt}`);
+      this.output.writeln(`Topic: ${topic}`);
 
-      const result = await this.researchService.generateQuestions(studyId, prompt, projectRoot);
+      const result = await this.researchService.generateQuestions(studyId, topic, projectRoot);
 
       if (result.success) {
         this.output.writeln(`Questions generated successfully: ${result.filePath}`);
@@ -82,14 +78,6 @@ export class QuestionsCommand implements ICommand {
 
   async validate(args: string[], options: Record<string, any>): Promise<ValidationResult> {
     const errors: any[] = [];
-
-    if (!args[0]) {
-      errors.push({
-        field: 'prompt',
-        message: 'Research prompt is required',
-        value: args[0]
-      });
-    }
 
     if (!options.study) {
       errors.push({
