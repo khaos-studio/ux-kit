@@ -1,364 +1,310 @@
-# Data Model: Codex Support Integration
+# Data Models: Remote Install Support
 
-## Overview
+## System Information Model
 
-This document defines the data models and structures for the Codex support integration feature. The models follow the existing UX-Kit architecture patterns and maintain consistency with the current Cursor integration.
-
-## Core Data Models
-
-### AIAgentType Enum
-
+### SystemInfo Interface
 ```typescript
-enum AIAgentType {
-  CURSOR = 'cursor',
-  CODEX = 'codex',
-  CUSTOM = 'custom'
+interface SystemInfo {
+  os: 'macos' | 'linux';
+  distribution?: string;
+  architecture: 'x86_64' | 'arm64';
+  nodeVersion?: string;
+  gitVersion?: string;
+  sshAvailable: boolean;
+  packageManager: 'homebrew' | 'apt' | 'yum' | 'none';
+  shell: string;
+  tempDir: string;
+  installDir: string;
 }
 ```
 
-**Purpose**: Defines the available AI agent types for selection during initialization.
-
-**Usage**: Used in InitCommand for AI agent selection and validation.
-
-### CodexConfiguration Interface
-
+### System Detection Logic
 ```typescript
-interface CodexConfiguration {
-  enabled: boolean;
-  cliPath?: string;
-  validationEnabled: boolean;
-  fallbackToCustom: boolean;
-  templatePath: string;
+class SystemDetector {
+  detectOS(): 'macos' | 'linux';
+  detectArchitecture(): 'x86_64' | 'arm64';
+  detectDistribution(): string | undefined;
+  detectPackageManager(): 'homebrew' | 'apt' | 'yum' | 'none';
+  checkNodeVersion(): string | undefined;
+  checkGitVersion(): string | undefined;
+  checkSSHAccess(): boolean;
+  getShellInfo(): string;
+  getTempDirectory(): string;
+  getInstallDirectory(): string;
 }
 ```
 
-**Purpose**: Configuration options for Codex integration.
+## Installation Options Model
 
-**Properties**:
-- `enabled`: Whether Codex integration is enabled
-- `cliPath`: Optional path to Codex CLI executable
-- `validationEnabled`: Whether to validate Codex CLI availability
-- `fallbackToCustom`: Whether to fallback to custom agent if Codex unavailable
-- `templatePath`: Path to Codex command templates
-
-### CodexValidationResult Interface
-
+### InstallOptions Interface
 ```typescript
-interface CodexValidationResult {
-  isValid: boolean;
-  cliAvailable: boolean;
-  cliPath?: string;
-  errorMessage?: string;
-  suggestions?: string[];
+interface InstallOptions {
+  version: 'latest' | string;
+  installPath: string;
+  skipDependencies: boolean;
+  skipVerification: boolean;
+  verbose: boolean;
+  force: boolean;
+  dryRun: boolean;
 }
 ```
 
-**Purpose**: Result of Codex CLI validation process.
-
-**Properties**:
-- `isValid`: Whether Codex CLI is properly configured
-- `cliAvailable`: Whether Codex CLI is available in system PATH
-- `cliPath`: Path to found Codex CLI executable
-- `errorMessage`: Error message if validation fails
-- `suggestions`: Suggested actions for user
-
-### CodexCommandTemplate Interface
-
+### Installation Configuration
 ```typescript
-interface CodexCommandTemplate {
+interface InstallConfig {
+  options: InstallOptions;
+  system: SystemInfo;
+  github: GitHubConfig;
+  paths: PathConfig;
+  security: SecurityConfig;
+}
+
+interface GitHubConfig {
+  owner: string;
+  repo: string;
+  apiUrl: string;
+  releasesUrl: string;
+  sshUrl: string;
+}
+
+interface PathConfig {
+  tempDir: string;
+  installDir: string;
+  configDir: string;
+  binaryPath: string;
+  symlinkPath: string;
+}
+
+interface SecurityConfig {
+  verifyChecksums: boolean;
+  verifySignatures: boolean;
+  allowedHashes: string[];
+  trustedKeys: string[];
+}
+```
+
+## Release Information Model
+
+### GitHubRelease Interface
+```typescript
+interface GitHubRelease {
+  id: number;
+  tag_name: string;
   name: string;
-  description: string;
-  command: string;
-  parameters: CodexCommandParameter[];
-  examples: string[];
-  category: string;
+  body: string;
+  draft: boolean;
+  prerelease: boolean;
+  published_at: string;
+  assets: GitHubAsset[];
 }
-```
 
-**Purpose**: Structure for Codex command templates.
-
-**Properties**:
-- `name`: Template name/identifier
-- `description`: Human-readable description
-- `command`: The command structure
-- `parameters`: Required and optional parameters
-- `examples`: Usage examples
-- `category`: Template category (e.g., 'research', 'analysis')
-
-### CodexCommandParameter Interface
-
-```typescript
-interface CodexCommandParameter {
+interface GitHubAsset {
+  id: number;
   name: string;
-  type: 'string' | 'number' | 'boolean' | 'array';
-  required: boolean;
-  description: string;
-  defaultValue?: any;
-  validation?: (value: any) => boolean;
+  label: string;
+  content_type: string;
+  size: number;
+  download_count: number;
+  browser_download_url: string;
+  uploader: GitHubUser;
+}
+
+interface GitHubUser {
+  login: string;
+  id: number;
+  avatar_url: string;
+  type: string;
 }
 ```
 
-**Purpose**: Parameter definition for Codex commands.
-
-**Properties**:
-- `name`: Parameter name
-- `type`: Parameter data type
-- `required`: Whether parameter is required
-- `description`: Parameter description
-- `defaultValue`: Default value if not provided
-- `validation`: Optional validation function
-
-## Service Interfaces
-
-### ICodexValidator Interface
-
+### Binary Information
 ```typescript
-interface ICodexValidator {
-  validateCodexCLI(): Promise<CodexValidationResult>;
-  isCodexAvailable(): Promise<boolean>;
-  getCodexPath(): Promise<string | null>;
+interface BinaryInfo {
+  name: string;
+  platform: string;
+  architecture: string;
+  downloadUrl: string;
+  checksum: string;
+  signature?: string;
+  size: number;
+  version: string;
 }
 ```
 
-**Purpose**: Interface for Codex CLI validation services.
+## Error Handling Model
 
-**Methods**:
-- `validateCodexCLI()`: Comprehensive validation of Codex CLI
-- `isCodexAvailable()`: Quick check for Codex CLI availability
-- `getCodexPath()`: Find Codex CLI executable path
-
-### ICodexCommandGenerator Interface
-
+### Error Types
 ```typescript
-interface ICodexCommandGenerator {
-  generateTemplates(config: CodexConfiguration): Promise<void>;
-  getTemplate(name: string): Promise<CodexCommandTemplate | null>;
-  listTemplates(): Promise<CodexCommandTemplate[]>;
-  validateTemplate(template: CodexCommandTemplate): boolean;
+enum ErrorType {
+  NETWORK_ERROR = 'NETWORK_ERROR',
+  PERMISSION_ERROR = 'PERMISSION_ERROR',
+  DEPENDENCY_ERROR = 'DEPENDENCY_ERROR',
+  SSH_ERROR = 'SSH_ERROR',
+  VERSION_ERROR = 'VERSION_ERROR',
+  VERIFICATION_ERROR = 'VERIFICATION_ERROR',
+  SYSTEM_ERROR = 'SYSTEM_ERROR'
 }
-```
 
-**Purpose**: Interface for Codex command template generation.
-
-**Methods**:
-- `generateTemplates()`: Generate all Codex command templates
-- `getTemplate()`: Retrieve specific template by name
-- `listTemplates()`: List all available templates
-- `validateTemplate()`: Validate template structure
-
-### ICodexIntegration Interface
-
-```typescript
-interface ICodexIntegration {
-  initialize(config: CodexConfiguration): Promise<void>;
-  validate(): Promise<CodexValidationResult>;
-  generateCommandTemplates(): Promise<void>;
-  getStatus(): Promise<CodexIntegrationStatus>;
-}
-```
-
-**Purpose**: Main interface for Codex integration functionality.
-
-**Methods**:
-- `initialize()`: Initialize Codex integration
-- `validate()`: Validate Codex setup
-- `generateCommandTemplates()`: Generate command templates
-- `getStatus()`: Get current integration status
-
-### CodexIntegrationStatus Interface
-
-```typescript
-interface CodexIntegrationStatus {
-  isInitialized: boolean;
-  isConfigured: boolean;
-  cliAvailable: boolean;
-  templatesGenerated: boolean;
-  lastValidation?: Date;
-  errorCount: number;
-}
-```
-
-**Purpose**: Status information for Codex integration.
-
-**Properties**:
-- `isInitialized`: Whether integration is initialized
-- `isConfigured`: Whether configuration is complete
-- `cliAvailable`: Whether Codex CLI is available
-- `templatesGenerated`: Whether templates are generated
-- `lastValidation`: Last validation timestamp
-- `errorCount`: Number of validation errors
-
-## Configuration Models
-
-### InitCommandOptions Interface
-
-```typescript
-interface InitCommandOptions {
-  aiAgent: AIAgentType;
-  projectPath: string;
-  skipValidation?: boolean;
-  forceReinit?: boolean;
-  codexConfig?: Partial<CodexConfiguration>;
-}
-```
-
-**Purpose**: Options for initialization command.
-
-**Properties**:
-- `aiAgent`: Selected AI agent type
-- `projectPath`: Project directory path
-- `skipValidation`: Skip AI agent validation
-- `forceReinit`: Force re-initialization
-- `codexConfig`: Codex-specific configuration
-
-### CodexTemplateConfig Interface
-
-```typescript
-interface CodexTemplateConfig {
-  outputPath: string;
-  templateFormat: 'markdown' | 'json' | 'yaml';
-  includeExamples: boolean;
-  includeDocumentation: boolean;
-  customTemplates?: string[];
-}
-```
-
-**Purpose**: Configuration for template generation.
-
-**Properties**:
-- `outputPath`: Where to generate templates
-- `templateFormat`: Template file format
-- `includeExamples`: Include usage examples
-- `includeDocumentation`: Include documentation
-- `customTemplates`: Custom template paths
-
-## Error Models
-
-### CodexError Interface
-
-```typescript
-interface CodexError {
-  code: string;
+interface InstallError {
+  type: ErrorType;
   message: string;
-  details?: any;
-  suggestions?: string[];
+  code: number;
+  suggestion: string;
   recoverable: boolean;
+  context: Record<string, any>;
 }
 ```
 
-**Purpose**: Standardized error structure for Codex operations.
-
-**Properties**:
-- `code`: Error code identifier
-- `message`: Human-readable error message
-- `details`: Additional error details
-- `suggestions`: Suggested actions
-- `recoverable`: Whether error is recoverable
-
-### CodexErrorCodes Enum
-
+### Error Recovery
 ```typescript
-enum CodexErrorCodes {
-  CLI_NOT_FOUND = 'CODEX_CLI_NOT_FOUND',
-  CLI_INVALID = 'CODEX_CLI_INVALID',
-  TEMPLATE_GENERATION_FAILED = 'CODEX_TEMPLATE_GENERATION_FAILED',
-  VALIDATION_FAILED = 'CODEX_VALIDATION_FAILED',
-  CONFIGURATION_INVALID = 'CODEX_CONFIGURATION_INVALID'
+interface ErrorRecovery {
+  canRetry: boolean;
+  maxRetries: number;
+  retryDelay: number;
+  fallbackAction?: string;
+  userAction?: string;
 }
 ```
 
-**Purpose**: Standardized error codes for Codex operations.
+## Progress Tracking Model
 
-## Data Flow Models
-
-### InitializationFlow Interface
-
+### Installation Progress
 ```typescript
-interface InitializationFlow {
-  step: 'selection' | 'validation' | 'configuration' | 'template_generation' | 'complete';
-  status: 'pending' | 'in_progress' | 'complete' | 'error';
-  data?: any;
-  error?: CodexError;
-}
-```
-
-**Purpose**: Tracks initialization flow progress.
-
-**Properties**:
-- `step`: Current initialization step
-- `status`: Step status
-- `data`: Step-specific data
-- `error`: Error information if step failed
-
-### TemplateGenerationFlow Interface
-
-```typescript
-interface TemplateGenerationFlow {
-  templateName: string;
-  status: 'pending' | 'generating' | 'complete' | 'error';
+interface InstallProgress {
+  phase: InstallPhase;
+  step: string;
   progress: number; // 0-100
-  outputPath?: string;
-  error?: CodexError;
-}
-```
-
-**Purpose**: Tracks template generation progress.
-
-**Properties**:
-- `templateName`: Name of template being generated
-- `status`: Generation status
-- `progress`: Generation progress percentage
-- `outputPath`: Generated template path
-- `error`: Error information if generation failed
-
-## Validation Models
-
-### ValidationRule Interface
-
-```typescript
-interface ValidationRule {
-  name: string;
-  validate: (value: any) => boolean;
   message: string;
-  severity: 'error' | 'warning' | 'info';
+  startTime: Date;
+  estimatedTime?: number;
+}
+
+enum InstallPhase {
+  DETECTION = 'DETECTION',
+  DEPENDENCIES = 'DEPENDENCIES',
+  DOWNLOAD = 'DOWNLOAD',
+  INSTALLATION = 'INSTALLATION',
+  CONFIGURATION = 'CONFIGURATION',
+  VERIFICATION = 'VERIFICATION',
+  COMPLETE = 'COMPLETE'
 }
 ```
 
-**Purpose**: Defines validation rules for Codex configuration.
-
-**Properties**:
-- `name`: Rule identifier
-- `validate`: Validation function
-- `message`: Error/warning message
-- `severity`: Rule severity level
-
-### ValidationResult Interface
-
+### Logging Configuration
 ```typescript
+interface LogConfig {
+  level: 'debug' | 'info' | 'warn' | 'error';
+  format: 'text' | 'json';
+  output: 'console' | 'file' | 'both';
+  filePath?: string;
+  maxSize?: number;
+  maxFiles?: number;
+}
+```
+
+## Configuration Model
+
+### User Configuration
+```typescript
+interface UserConfig {
+  installPath: string;
+  configPath: string;
+  dataPath: string;
+  logPath: string;
+  version: string;
+  autoUpdate: boolean;
+  telemetry: boolean;
+  preferences: UserPreferences;
+}
+
+interface UserPreferences {
+  theme: 'light' | 'dark' | 'auto';
+  editor: string;
+  shell: string;
+  language: string;
+  notifications: boolean;
+}
+```
+
+### Environment Variables
+```typescript
+interface EnvironmentConfig {
+  UXKIT_HOME: string;
+  UXKIT_CONFIG: string;
+  UXKIT_DATA: string;
+  UXKIT_LOG: string;
+  PATH: string;
+  NODE_PATH?: string;
+  GIT_SSH_COMMAND?: string;
+}
+```
+
+## Validation Model
+
+### System Requirements
+```typescript
+interface SystemRequirements {
+  minNodeVersion: string;
+  minGitVersion: string;
+  requiredCommands: string[];
+  requiredPermissions: string[];
+  diskSpace: number; // MB
+  memory: number; // MB
+}
+
 interface ValidationResult {
-  isValid: boolean;
+  valid: boolean;
   errors: ValidationError[];
   warnings: ValidationWarning[];
-  info: ValidationInfo[];
+  suggestions: string[];
+}
+
+interface ValidationError {
+  requirement: string;
+  current: string;
+  required: string;
+  message: string;
+}
+
+interface ValidationWarning {
+  requirement: string;
+  message: string;
+  suggestion: string;
 }
 ```
 
-**Purpose**: Result of validation process.
+## State Management Model
 
-**Properties**:
-- `isValid`: Overall validation result
-- `errors`: Validation errors
-- `warnings`: Validation warnings
-- `info`: Validation information
+### Installation State
+```typescript
+interface InstallState {
+  status: 'idle' | 'running' | 'completed' | 'failed' | 'cancelled';
+  currentPhase: InstallPhase;
+  progress: number;
+  startTime: Date;
+  endTime?: Date;
+  duration?: number;
+  errors: InstallError[];
+  warnings: string[];
+  artifacts: InstallArtifact[];
+}
 
-## Summary
+interface InstallArtifact {
+  name: string;
+  path: string;
+  type: 'binary' | 'config' | 'data' | 'log';
+  size: number;
+  checksum: string;
+  created: Date;
+}
+```
 
-The data models for Codex support integration follow the existing UX-Kit patterns and provide:
-
-1. **Type Safety**: Strong typing with TypeScript interfaces
-2. **Extensibility**: Easy to add new features and configurations
-3. **Validation**: Comprehensive validation and error handling
-4. **Consistency**: Follows existing architectural patterns
-5. **Documentation**: Clear interfaces with purpose and usage
-
-These models ensure the Codex integration maintains the high quality standards of the UX-Kit codebase while providing a solid foundation for implementation.
+### State Persistence
+```typescript
+interface StateManager {
+  saveState(state: InstallState): void;
+  loadState(): InstallState | null;
+  clearState(): void;
+  getStateHistory(): InstallState[];
+}
+```

@@ -1,150 +1,127 @@
-# Research & Analysis: Codex Support Integration
+# Research & Analysis: Remote Install Support
 
 ## Feature Requirements Analysis
 
 ### Core Requirements
-- **AI Agent Selection**: Add Codex as an option in the existing AI agent selection prompt
-- **Command Template Generation**: Create Codex-specific command templates for IDE integration
-- **CLI Validation**: Implement Codex CLI availability checking with graceful fallback
-- **Backward Compatibility**: Maintain existing Cursor and custom agent functionality
+- **Single Command Installation**: Users can install UX Kit CLI with `curl -fsSL <url> | bash`
+- **SSH Integration**: Leverage existing SSH configuration for private GitHub repository access
+- **Cross-Platform Support**: macOS and Linux compatibility
+- **Automated Setup**: Dependency installation, configuration, and verification
+- **Version Management**: Support for latest and specific version installations
 
-### User Stories Analysis
-1. **Primary**: UX researchers want to use Codex for research workflows
-2. **Primary**: Developers need Codex command templates for IDE integration
-3. **Secondary**: Users want validation feedback for Codex CLI availability
+### User Stories
+1. **As a developer**, I want to install UX Kit CLI with a single command so I can quickly get started
+2. **As a team lead**, I want the installation to work on different systems so my team can use it consistently
+3. **As a DevOps engineer**, I want the installation to be idempotent so it's safe to run in automation
+4. **As a security-conscious user**, I want the installation to verify checksums so I can trust the binaries
 
-### Acceptance Criteria Analysis
-- **Must Have (P0)**: Codex option in selection, template generation, CLI validation, no breaking changes
-- **Should Have (P1)**: Consistent template structure, error handling, user feedback
-- **Could Have (P2)**: Advanced configuration options, enhanced integration features
+### Functional Requirements
+- Detect operating system and architecture automatically
+- Install required dependencies (Node.js, Git) if missing
+- Download and install pre-compiled binaries from GitHub releases
+- Set up configuration and environment variables
+- Verify installation success with clear feedback
+- Handle version selection (latest vs specific)
+- Support custom installation paths
+
+### Non-Functional Requirements
+- **Performance**: Installation completes within 2 minutes
+- **Reliability**: 99% success rate on supported platforms
+- **Security**: Verify binary checksums and use HTTPS
+- **Usability**: Clear error messages and progress indicators
+- **Maintainability**: Shell script follows best practices
 
 ## Technical Constraints
 
-### Performance Constraints
-- **Initialization Time**: < 100ms additional overhead
-- **Memory Usage**: No significant memory impact
-- **Response Time**: All CLI commands must respond within 2 seconds (constitutional requirement)
+### System Requirements
+- **Node.js**: Version 18+ required
+- **Git**: Required for repository access
+- **SSH**: Required for private repository access
+- **Package Managers**: Homebrew (macOS), apt/yum (Linux)
 
-### Compatibility Constraints
-- **Backward Compatibility**: 100% preservation of existing functionality
-- **Cross-Platform**: Must work on macOS, Linux, and WSL
-- **TypeScript**: Must use strict mode and maintain type safety
+### Platform Limitations
+- **Windows**: Not supported in initial version (PowerShell support planned)
+- **Architecture**: x86_64 and ARM64 support required
+- **Shell**: Bash 4.0+ required for script execution
 
 ### Security Constraints
-- **Input Validation**: Sanitize all user inputs
-- **Error Handling**: Graceful error handling with clear feedback
-- **Data Protection**: Secure handling of configuration data
+- Must verify binary checksums before installation
+- Use HTTPS for all downloads
+- Validate SSH key fingerprints
+- Sanitize user inputs and file paths
+- Follow principle of least privilege
 
 ## Best Practices Research
 
-### AI Agent Integration Patterns
-- **Protocol-Oriented Design**: Use interfaces for AI agent abstraction
-- **Dependency Injection**: Inject AI agent implementations
-- **Factory Pattern**: Create AI agent instances based on user selection
-- **Template Method**: Standardize command template generation
+### Shell Script Best Practices
+- Use `set -e` for fail-fast behavior
+- Implement proper error handling with `trap`
+- Use `shellcheck` for code quality
+- Provide clear progress indicators
+- Support both interactive and non-interactive modes
 
-### CLI Validation Patterns
-- **Graceful Degradation**: Continue operation when external tools unavailable
-- **User Feedback**: Clear messaging about validation status
-- **Retry Logic**: Allow users to retry validation
-- **Configuration**: Allow users to skip validation if needed
+### Installation Script Patterns
+- **Idempotent Design**: Safe to run multiple times
+- **Progressive Enhancement**: Graceful degradation for different systems
+- **Fail-Fast**: Early validation with clear error messages
+- **User Feedback**: Progress indicators and status messages
 
-### Template Generation Patterns
-- **Consistent Structure**: Follow existing Cursor template patterns
-- **Extensibility**: Easy to add new template types
-- **Validation**: Ensure generated templates are syntactically correct
-- **Documentation**: Include usage examples in templates
+### Package Management Integration
+- **Homebrew**: Use `brew install` for dependencies on macOS
+- **APT**: Use `apt-get` for Ubuntu/Debian systems
+- **YUM**: Use `yum` for RHEL/CentOS systems
+- **Fallback**: Manual installation if package managers unavailable
 
-## Architecture Analysis
+### GitHub API Integration
+- Use GitHub Releases API for binary downloads
+- Implement rate limiting and retry logic
+- Handle authentication for private repositories
+- Verify release signatures and checksums
 
-### Current Architecture
-- **InitCommand**: Handles AI agent selection and initialization
-- **CursorCommandGenerator**: Generates Cursor-specific command templates
-- **InputService**: Manages user input and validation
-- **Template System**: Manages command template generation and storage
+## Technical Challenges
 
-### Integration Points
-1. **InitCommand**: Add Codex option to AI agent selection
-2. **Command Generator**: Create CodexCommandGenerator service
-3. **Validation**: Add Codex CLI validation logic
-4. **Templates**: Generate Codex-specific command templates
+### Cross-Platform Compatibility
+- Different package managers on different systems
+- Varying file system permissions and paths
+- Different shell environments and capabilities
+- Architecture-specific binary requirements
 
-### Design Patterns to Apply
-- **Strategy Pattern**: Different AI agent implementations
-- **Factory Pattern**: Create appropriate command generators
-- **Template Method**: Standardize template generation process
-- **Observer Pattern**: Notify about validation status changes
+### Security Considerations
+- Verifying binary authenticity and integrity
+- Handling SSH key validation securely
+- Protecting against malicious script injection
+- Ensuring secure download and installation
 
-## Risk Assessment
+### Error Handling
+- Network connectivity issues
+- Permission problems
+- Missing dependencies
+- SSH configuration problems
+- Version conflicts
 
-### Technical Risks
-- **Codex CLI Availability**: High probability, medium impact
-  - Mitigation: Graceful fallback with clear messaging
-- **Template Compatibility**: Medium probability, low impact
-  - Mitigation: Follow existing Cursor template patterns
-- **Performance Impact**: Low probability, low impact
-  - Mitigation: Minimal changes, no new dependencies
+### Performance Optimization
+- Efficient binary downloads
+- Minimal system resource usage
+- Fast installation and startup times
+- Optimized dependency resolution
 
-### Implementation Risks
-- **Breaking Changes**: Low probability, high impact
-  - Mitigation: Comprehensive testing, backward compatibility checks
-- **User Experience**: Medium probability, medium impact
-  - Mitigation: Consistent UI patterns, clear feedback
+## Research Conclusions
 
-## Dependencies Analysis
+### Recommended Architecture
+- **Modular Design**: Separate concerns for system detection, dependency management, and installation
+- **Error Recovery**: Comprehensive error handling with clear user guidance
+- **Security First**: Verify all downloads and validate system state
+- **User Experience**: Clear feedback and progress indicators throughout
 
-### External Dependencies
-- **OpenAI Codex CLI**: Optional, for validation only
-- **No new runtime dependencies**: Maintains lightweight footprint
+### Key Implementation Decisions
+- Use bash for maximum compatibility
+- Implement comprehensive system detection
+- Create fallback mechanisms for dependency installation
+- Provide detailed error messages and troubleshooting guidance
+- Support both interactive and automated installation modes
 
-### Internal Dependencies
-- **InitCommand**: Core initialization logic
-- **CursorCommandGenerator**: Template for Codex implementation
-- **InputService**: User input handling
-- **Template System**: Command template management
-
-## Success Metrics
-
-### Functional Metrics
-- **Codex Option Availability**: 100% (appears in selection prompt)
-- **Template Generation**: 100% (templates created successfully)
-- **User Adoption**: 100% (users can initialize with Codex)
-- **Error Handling**: 100% (graceful degradation when CLI unavailable)
-
-### Performance Metrics
-- **Initialization Time**: < 100ms additional overhead
-- **Memory Usage**: No significant increase
-- **Response Time**: < 2 seconds for all commands
-
-### Quality Metrics
-- **Test Coverage**: > 90% for new code
-- **Code Quality**: Passes all linting and type checking
-- **Documentation**: Complete API and user documentation
-
-## Implementation Strategy
-
-### Phase 1: Core Integration
-- Add Codex option to InitCommand
-- Implement basic CLI validation
-- Create CodexCommandGenerator skeleton
-
-### Phase 2: Template System
-- Implement full CodexCommandGenerator
-- Create Codex-specific command templates
-- Integrate with existing template system
-
-### Phase 3: Testing & Documentation
-- Comprehensive testing suite
-- Update documentation
-- Performance validation
-
-## Conclusion
-
-The Codex integration is a well-scoped feature that follows established patterns in the UX-Kit codebase. The main challenges are ensuring graceful fallback when Codex CLI is unavailable and maintaining backward compatibility. The implementation should be straightforward given the existing Cursor integration as a template.
-
-Key success factors:
-1. Follow existing architectural patterns
-2. Implement comprehensive error handling
-3. Maintain performance requirements
-4. Ensure backward compatibility
-5. Provide clear user feedback
+### Success Metrics
+- Installation success rate > 99%
+- Average installation time < 2 minutes
+- User satisfaction with error messages
+- Cross-platform compatibility across supported systems
