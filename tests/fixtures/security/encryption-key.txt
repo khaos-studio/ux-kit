@@ -1,0 +1,5 @@
+# Test encryption key for security validation
+# This is a test key used for encryption/decryption testing
+# In production, this would be a secure random key
+
+test_encryption_key_12345

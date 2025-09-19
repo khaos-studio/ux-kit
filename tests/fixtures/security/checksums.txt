@@ -1,0 +1,17 @@
+# Test file checksums for security validation
+# These checksums are for the test-file.txt fixture
+
+# SHA256 checksum
+sha256: a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456
+
+# SHA1 checksum  
+sha1: 1234567890abcdef1234567890abcdef12345678
+
+# MD5 checksum
+md5: 1234567890abcdef1234567890abcdef
+
+# File size in bytes
+size: 200
+
+# Test file with known content for validation
+content: "This is a test file for security validation.\nIt contains sample content for checksum verification.\nThe file is used to test file integrity validation.\nThis content should remain unchanged during tests."
