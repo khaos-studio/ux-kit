@@ -245,7 +245,6 @@
 - `tests/mocks/security-manager.mock.sh`
 
 **Technical Tasks**:
-- [ ] Test cryptographic functions
 - [ ] Test input validation and sanitization
 - [ ] Test security policy enforcement
 - [ ] Test error handling for security failures

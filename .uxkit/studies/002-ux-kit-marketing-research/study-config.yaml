@@ -1,0 +1,17 @@
+version: 1.0.0
+studyId: 002-ux-kit-marketing-research
+name: UX-Kit Marketing Research
+description: Research study to understand how to better market and present UX-Kit's value proposition
+createdAt: 2025-09-19T16:34:55.677Z
+updatedAt: 2025-09-19T16:34:55.678Z
+status: draft
+aiAgent:
+  provider: cursor
+  settings:
+research:
+  defaultTemplates:
+    questions: questions-template.md
+    sources: sources-template.md
+    summarize: summarize-template.md
+    interview: interview-template.md
+    synthesize: synthesis-template.md

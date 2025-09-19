@@ -1,0 +1,17 @@
+version: 1.0.0
+studyId: 003-ux-kit-copywriting-research
+name: UX-Kit Copywriting Research
+description: Research study to develop optimal copy and messaging for UX-Kit's landing page, feature pages, and documentation
+createdAt: 2025-09-19T16:38:34.947Z
+updatedAt: 2025-09-19T16:38:34.948Z
+status: draft
+aiAgent:
+  provider: cursor
+  settings:
+research:
+  defaultTemplates:
+    questions: questions-template.md
+    sources: sources-template.md
+    summarize: summarize-template.md
+    interview: interview-template.md
+    synthesize: synthesis-template.md
