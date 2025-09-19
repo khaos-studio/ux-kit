@@ -1,10 +1,10 @@
 # UX-Kit CLI
 
-A lightweight TypeScript CLI toolkit for UX research inspired by GitHub's spec-kit.
+A comprehensive TypeScript CLI toolkit for UX research with AI agent integration, inspired by GitHub's spec-kit.
 
 ## Overview
 
-UX-Kit provides structured research workflows through slash commands, AI agent integration, and file-based artifact management. The tool generates text files and scripts to support AI agent research workflows in IDEs.
+UX-Kit provides structured research workflows through CLI commands, AI agent integration (Cursor, Codex v2, Custom), and file-based artifact management. The tool generates text files and scripts to support AI agent research workflows in IDEs with beautiful CLI experiences and comprehensive test coverage.
 
 ## 🎯 Demo Suite
 
@@ -19,13 +19,15 @@ UX-Kit provides structured research workflows through slash commands, AI agent i
 
 ### Demo Highlights
 
-- **160 tests passing** (100% success rate)
-- **44 TypeScript files** with 4,021 lines of code
-- **Complete CLI** with 10 commands (study management + research workflow)
+- **743+ tests passing** with comprehensive coverage
+- **50+ TypeScript files** with extensive codebase
+- **Complete CLI** with study management and research workflow commands
 - **Professional templates** with Handlebars-style syntax
 - **Cross-platform support** for macOS, Linux, and WSL
+- **AI Agent Integration** supporting Cursor, Codex v2, and Custom agents
 - **Real file system operations** with proper directory structure creation
 - **Full research workflow** from questions to synthesis
+- **Beautiful CLI experience** with ASCII art, progress indicators, and interactive prompts
 
 ## Installation
 
@@ -48,38 +50,32 @@ node dist/index.js --help
 
 ## 🚀 Current Status
 
-**UX-Kit CLI is now fully functional!** The core study management features are implemented and working:
+**UX-Kit CLI is fully functional!** All core features are implemented and working:
 
-### ✅ **Working Features**
+### ✅ **Core Features**
 - **Project Initialization**: `node dist/index.js init` - Sets up UX-Kit directory structure with beautiful ASCII banner
-- **Interactive AI Agent Selection**: Choose between Cursor, Claude, or custom AI agents during initialization
+- **Interactive AI Agent Selection**: Choose between Cursor, Codex v2, or Custom AI agents during initialization
 - **Cursor IDE Integration**: Automatic generation of custom slash commands for seamless IDE workflow
-- **Study Creation**: `node dist/index.js study:create --name "Study Name"` - Creates new research studies
-- **Study Listing**: `node dist/index.js study:list` - Lists all research studies
-- **Study Details**: `node dist/index.js study:show <study-id>` - Shows detailed study information
-- **Study Deletion**: `node dist/index.js study:delete <study-id>` - Removes studies
-- **Research Questions**: `node dist/index.js research:questions --study <study-id> --topic "prompt"` - Generates research questions
-- **Research Sources**: `node dist/index.js research:sources --study <study-id>` - Collects and organizes research sources
-- **Research Synthesis**: `node dist/index.js research:synthesize --study <study-id>` - Synthesizes insights from all artifacts
-- **Source Summaries**: `node dist/index.js research:summarize --study <study-id> --sourceId <source-id>` - Generates summaries for research sources
-- **Interview Processing**: `node dist/index.js research:interview --study <study-id> --transcript "transcript"` - Processes interview transcripts
-- **Help System**: `node dist/index.js --help` - Shows available commands
+- **Codex v2 Integration**: Creates `codex.md` configuration and `.codex/prompts/` directory with UX research prompts
+- **Study Management**: Complete CRUD operations for research studies
+- **Research Workflow**: Question generation, source collection, synthesis, and analysis
 - **Template System**: Handlebars-style templates for research artifacts
 - **File Generation**: Professional Markdown files with proper formatting
 - **Cross-Platform**: Works on macOS, Linux, and WSL
+- **Beautiful CLI**: ASCII art, progress indicators, and interactive prompts
 
-### 🎨 **New Cursor IDE Features**
+### 🤖 **AI Agent Integration**
+- **Cursor IDE**: Automatic generation of custom slash commands (`/specify`, `/research`, `/study`, `/synthesize`)
+- **Codex v2**: Creates `codex.md` configuration file and `.codex/prompts/` directory with 5 UX research prompt templates
+- **Custom Agents**: Support for custom AI agent configurations
+- **IDE Detection**: Smart detection of Cursor IDE installation
+- **Natural Language Prompts**: Codex v2 integration works through natural language interaction
+
+### 🎨 **Enhanced CLI Experience**
 - **Beautiful ASCII Banner**: Eye-catching UX-Kit initialization with colors and emojis
 - **Interactive Prompts**: User-friendly AI agent selection with descriptions
 - **Progress Indicators**: Visual feedback during setup with animated progress
-- **Cursor Commands**: Automatic generation of `/specify`, `/research`, `/study`, and `/synthesize` commands
-- **IDE Detection**: Smart detection of Cursor IDE installation
 - **Enhanced UX**: Emojis, colors, and engaging visual feedback throughout the process
-
-### 🔄 **In Development**
-- Advanced template features and customization
-- Additional AI agent integrations
-- Enhanced slash command functionality
 
 ### Future: NPM Package (Planned)
 
@@ -129,8 +125,9 @@ node dist/index.js delete <study-id>
 node dist/index.js --help
 ```
 
-### Option 3: Cursor IDE Integration
+### Option 3: AI Agent Integration
 
+#### Cursor IDE Integration
 ```bash
 # Initialize with Cursor IDE integration
 node dist/index.js init --aiAgent cursor
@@ -147,17 +144,35 @@ node dist/index.js init --aiAgent cursor
 # /synthesize "Synthesize insights from research data"
 ```
 
+#### Codex v2 Integration
+```bash
+# Initialize with Codex v2 integration
+node dist/index.js init --aiAgent codex
+
+# This creates:
+# - codex.md configuration file in project root
+# - .codex/ directory with README and prompts/
+# - 5 UX research prompt templates (create-study, generate-questions, etc.)
+# - Natural language prompt support
+
+# Use natural language prompts with Codex:
+# "Create a new UX research study about mobile app navigation"
+# "Generate interview questions for testing the checkout process"
+# "Synthesize findings from last week's user interviews"
+```
+
 ## Features
 
 ### Core Capabilities
 
 - **Spec-Driven Research**: Create structured research specifications
-- **AI Agent Integration**: Support for Cursor, Claude, and custom AI agents
+- **AI Agent Integration**: Support for Cursor, Codex v2, and Custom AI agents
 - **File-Based Approach**: Simple text files and scripts, no complex databases
 - **IDE Integration**: Slash commands for seamless workflow integration
 - **Template System**: Handlebars-style templates for consistent research outputs
 - **Beautiful CLI Experience**: ASCII art banners, progress indicators, and interactive prompts
-- **Cursor IDE Integration**: Automatic generation of custom slash commands
+- **Cross-Platform Support**: Works on macOS, Linux, and WSL
+- **Natural Language Prompts**: Codex v2 integration with custom prompt templates
 
 ### Research Workflow
 
@@ -188,11 +203,14 @@ node dist/index.js init --aiAgent cursor
 
 ### Technical Features
 
-- **160 Tests Passing**: 100% test coverage with comprehensive validation
+- **743+ Tests Passing**: Comprehensive test coverage with validation
 - **Cross-Platform**: Works on macOS, Linux, and WSL
 - **TypeScript**: Full type safety with strict mode compliance
 - **Clean Architecture**: Layered design with dependency injection
 - **Professional Output**: Markdown files with tables, code blocks, and formatting
+- **AI Agent Integration**: Cursor, Codex v2, and Custom agent support
+- **File System Operations**: Robust file and directory management
+- **Error Handling**: Comprehensive error handling and user feedback
 
 ## Architecture
 
@@ -386,10 +404,12 @@ The demo demonstrates our powerful template system:
 
 ### Code Quality
 
-- **44 TypeScript files** with 4,021 lines of code
-- **160 tests** with 100% passing rate
+- **50+ TypeScript files** with extensive codebase
+- **743+ tests** with comprehensive coverage
 - **Clean Architecture** with layered design and dependency injection
 - **Type Safety** with TypeScript strict mode compliance
+- **AI Agent Integration** with Cursor, Codex v2, and Custom support
+- **File System Operations** with robust error handling
 
 ### Test Coverage
 
@@ -401,9 +421,11 @@ The demo demonstrates our powerful template system:
 ### Demo Artifacts
 
 - **5 Template Types**: Questions, Sources, Interview, Synthesis, Summary
-- **9 CLI Commands**: Complete workflow management
+- **10+ CLI Commands**: Complete workflow management
 - **Professional Output**: Markdown files with tables and formatting
 - **Realistic Data**: E-commerce checkout optimization study
+- **AI Agent Integration**: Cursor and Codex v2 examples
+- **Custom Prompts**: UX research prompt templates for Codex v2
 
 ## Development
 
@@ -424,10 +446,34 @@ npm run lint
 npm run format
 ```
 
+## 🤖 AI Agent Integration
+
+### Cursor IDE Integration
+- **Automatic Setup**: Detects Cursor IDE installation and generates custom slash commands
+- **Slash Commands**: `/specify`, `/research`, `/study`, `/synthesize` for seamless workflow
+- **IDE Integration**: Commands appear in Cursor's command palette
+- **Workflow Integration**: Direct integration with Cursor's AI capabilities
+
+### Codex v2 Integration
+- **Configuration File**: Creates `codex.md` in project root with UX research instructions
+- **Custom Prompts**: Generates `.codex/prompts/` directory with 5 specialized UX research prompt templates:
+  - `create-study.md` - Create new UX research studies
+  - `generate-questions.md` - Generate research questions
+  - `synthesize-findings.md` - Analyze and synthesize research data
+  - `create-personas.md` - Develop user personas
+  - `research-plan.md` - Create comprehensive research plans
+- **Natural Language**: Works through natural language prompts instead of CLI commands
+- **IDE Integration**: Codex v2 works through IDE integration, not CLI commands
+
+### Custom AI Agents
+- **Flexible Configuration**: Support for custom AI agent setups
+- **Template System**: Handlebars-style templates for consistent outputs
+- **File-Based**: Simple text files and scripts, no complex databases
+
 ## 📚 Documentation
 
 - **[Documentation Index](DOCUMENTATION.md)** - Complete documentation navigation
-- **[Project Status](PROJECT_STATUS.md)** - Detailed project progress (94% complete)
+- **[Project Status](PROJECT_STATUS.md)** - Detailed project progress
 - **[Task Specifications](.specify/specs/tasks.md)** - Complete task breakdown
 - **[Quickstart Guide](.specify/specs/quickstart.md)** - Getting started guide
 - **[Demo Suite](demo/)** - Comprehensive demo and examples
