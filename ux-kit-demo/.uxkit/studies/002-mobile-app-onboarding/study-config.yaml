@@ -1,0 +1,24 @@
+version: 1.0.0
+studyId: 002-mobile-app-onboarding
+name: Mobile App Onboarding
+description: description(str, argsDescription) {
+    if (str === undefined && argsDescription === undefined) return this._description;
+    this._description = str;
+    if (argsDescription) {
+      this._argsDescription = argsDescription;
+    }
+    return this;
+  }
+createdAt: 2025-09-19T00:36:17.080Z
+updatedAt: 2025-09-19T00:36:17.080Z
+status: draft
+aiAgent:
+  provider: cursor
+  settings:
+research:
+  defaultTemplates:
+    questions: questions-template.md
+    sources: sources-template.md
+    summarize: summarize-template.md
+    interview: interview-template.md
+    synthesize: synthesis-template.md

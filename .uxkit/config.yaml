@@ -1,0 +1,15 @@
+version: 1.0.0
+aiAgent:
+  provider: cursor
+  settings:
+storage:
+  basePath: ./.uxkit/studies
+  format: markdown
+research:
+  defaultTemplates:
+    questions: questions-template.md
+    sources: sources-template.md
+    summarize: summarize-template.md
+    interview: interview-template.md
+    synthesize: synthesis-template.md
+  autoSave: true

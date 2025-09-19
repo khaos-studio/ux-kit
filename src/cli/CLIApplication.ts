@@ -82,7 +82,9 @@ export class CLIApplication {
 
   async execute(args: string[]): Promise<any> {
     try {
-      await this.commander.parseAsync(args);
+      // Commander expects full argv array starting with node and script path
+      const fullArgs = ['node', 'uxkit', ...args];
+      await this.commander.parseAsync(fullArgs);
       return { success: true, message: 'Command executed successfully' };
     } catch (error) {
       if (this.errorOutput) {
