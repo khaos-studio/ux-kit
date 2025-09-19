@@ -21,7 +21,7 @@ uxkit --help
 
 ```bash
 # Clone the repository
-git clone https://github.com/ux-kit/cli.git
+git clone https://github.com/khaos-studio/ux-kit.git
 cd ux-kit
 
 # Install dependencies

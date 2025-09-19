@@ -337,7 +337,7 @@ When reporting issues, include:
 
 ### Support Channels
 
-- **GitHub Issues**: [UX-Kit GitHub Repository](https://github.com/ux-kit/cli/issues)
+- **GitHub Issues**: [UX-Kit GitHub Repository](https://github.com/khaos-studio/ux-kit/issues)
 - **Documentation**: [UX-Kit Documentation](https://docs.ux-kit.dev)
 - **Community**: [UX-Kit Discord](https://discord.gg/ux-kit)
 

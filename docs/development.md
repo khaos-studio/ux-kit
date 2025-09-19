@@ -15,7 +15,7 @@ Complete guide for contributing to UX-Kit CLI development.
 
 ```bash
 # Clone the repository
-git clone https://github.com/ux-kit/cli.git
+git clone https://github.com/khaos-studio/ux-kit.git
 cd ux-kit
 
 # Install dependencies
@@ -567,11 +567,11 @@ npm test -- --testNamePattern="path"
 
 ### Getting Help
 
-- Check existing [GitHub Issues](https://github.com/ux-kit/cli/issues)
+- Check existing [GitHub Issues](https://github.com/khaos-studio/ux-kit/issues)
 - Review [Documentation](../README.md)
 - Join our [Discord Community](https://discord.gg/ux-kit)
-- Create a [GitHub Issue](https://github.com/ux-kit/cli/issues/new) for bugs
+- Create a [GitHub Issue](https://github.com/khaos-studio/ux-kit/issues/new) for bugs
 
 ---
 
-Ready to contribute? [Check out our GitHub repository →](https://github.com/ux-kit/cli)
+Ready to contribute? [Check out our GitHub repository →](https://github.com/khaos-studio/ux-kit)

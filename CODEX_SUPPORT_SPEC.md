@@ -179,7 +179,7 @@ This feature adds OpenAI Codex support to UX-Kit CLI, allowing users to select C
 ### References
 - [OpenAI Codex Documentation](https://openai.com/blog/openai-codex)
 - [Spec-Kit Codex Integration](https://github.com/github/spec-kit/pull/14)
-- [UX-Kit Current Implementation](https://github.com/ux-kit/ux-kit)
+- [UX-Kit Current Implementation](https://github.com/khaos-studio/ux-kit)
 
 ---
 
