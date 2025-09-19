@@ -528,12 +528,54 @@ Task agent execute T017  # Update Script
 
 ## Task Summary
 
-- **Total Tasks**: 17
+- **Total Tasks**: 18
 - **Setup Tasks**: 2
 - **Test Tasks**: 5 (all parallel)
 - **Core Tasks**: 7
 - **Integration Tasks**: 3
+- **Enhancement Tasks**: 1
 
 **Estimated Total Effort**: 45 days  
 **Estimated Duration**: 9 weeks (with parallel execution)  
 **Critical Path**: T001 → T002 → T003-T007 → T008-T014 → T015 → T016 → T017
+
+## Enhancement Tasks
+
+### T018: Codex v2 Integration Enhancement ✅ COMPLETED
+**Type**: Enhancement  
+**Priority**: High  
+**Effort**: 2 hours  
+**Size**: medium
+**Dependencies**: Previous Codex integration work  
+**Completed**: 2025-09-19 10:00:00 EDT
+
+**Description**: Enhance Codex v2 integration with custom prompts following patterns from OpenAI Codex PR #2696.
+
+**Acceptance Criteria**:
+- [x] Add .codex/prompts/ directory following Codex v2 patterns
+- [x] Create 5 UX research specific prompt files
+- [x] Update CodexCommandGenerator to generate prompts directory structure
+- [x] Update documentation to reflect new prompts functionality
+- [x] Update tests to verify prompts directory creation
+- [x] All tests passing with comprehensive coverage
+
+**Files to Create/Modify**:
+- `src/services/codex/CodexCommandGenerator.ts` (enhanced with prompts generation) ✅
+- `tests/unit/services/codex/CodexCommandGenerator.test.ts` (updated tests) ✅
+- `src/commands/InitCommand.ts` (updated success messages) ✅
+
+**Technical Tasks**:
+- [x] Create .codex/prompts/ directory structure
+- [x] Generate 5 UX research prompt files (create-study, generate-questions, synthesize-findings, create-personas, research-plan)
+- [x] Update README.md to document available prompts
+- [x] Update success messages to mention prompts directory
+- [x] Add comprehensive test coverage for prompts functionality
+- [x] Verify all 26 tests pass
+
+**Implementation Notes**:
+- Successfully enhanced Codex integration based on insights from OpenAI Codex PR #2696
+- Custom prompts are now stored in .codex/prompts/ following Codex v2 patterns
+- Created 5 specialized UX research prompts for common research tasks
+- All 26 unit tests passing with comprehensive coverage
+- Integration now provides both configuration and ready-to-use prompts
+- Maintains full backward compatibility with existing functionality
