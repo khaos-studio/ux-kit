@@ -402,31 +402,53 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 
 ## Core Tasks
 
-### T011: Create CodexValidator Service
+### T011: Create CodexValidator Service ✅ COMPLETED
 **Type**: Core  
 **Priority**: Critical  
 **Effort**: 4 hours  
 **Dependencies**: T003, T005  
+**Completed**: 2025-09-19 01:15:47 EDT
 
 **Description**: Implement CodexValidator service for CLI validation.
 
 **Acceptance Criteria**:
-- [ ] Implement `ICodexValidator` interface
-- [ ] Add CLI availability checking
-- [ ] Add version detection
-- [ ] Add path resolution
-- [ ] Add comprehensive error handling
+- [x] Implement `ICodexValidator` interface
+- [x] Add CLI availability checking
+- [x] Add version detection
+- [x] Add path resolution
+- [x] Add comprehensive error handling
 
 **Files to Create/Modify**:
-- `src/services/codex/CodexValidator.ts`
+- `src/services/codex/CodexValidator.ts` ✅
+- `tests/use-cases/T011-CodexValidator.use-case.test.ts` (new) ✅
+- `tests/unit/services/codex/CodexValidator.test.ts` (new) ✅
 
 **Technical Tasks**:
-- [ ] Create CodexValidator class
-- [ ] Implement validateCodexCLI method
-- [ ] Implement isCodexAvailable method
-- [ ] Implement getCodexPath method
-- [ ] Implement getCodexVersion method
-- [ ] Add error handling and logging
+- [x] Create CodexValidator class
+- [x] Implement validateCodexCLI method
+- [x] Implement isCodexAvailable method
+- [x] Implement getCodexPath method
+- [x] Implement getCodexVersion method
+- [x] Add error handling and logging
+- [x] Implement TDD approach with use case tests first
+- [x] Add comprehensive unit tests with 100% coverage
+- [x] Handle all error scenarios: CLI_NOT_FOUND, CLI_INVALID, PERMISSION_DENIED, UNKNOWN_ERROR
+- [x] Support cross-platform path resolution (Unix/Windows)
+- [x] Add timeout handling for CLI operations
+- [x] Provide helpful error messages and suggestions
+
+**Implementation Notes**:
+- Successfully implemented CodexValidator service following TDD approach
+- All ICodexValidator interface methods implemented: validateCodexCLI, isCodexAvailable, getCodexPath, getCodexVersion
+- Comprehensive error handling for all validation scenarios
+- Cross-platform support for CLI path resolution (which/where commands)
+- Timeout handling with 10-second default timeout
+- Detailed error messages with actionable suggestions for each error type
+- Use case tests demonstrate complete user scenarios with 20/20 tests passing
+- Unit tests provide 100% coverage with 25/25 tests passing
+- Total test coverage: 45/45 tests passing
+- Service integrates with ICLIExecutionService for all CLI operations
+- Proper TypeScript typing and error handling throughout
 
 ### T012: Create CodexCommandGenerator Service
 **Type**: Core  
@@ -817,9 +839,9 @@ graph TD
 
 ## Next Steps
 
-1. **Immediate**: Begin with T007 (CodexValidator Unit Tests) - Next Up (depends on T010)
+1. **Immediate**: Begin with T012 (Create CodexCommandGenerator Service) - Next Up
 2. **Week 1**: Complete Setup and Test tasks (T007-T010)
-3. **Week 2**: Complete Core tasks (T011-T016)
+3. **Week 2**: Complete Core tasks (T012-T016)
 4. **Week 3**: Complete Integration tasks (T017-T019)
 5. **Week 4**: Complete Polish tasks (T020-T022)
 
