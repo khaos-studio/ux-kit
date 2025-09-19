@@ -73,7 +73,7 @@ New to UX-Kit? Start here:
 
 1. **Install UX-Kit**:
    \`\`\`bash
-   git clone https://github.com/khaos-studio/ux-kit.git && cd ux-kit && npm install && npm run build && npm link
+   npm install -g https://github.com/khaos-studio/ux-kit.git
    \`\`\`
 
 2. **Initialize your project**:
@@ -202,7 +202,7 @@ git --version
 Install UX-Kit globally to use it from anywhere:
 
 \`\`\`bash
-git clone https://github.com/khaos-studio/ux-kit.git && cd ux-kit && npm install && npm run build && npm link
+npm install -g https://github.com/khaos-studio/ux-kit.git
 \`\`\`
 
 ### Local Installation
@@ -210,7 +210,7 @@ git clone https://github.com/khaos-studio/ux-kit.git && cd ux-kit && npm install
 Install UX-Kit locally in your project:
 
 \`\`\`bash
-git clone https://github.com/khaos-studio/ux-kit.git && cd ux-kit && npm install && npm run build
+npm install -g https://github.com/khaos-studio/ux-kit.git
 \`\`\`
 
 ### Verify Installation
@@ -470,7 +470,7 @@ If the \`uxkit\` command is not found:
 npm list -g @ux-kit/cli
 
 # Reinstall if needed
-git clone https://github.com/khaos-studio/ux-kit.git && cd ux-kit && npm install && npm run build && npm link
+npm install -g https://github.com/khaos-studio/ux-kit.git
 \`\`\`
 
 ## Getting Help
@@ -939,7 +939,7 @@ cat .uxkit/studies/007-advanced-configuration-test/questions.md
 
 1. **Template not found**: Re-initialize with \`uxkit init --force\`
 2. **Permission errors**: Check file permissions with \`ls -la .uxkit/\`
-3. **Command not found**: Reinstall with \`git clone https://github.com/khaos-studio/ux-kit.git && cd ux-kit && npm install && npm run build && npm link\`
+3. **Command not found**: Reinstall with \`npm install -g https://github.com/khaos-studio/ux-kit.git\`
 4. **Invalid configuration**: Validate YAML syntax
 
 ### Getting Help
@@ -1496,7 +1496,7 @@ This guide helps you resolve common issues and problems with UX-Kit.
 
 2. **Reinstall globally**:
    \`\`\`bash
-   git clone https://github.com/khaos-studio/ux-kit.git && cd ux-kit && npm install && npm run build && npm link
+   npm install -g https://github.com/khaos-studio/ux-kit.git
    \`\`\`
 
 3. **Check PATH**:
@@ -1517,7 +1517,7 @@ This guide helps you resolve common issues and problems with UX-Kit.
 **Solutions**:
 1. **Use sudo** (not recommended):
    \`\`\`bash
-   sudo git clone https://github.com/khaos-studio/ux-kit.git && cd ux-kit && npm install && npm run build && npm link
+   sudo npm install -g https://github.com/khaos-studio/ux-kit.git
    \`\`\`
 
 2. **Change npm prefix** (recommended):
@@ -1526,7 +1526,7 @@ This guide helps you resolve common issues and problems with UX-Kit.
    npm config set prefix '~/.npm-global'
    echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
    source ~/.bashrc
-   git clone https://github.com/khaos-studio/ux-kit.git && cd ux-kit && npm install && npm run build && npm link
+   npm install -g https://github.com/khaos-studio/ux-kit.git
    \`\`\`
 
 3. **Use nvm** (recommended):
@@ -1534,7 +1534,7 @@ This guide helps you resolve common issues and problems with UX-Kit.
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
    nvm install node
    nvm use node
-   git clone https://github.com/khaos-studio/ux-kit.git && cd ux-kit && npm install && npm run build && npm link
+   npm install -g https://github.com/khaos-studio/ux-kit.git
    \`\`\`
 
 ### Initialization Issues

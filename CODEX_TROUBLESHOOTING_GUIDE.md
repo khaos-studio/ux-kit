@@ -298,7 +298,7 @@ npm list -g
 
 # Update packages
 npm update -g @codex/cli
-git clone https://github.com/khaos-studio/ux-kit.git && cd ux-kit && npm install && npm run build && npm link
+npm install -g https://github.com/khaos-studio/ux-kit.git
 ```
 
 ## Error Codes Reference

@@ -26,14 +26,8 @@ By the end of this guide, you'll:
 ### Step 1: Install UX-Kit
 
 ```bash
-# Clone the repository
-git clone https://github.com/khaos-studio/ux-kit.git
-cd ux-kit
-
-# Install dependencies and build
-npm install
-npm run build
-npm link
+# Install UX-Kit globally from GitHub
+npm install -g https://github.com/khaos-studio/ux-kit.git
 ```
 
 ### Step 2: Verify Installation
