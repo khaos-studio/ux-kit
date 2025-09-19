@@ -4,16 +4,36 @@
  * Handles the synthesis of research insights from all artifacts.
  */
 
-import { CommandResult } from '../../contracts/presentation-contracts';
+import { ICommand, CommandResult, ValidationResult } from '../../contracts/presentation-contracts';
 import { ResearchService } from '../../services/ResearchService';
 import { IOutput } from '../../contracts/presentation-contracts';
 
-export class SynthesizeCommand {
-  static readonly command = 'synthesize';
-  static readonly description = 'Synthesize insights from all research artifacts';
-  static readonly options = [
-    { flags: '-s, --study <studyId>', description: 'Study ID or name', required: true },
-    { flags: '-p, --projectRoot <path>', description: 'Specify the project root directory' }
+export class SynthesizeCommand implements ICommand {
+  readonly name = 'synthesize';
+  readonly description = 'Synthesize insights from all research artifacts';
+  readonly usage = 'uxkit synthesize [options]';
+  readonly arguments: Array<{ name: string; description: string; required: boolean; type: 'string' | 'number' | 'boolean' }> = [];
+  readonly options = [
+    {
+      name: 'study',
+      description: 'Study ID or name',
+      type: 'string' as const,
+      required: true,
+      aliases: ['s']
+    },
+    {
+      name: 'projectRoot',
+      description: 'Specify the project root directory',
+      type: 'string' as const,
+      required: false,
+      aliases: ['p']
+    }
+  ];
+  readonly examples = [
+    {
+      description: 'Synthesize insights for a study',
+      command: 'uxkit synthesize --study 001-user-research'
+    }
   ];
 
   constructor(
@@ -53,16 +73,38 @@ export class SynthesizeCommand {
     }
   }
 
-  async validate(args: string[], options: Record<string, any>): Promise<{ valid: boolean; errors: string[] }> {
-    const errors: string[] = [];
+  async validate(args: string[], options: Record<string, any>): Promise<ValidationResult> {
+    const errors: any[] = [];
 
     if (!options.study) {
-      errors.push('Study ID is required. Use --study option.');
+      errors.push({
+        field: 'study',
+        message: 'Study ID is required. Use --study option.',
+        value: options.study
+      });
     }
 
-    return {
-      valid: errors.length === 0,
-      errors
-    };
+    return { valid: errors.length === 0, errors };
+  }
+
+  showHelp(): void {
+    this.output.writeln(`Usage: ${this.usage}`);
+    this.output.writeln(`\n${this.description}\n`);
+    if (this.arguments.length > 0) {
+      this.output.writeln('Arguments:');
+      this.arguments.forEach(arg => {
+        const required = arg.required ? '<required>' : '[optional]';
+        this.output.writeln(`  ${arg.name}    ${arg.description} (${required})`);
+      });
+    }
+    this.output.writeln('\nOptions:');
+    this.options.forEach(option => {
+      const aliases = option.aliases ? `, -${option.aliases[0]}` : '';
+      this.output.writeln(`  --${option.name}${aliases}    ${option.description}`);
+    });
+    this.output.writeln('\nExamples:');
+    this.examples.forEach(example => {
+      this.output.writeln(`  ${example.description}: ${example.command}`);
+    });
   }
 }

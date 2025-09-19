@@ -15,6 +15,10 @@ import { ListStudiesCommand } from './commands/study/ListStudiesCommand';
 import { ShowStudyCommand } from './commands/study/ShowStudyCommand';
 import { DeleteStudyCommand } from './commands/study/DeleteStudyCommand';
 import { QuestionsCommand } from './commands/research/QuestionsCommand';
+import { SourcesCommand } from './commands/research/SourcesCommand';
+import { SynthesizeCommand } from './commands/research/SynthesizeCommand';
+import { SummarizeCommand } from './commands/research/SummarizeCommand';
+import { InterviewCommand } from './commands/research/InterviewCommand';
 
 // Services
 import { DirectoryService } from './services/DirectoryService';
@@ -75,9 +79,13 @@ async function main(): Promise<void> {
     cliApp.registerCommand(new ListStudiesCommand(studyService, output));
     cliApp.registerCommand(new ShowStudyCommand(studyService, output));
     cliApp.registerCommand(new DeleteStudyCommand(studyService, output));
-    cliApp.registerCommand(new QuestionsCommand(researchService, output));
     
-    // Note: Other research commands (sources, synthesize, etc.) need to be fixed to implement ICommand interface properly
+    // Register research commands
+    cliApp.registerCommand(new QuestionsCommand(researchService, output));
+    cliApp.registerCommand(new SourcesCommand(researchService, output));
+    cliApp.registerCommand(new SynthesizeCommand(researchService, output));
+    cliApp.registerCommand(new SummarizeCommand(researchService, output));
+    cliApp.registerCommand(new InterviewCommand(researchService, output));
 
     // Execute CLI with command line arguments
     const result = await cliApp.execute(process.argv.slice(2));

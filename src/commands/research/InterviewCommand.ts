@@ -4,17 +4,53 @@
  * Handles the processing and formatting of interview transcripts.
  */
 
-import { CommandResult } from '../../contracts/presentation-contracts';
+import { ICommand, CommandResult, ValidationResult } from '../../contracts/presentation-contracts';
 import { ResearchService } from '../../services/ResearchService';
 import { IOutput } from '../../contracts/presentation-contracts';
 
-export class InterviewCommand {
-  static readonly command = 'interview <transcript>';
-  static readonly description = 'Process and format an interview transcript';
-  static readonly options = [
-    { flags: '-s, --study <studyId>', description: 'Study ID or name', required: true },
-    { flags: '--participant <participantId>', description: 'Participant ID (auto-generated if not provided)' },
-    { flags: '-p, --projectRoot <path>', description: 'Specify the project root directory' }
+export class InterviewCommand implements ICommand {
+  readonly name = 'interview';
+  readonly description = 'Process and format an interview transcript';
+  readonly usage = 'uxkit interview <transcript> [options]';
+  readonly arguments = [
+    {
+      name: 'transcript',
+      description: 'Interview transcript content or file path',
+      required: true,
+      type: 'string' as const
+    }
+  ];
+  readonly options = [
+    {
+      name: 'study',
+      description: 'Study ID or name',
+      type: 'string' as const,
+      required: true,
+      aliases: ['s']
+    },
+    {
+      name: 'participant',
+      description: 'Participant ID (auto-generated if not provided)',
+      type: 'string' as const,
+      required: false
+    },
+    {
+      name: 'projectRoot',
+      description: 'Specify the project root directory',
+      type: 'string' as const,
+      required: false,
+      aliases: ['p']
+    }
+  ];
+  readonly examples = [
+    {
+      description: 'Process an interview transcript',
+      command: 'uxkit interview "Interview transcript content..." --study 001-user-research'
+    },
+    {
+      description: 'Process interview with specific participant ID',
+      command: 'uxkit interview "Interview transcript content..." --study 001-user-research --participant P001'
+    }
   ];
 
   constructor(
@@ -55,21 +91,45 @@ export class InterviewCommand {
     }
   }
 
-  async validate(args: string[], options: Record<string, any>): Promise<{ valid: boolean; errors: string[] }> {
-    const errors: string[] = [];
+  async validate(args: string[], options: Record<string, any>): Promise<ValidationResult> {
+    const errors: any[] = [];
 
     if (!args[0]) {
-      errors.push('Interview transcript is required');
+      errors.push({
+        field: 'transcript',
+        message: 'Interview transcript is required',
+        value: args[0]
+      });
     }
 
     if (!options.study) {
-      errors.push('Study ID is required. Use --study option.');
+      errors.push({
+        field: 'study',
+        message: 'Study ID is required. Use --study option.',
+        value: options.study
+      });
     }
 
-    return {
-      valid: errors.length === 0,
-      errors
-    };
+    return { valid: errors.length === 0, errors };
+  }
+
+  showHelp(): void {
+    this.output.writeln(`Usage: ${this.usage}`);
+    this.output.writeln(`\n${this.description}\n`);
+    this.output.writeln('Arguments:');
+    this.arguments.forEach(arg => {
+      const required = arg.required ? '<required>' : '[optional]';
+      this.output.writeln(`  ${arg.name}    ${arg.description} (${required})`);
+    });
+    this.output.writeln('\nOptions:');
+    this.options.forEach(option => {
+      const aliases = option.aliases ? `, -${option.aliases[0]}` : '';
+      this.output.writeln(`  --${option.name}${aliases}    ${option.description}`);
+    });
+    this.output.writeln('\nExamples:');
+    this.examples.forEach(example => {
+      this.output.writeln(`  ${example.description}: ${example.command}`);
+    });
   }
 
   private generateParticipantId(): string {

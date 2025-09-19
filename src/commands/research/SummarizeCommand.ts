@@ -4,16 +4,43 @@
  * Handles the summarization of research sources.
  */
 
-import { CommandResult } from '../../contracts/presentation-contracts';
+import { ICommand, CommandResult, ValidationResult } from '../../contracts/presentation-contracts';
 import { ResearchService } from '../../services/ResearchService';
 import { IOutput } from '../../contracts/presentation-contracts';
 
-export class SummarizeCommand {
-  static readonly command = 'summarize <sourceId>';
-  static readonly description = 'Generate a summary for a research source';
-  static readonly options = [
-    { flags: '-s, --study <studyId>', description: 'Study ID or name', required: true },
-    { flags: '-p, --projectRoot <path>', description: 'Specify the project root directory' }
+export class SummarizeCommand implements ICommand {
+  readonly name = 'summarize';
+  readonly description = 'Generate a summary for a research source';
+  readonly usage = 'uxkit summarize <sourceId> [options]';
+  readonly arguments = [
+    {
+      name: 'sourceId',
+      description: 'Source ID to summarize',
+      required: true,
+      type: 'string' as const
+    }
+  ];
+  readonly options = [
+    {
+      name: 'study',
+      description: 'Study ID or name',
+      type: 'string' as const,
+      required: true,
+      aliases: ['s']
+    },
+    {
+      name: 'projectRoot',
+      description: 'Specify the project root directory',
+      type: 'string' as const,
+      required: false,
+      aliases: ['p']
+    }
+  ];
+  readonly examples = [
+    {
+      description: 'Summarize a research source',
+      command: 'uxkit summarize source-123 --study 001-user-research'
+    }
   ];
 
   constructor(
@@ -53,20 +80,44 @@ export class SummarizeCommand {
     }
   }
 
-  async validate(args: string[], options: Record<string, any>): Promise<{ valid: boolean; errors: string[] }> {
-    const errors: string[] = [];
+  async validate(args: string[], options: Record<string, any>): Promise<ValidationResult> {
+    const errors: any[] = [];
 
     if (!args[0]) {
-      errors.push('Source ID is required');
+      errors.push({
+        field: 'sourceId',
+        message: 'Source ID is required',
+        value: args[0]
+      });
     }
 
     if (!options.study) {
-      errors.push('Study ID is required. Use --study option.');
+      errors.push({
+        field: 'study',
+        message: 'Study ID is required. Use --study option.',
+        value: options.study
+      });
     }
 
-    return {
-      valid: errors.length === 0,
-      errors
-    };
+    return { valid: errors.length === 0, errors };
+  }
+
+  showHelp(): void {
+    this.output.writeln(`Usage: ${this.usage}`);
+    this.output.writeln(`\n${this.description}\n`);
+    this.output.writeln('Arguments:');
+    this.arguments.forEach(arg => {
+      const required = arg.required ? '<required>' : '[optional]';
+      this.output.writeln(`  ${arg.name}    ${arg.description} (${required})`);
+    });
+    this.output.writeln('\nOptions:');
+    this.options.forEach(option => {
+      const aliases = option.aliases ? `, -${option.aliases[0]}` : '';
+      this.output.writeln(`  --${option.name}${aliases}    ${option.description}`);
+    });
+    this.output.writeln('\nExamples:');
+    this.examples.forEach(example => {
+      this.output.writeln(`  ${example.description}: ${example.command}`);
+    });
   }
 }
