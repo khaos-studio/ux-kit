@@ -1,555 +1,411 @@
 /**
- * Presentation Layer Contracts
+ * Presentation Contracts for Codex Support Integration
  * 
- * This file defines the presentation layer interfaces and types for the UX-Kit TypeScript CLI.
- * The presentation layer handles user interface, command parsing, output formatting, and
- * IDE integration, following clean architecture principles.
- * 
- * The presentation layer is inspired by GitHub's spec-kit approach for structured workflows.
+ * These contracts define the presentation layer interfaces for Codex integration,
+ * including CLI commands, user interfaces, and output formatting.
  */
 
-import { CommandResult } from './application-contracts';
+import {
+  CodexConfiguration,
+  CodexValidationResponse,
+  CodexCommandTemplate,
+  CodexStatus,
+  CodexError
+} from './domain-contracts';
 
 // ============================================================================
-// CLI Application Interfaces
+// CLI Command Contracts
 // ============================================================================
 
 /**
- * CLI application interface
+ * Interface for CLI command execution
  */
-export interface ICLIApplication {
+export interface ICLICommand {
+  /**
+   * Command name
+   */
   readonly name: string;
-  readonly version: string;
+  
+  /**
+   * Command description
+   */
   readonly description: string;
   
-  registerCommand(command: ICommand): void;
-  unregisterCommand(name: string): void;
-  getCommand(name: string): ICommand | null;
-  listCommands(): ICommand[];
-  
-  execute(args: string[]): Promise<void>;
-  showHelp(): void;
-  showVersion(): void;
-  
-  setOutput(output: IOutput): void;
-  setErrorOutput(errorOutput: IOutput): void;
-  setLogger(logger: ILogger): void;
-}
-
-/**
- * Command interface
- */
-export interface ICommand {
-  readonly name: string;
-  readonly description: string;
+  /**
+   * Command usage
+   */
   readonly usage: string;
-  readonly arguments: CommandArgument[];
-  readonly options: CommandOption[];
-  readonly examples: CommandExample[];
   
-  execute(args: string[], options: Record<string, any>): Promise<CommandResult>;
-  validate(args: string[], options: Record<string, any>): Promise<ValidationResult>;
-  showHelp(): void;
+  /**
+   * Command options
+   */
+  readonly options: readonly CLICommandOption[];
+  
+  /**
+   * Execute command
+   */
+  execute(args: readonly string[], options: Record<string, any>): Promise<CLICommandResult>;
+  
+  /**
+   * Validate command arguments
+   */
+  validate(args: readonly string[], options: Record<string, any>): Promise<boolean>;
+  
+  /**
+   * Get command help
+   */
+  getHelp(): string;
 }
 
 /**
- * Command argument definition
+ * CLI command option definition
  */
-export interface CommandArgument {
+export interface CLICommandOption {
   readonly name: string;
+  readonly shortName?: string;
   readonly description: string;
-  readonly required: boolean;
-  readonly type: 'string' | 'number' | 'boolean' | 'array';
-  readonly defaultValue?: any;
-  readonly validator?: ArgumentValidator;
-}
-
-/**
- * Command option definition
- */
-export interface CommandOption {
-  readonly name: string;
-  readonly description: string;
-  readonly type: 'string' | 'number' | 'boolean' | 'array';
+  readonly type: 'string' | 'boolean' | 'number' | 'array';
   readonly required: boolean;
   readonly defaultValue?: any;
-  readonly aliases?: string[];
-  readonly validator?: OptionValidator;
+  readonly choices?: readonly string[];
 }
 
 /**
- * Command example
+ * CLI command execution result
  */
-export interface CommandExample {
-  readonly description: string;
-  readonly command: string;
-  readonly explanation?: string;
-}
-
-/**
- * Argument validator
- */
-export interface ArgumentValidator {
-  validate(value: any): Promise<boolean>;
-  getErrorMessage(value: any): string;
-}
-
-/**
- * Option validator
- */
-export interface OptionValidator {
-  validate(value: any): Promise<boolean>;
-  getErrorMessage(value: any): string;
-}
-
-/**
- * Validation result
- */
-export interface ValidationResult {
-  readonly valid: boolean;
-  readonly errors: ValidationError[];
-}
-
-/**
- * Validation error
- */
-export interface ValidationError {
-  readonly field: string;
+export interface CLICommandResult {
+  readonly success: boolean;
   readonly message: string;
-  readonly value: any;
+  readonly data?: any;
+  readonly error?: CodexError;
+  readonly exitCode: number;
 }
 
 // ============================================================================
-// Output Interfaces
+// User Interface Contracts
 // ============================================================================
 
 /**
- * Output interface
+ * Interface for user interface operations
  */
-export interface IOutput {
-  write(text: string): void;
-  writeln(text: string): void;
-  writeError(text: string): void;
-  writeErrorln(text: string): void;
-  clear(): void;
-  flush(): void;
-}
-
-/**
- * Console output implementation
- */
-export interface IConsoleOutput extends IOutput {
-  readonly name: 'console';
-  readonly colors: boolean;
-  readonly timestamps: boolean;
+export interface IUserInterface {
+  /**
+   * Display message to user
+   */
+  displayMessage(message: string, type?: MessageType): void;
   
-  write(text: string): void;
-  writeln(text: string): void;
-  writeError(text: string): void;
-  writeErrorln(text: string): void;
-  clear(): void;
-  flush(): void;
-}
-
-/**
- * File output implementation
- */
-export interface IFileOutput extends IOutput {
-  readonly name: 'file';
-  readonly filePath: string;
-  readonly append: boolean;
+  /**
+   * Display error to user
+   */
+  displayError(error: CodexError): void;
   
-  write(text: string): void;
-  writeln(text: string): void;
-  writeError(text: string): void;
-  writeErrorln(text: string): void;
-  clear(): void;
-  flush(): void;
-}
-
-// ============================================================================
-// Formatter Interfaces
-// ============================================================================
-
-/**
- * Formatter interface
- */
-export interface IFormatter {
-  format(data: any, options?: FormatOptions): string;
-  formatTable(data: any[], options?: TableFormatOptions): string;
-  formatList(items: any[], options?: ListFormatOptions): string;
-  formatJson(data: any, options?: JsonFormatOptions): string;
-  formatYaml(data: any, options?: YamlFormatOptions): string;
-  formatMarkdown(data: any, options?: MarkdownFormatOptions): string;
-}
-
-/**
- * Format options
- */
-export interface FormatOptions {
-  readonly indent?: number;
-  readonly colors?: boolean;
-  readonly maxWidth?: number;
-  readonly truncate?: boolean;
-}
-
-/**
- * Table format options
- */
-export interface TableFormatOptions extends FormatOptions {
-  readonly headers?: string[];
-  readonly align?: 'left' | 'center' | 'right';
-  readonly border?: boolean;
-  readonly padding?: number;
-}
-
-/**
- * List format options
- */
-export interface ListFormatOptions extends FormatOptions {
-  readonly style?: 'bullet' | 'numbered' | 'dash';
-  readonly indent?: number;
-  readonly separator?: string;
-}
-
-/**
- * JSON format options
- */
-export interface JsonFormatOptions extends FormatOptions {
-  readonly pretty?: boolean;
-  readonly sortKeys?: boolean;
-  readonly replacer?: (key: string, value: any) => any;
-}
-
-/**
- * YAML format options
- */
-export interface YamlFormatOptions extends FormatOptions {
-  readonly indent?: number;
-  readonly lineWidth?: number;
-  readonly noRefs?: boolean;
-  readonly sortKeys?: boolean;
-}
-
-/**
- * Markdown format options
- */
-export interface MarkdownFormatOptions extends FormatOptions {
-  readonly level?: number;
-  readonly includeToc?: boolean;
-  readonly codeBlocks?: boolean;
-  readonly tables?: boolean;
-}
-
-// ============================================================================
-// Progress Interfaces
-// ============================================================================
-
-/**
- * Progress indicator interface
- */
-export interface IProgressIndicator {
-  start(total: number, message?: string): void;
-  update(current: number, message?: string): void;
-  increment(message?: string): void;
-  finish(message?: string): void;
-  stop(): void;
-  isRunning(): boolean;
-}
-
-/**
- * Spinner progress indicator
- */
-export interface ISpinnerProgressIndicator extends IProgressIndicator {
-  readonly name: 'spinner';
-  readonly spinner: string;
-  readonly interval: number;
+  /**
+   * Display progress indicator
+   */
+  displayProgress(message: string, progress: number): void;
   
-  start(total: number, message?: string): void;
-  update(current: number, message?: string): void;
-  increment(message?: string): void;
-  finish(message?: string): void;
-  stop(): void;
-  isRunning(): boolean;
-}
-
-/**
- * Bar progress indicator
- */
-export interface IBarProgressIndicator extends IProgressIndicator {
-  readonly name: 'bar';
-  readonly width: number;
-  readonly character: string;
-  readonly emptyCharacter: string;
+  /**
+   * Display confirmation prompt
+   */
+  displayConfirmation(message: string): Promise<boolean>;
   
-  start(total: number, message?: string): void;
-  update(current: number, message?: string): void;
-  increment(message?: string): void;
-  finish(message?: string): void;
-  stop(): void;
-  isRunning(): boolean;
-}
-
-// ============================================================================
-// Logger Interfaces
-// ============================================================================
-
-/**
- * Logger interface
- */
-export interface ILogger {
-  debug(message: string, context?: Record<string, any>): void;
-  info(message: string, context?: Record<string, any>): void;
-  warn(message: string, context?: Record<string, any>): void;
-  error(message: string, context?: Record<string, any>): void;
-  fatal(message: string, context?: Record<string, any>): void;
+  /**
+   * Display selection prompt
+   */
+  displaySelection(message: string, choices: readonly string[]): Promise<string>;
   
-  setLevel(level: LogLevel): void;
-  getLevel(): LogLevel;
-  isEnabled(level: LogLevel): boolean;
-}
-
-/**
- * Log levels
- */
-export enum LogLevel {
-  DEBUG = 'debug',
-  INFO = 'info',
-  WARN = 'warn',
-  ERROR = 'error',
-  FATAL = 'fatal'
-}
-
-// ============================================================================
-// IDE Integration Interfaces
-// ============================================================================
-
-/**
- * IDE integration interface
- */
-export interface IIDEIntegration {
-  readonly name: string;
-  readonly version: string;
-  readonly supportedCommands: string[];
+  /**
+   * Display input prompt
+   */
+  displayInput(message: string, defaultValue?: string): Promise<string>;
   
-  registerSlashCommand(command: ISlashCommand): void;
-  unregisterSlashCommand(name: string): void;
-  getSlashCommand(name: string): ISlashCommand | null;
-  listSlashCommands(): ISlashCommand[];
+  /**
+   * Clear screen
+   */
+  clearScreen(): void;
   
-  executeSlashCommand(name: string, args: string[]): Promise<void>;
-  showSlashCommandHelp(name: string): void;
-  showAllSlashCommands(): void;
+  /**
+   * Display help information
+   */
+  displayHelp(helpText: string): void;
 }
 
 /**
- * Slash command interface
+ * Message types for user interface
  */
-export interface ISlashCommand {
-  readonly name: string;
-  readonly description: string;
-  readonly usage: string;
-  readonly examples: SlashCommandExample[];
-  
-  execute(args: string[], context: IDEContext): Promise<void>;
-  validate(args: string[]): Promise<ValidationResult>;
-  showHelp(): void;
-}
-
-/**
- * Slash command example
- */
-export interface SlashCommandExample {
-  readonly description: string;
-  readonly command: string;
-  readonly explanation?: string;
-}
-
-/**
- * IDE context
- */
-export interface IDEContext {
-  readonly workspace: string;
-  readonly currentFile?: string;
-  readonly selection?: string;
-  readonly cursor?: CursorPosition;
-  readonly project?: ProjectInfo;
-}
-
-/**
- * Cursor position
- */
-export interface CursorPosition {
-  readonly line: number;
-  readonly column: number;
-  readonly offset: number;
-}
-
-/**
- * Project information
- */
-export interface ProjectInfo {
-  readonly name: string;
-  readonly path: string;
-  readonly type: string;
-  readonly version?: string;
-  readonly dependencies?: Record<string, string>;
-}
-
-// ============================================================================
-// Cursor IDE Integration
-// ============================================================================
-
-/**
- * Cursor IDE integration
- */
-export interface ICursorIntegration extends IIDEIntegration {
-  readonly name: 'cursor';
-  readonly version: string;
-  readonly supportedCommands: string[];
-  
-  registerSlashCommand(command: ISlashCommand): void;
-  unregisterSlashCommand(name: string): void;
-  getSlashCommand(name: string): ISlashCommand | null;
-  listSlashCommands(): ISlashCommand[];
-  
-  executeSlashCommand(name: string, args: string[]): Promise<void>;
-  showSlashCommandHelp(name: string): void;
-  showAllSlashCommands(): void;
-  
-  // Cursor-specific methods
-  getCurrentWorkspace(): Promise<string>;
-  getCurrentFile(): Promise<string | null>;
-  getSelection(): Promise<string | null>;
-  getCursorPosition(): Promise<CursorPosition | null>;
-  insertText(text: string, position?: CursorPosition): Promise<void>;
-  replaceSelection(text: string): Promise<void>;
-  showNotification(message: string, type?: NotificationType): Promise<void>;
-}
-
-/**
- * Notification types
- */
-export enum NotificationType {
+export enum MessageType {
   INFO = 'info',
   SUCCESS = 'success',
   WARNING = 'warning',
-  ERROR = 'error'
+  ERROR = 'error',
+  DEBUG = 'debug'
 }
 
 // ============================================================================
-// Command Implementations
+// Output Formatting Contracts
 // ============================================================================
 
 /**
- * Init command
+ * Interface for output formatting
  */
-export interface IInitCommand extends ICommand {
-  readonly name: 'init';
-  readonly description: 'Initialize UX-Kit in the current project';
-  readonly usage: 'uxkit init [options]';
-  readonly arguments: CommandArgument[];
-  readonly options: CommandOption[];
-  readonly examples: CommandExample[];
+export interface IOutputFormatter {
+  /**
+   * Format validation response
+   */
+  formatValidationResponse(response: CodexValidationResponse): string;
   
-  execute(args: string[], options: {
-    'ai-agent'?: string;
-    'template'?: string;
-    'force'?: boolean;
-  }): Promise<CommandResult>;
+  /**
+   * Format status information
+   */
+  formatStatus(status: CodexStatus): string;
+  
+  /**
+   * Format command templates
+   */
+  formatCommandTemplates(templates: readonly CodexCommandTemplate[]): string;
+  
+  /**
+   * Format error information
+   */
+  formatError(error: CodexError): string;
+  
+  /**
+   * Format configuration
+   */
+  formatConfiguration(config: CodexConfiguration): string;
+  
+  /**
+   * Format help text
+   */
+  formatHelp(helpText: string): string;
 }
 
 /**
- * Research questions command
+ * Output format types
  */
-export interface IResearchQuestionsCommand extends ICommand {
-  readonly name: 'research:questions';
-  readonly description: 'Generate research questions from a prompt';
-  readonly usage: 'uxkit research:questions <prompt> [options]';
-  readonly arguments: CommandArgument[];
-  readonly options: CommandOption[];
-  readonly examples: CommandExample[];
+export enum OutputFormat {
+  TEXT = 'text',
+  JSON = 'json',
+  YAML = 'yaml',
+  TABLE = 'table',
+  MARKDOWN = 'markdown'
+}
+
+// ============================================================================
+// Interactive Prompts Contracts
+// ============================================================================
+
+/**
+ * Interface for interactive prompts
+ */
+export interface IInteractivePrompt {
+  /**
+   * Display AI agent selection prompt
+   */
+  displayAIAgentSelection(): Promise<string>;
   
-  execute(args: string[], options: {
-    'study'?: string;
-    'categories'?: string[];
-    'max-questions'?: number;
-  }): Promise<CommandResult>;
+  /**
+   * Display Codex configuration prompt
+   */
+  displayCodexConfigurationPrompt(): Promise<Partial<CodexConfiguration>>;
+  
+  /**
+   * Display validation confirmation prompt
+   */
+  displayValidationConfirmation(): Promise<boolean>;
+  
+  /**
+   * Display template generation confirmation
+   */
+  displayTemplateGenerationConfirmation(): Promise<boolean>;
+  
+  /**
+   * Display error resolution prompt
+   */
+  displayErrorResolutionPrompt(error: CodexError): Promise<string>;
+}
+
+// ============================================================================
+// Progress Reporting Contracts
+// ============================================================================
+
+/**
+ * Interface for progress reporting
+ */
+export interface IProgressReporter {
+  /**
+   * Start progress reporting
+   */
+  startProgress(message: string): void;
+  
+  /**
+   * Update progress
+   */
+  updateProgress(progress: number, message?: string): void;
+  
+  /**
+   * Complete progress
+   */
+  completeProgress(message?: string): void;
+  
+  /**
+   * Report error
+   */
+  reportError(error: CodexError): void;
+  
+  /**
+   * Stop progress reporting
+   */
+  stopProgress(): void;
+}
+
+// ============================================================================
+// Command Line Interface Contracts
+// ============================================================================
+
+/**
+ * Interface for command line interface operations
+ */
+export interface ICommandLineInterface {
+  /**
+   * Parse command line arguments
+   */
+  parseArguments(args: readonly string[]): ParsedArguments;
+  
+  /**
+   * Display command help
+   */
+  displayHelp(command: string): void;
+  
+  /**
+   * Display version information
+   */
+  displayVersion(): void;
+  
+  /**
+   * Execute command
+   */
+  executeCommand(command: string, args: readonly string[]): Promise<void>;
+  
+  /**
+   * Register command
+   */
+  registerCommand(command: ICLICommand): void;
+  
+  /**
+   * Get available commands
+   */
+  getAvailableCommands(): readonly string[];
 }
 
 /**
- * Research sources command
+ * Parsed command line arguments
  */
-export interface IResearchSourcesCommand extends ICommand {
-  readonly name: 'research:sources';
-  readonly description: 'Discover and log research sources';
-  readonly usage: 'uxkit research:sources [options]';
-  readonly arguments: CommandArgument[];
-  readonly options: CommandOption[];
-  readonly examples: CommandExample[];
+export interface ParsedArguments {
+  readonly command: string;
+  readonly args: readonly string[];
+  readonly options: Record<string, any>;
+  readonly valid: boolean;
+  readonly errors: readonly string[];
+}
+
+// ============================================================================
+// Display Contracts
+// ============================================================================
+
+/**
+ * Interface for display operations
+ */
+export interface IDisplayService {
+  /**
+   * Display table
+   */
+  displayTable(data: readonly any[], columns: readonly string[]): void;
   
-  execute(args: string[], options: {
-    'study'?: string;
-    'types'?: string[];
-    'max-sources'?: number;
-    'auto-discover'?: boolean;
-  }): Promise<CommandResult>;
+  /**
+   * Display list
+   */
+  displayList(items: readonly string[], title?: string): void;
+  
+  /**
+   * Display code block
+   */
+  displayCodeBlock(code: string, language?: string): void;
+  
+  /**
+   * Display JSON
+   */
+  displayJSON(data: any): void;
+  
+  /**
+   * Display YAML
+   */
+  displayYAML(data: any): void;
+  
+  /**
+   * Display markdown
+   */
+  displayMarkdown(markdown: string): void;
+}
+
+// ============================================================================
+// Theme and Styling Contracts
+// ============================================================================
+
+/**
+ * Interface for theme and styling
+ */
+export interface IThemeService {
+  /**
+   * Get theme colors
+   */
+  getColors(): ThemeColors;
+  
+  /**
+   * Apply theme to text
+   */
+  applyTheme(text: string, style: TextStyle): string;
+  
+  /**
+   * Get styled message
+   */
+  getStyledMessage(message: string, type: MessageType): string;
+  
+  /**
+   * Get styled error
+   */
+  getStyledError(error: CodexError): string;
+  
+  /**
+   * Get styled success
+   */
+  getStyledSuccess(message: string): string;
 }
 
 /**
- * Research summarize command
+ * Theme colors
  */
-export interface IResearchSummarizeCommand extends ICommand {
-  readonly name: 'research:summarize';
-  readonly description: 'Summarize source documents';
-  readonly usage: 'uxkit research:summarize <source> [options]';
-  readonly arguments: CommandArgument[];
-  readonly options: CommandOption[];
-  readonly examples: CommandExample[];
-  
-  execute(args: string[], options: {
-    'study'?: string;
-    'focus-areas'?: string[];
-    'max-length'?: number;
-  }): Promise<CommandResult>;
+export interface ThemeColors {
+  readonly primary: string;
+  readonly secondary: string;
+  readonly success: string;
+  readonly warning: string;
+  readonly error: string;
+  readonly info: string;
+  readonly background: string;
+  readonly foreground: string;
 }
 
 /**
- * Research interview command
+ * Text styles
  */
-export interface IResearchInterviewCommand extends ICommand {
-  readonly name: 'research:interview';
-  readonly description: 'Format interview transcripts';
-  readonly usage: 'uxkit research:interview <transcript> [options]';
-  readonly arguments: CommandArgument[];
-  readonly options: CommandOption[];
-  readonly examples: CommandExample[];
-  
-  execute(args: string[], options: {
-    'study'?: string;
-    'participant'?: string;
-    'focus-areas'?: string[];
-  }): Promise<CommandResult>;
-}
-
-/**
- * Research synthesize command
- */
-export interface IResearchSynthesizeCommand extends ICommand {
-  readonly name: 'research:synthesize';
-  readonly description: 'Synthesize insights from all artifacts';
-  readonly usage: 'uxkit research:synthesize [options]';
-  readonly arguments: CommandArgument[];
-  readonly options: CommandOption[];
-  readonly examples: CommandExample[];
-  
-  execute(args: string[], options: {
-    'study'?: string;
-    'format'?: string;
-    'focus-areas'?: string[];
-    'categories'?: string[];
-    'min-confidence'?: number;
-  }): Promise<CommandResult>;
+export enum TextStyle {
+  BOLD = 'bold',
+  ITALIC = 'italic',
+  UNDERLINE = 'underline',
+  STRIKETHROUGH = 'strikethrough',
+  DIM = 'dim',
+  INVERSE = 'inverse'
 }
 
 // ============================================================================
@@ -557,107 +413,154 @@ export interface IResearchSynthesizeCommand extends ICommand {
 // ============================================================================
 
 /**
- * Base class for presentation exceptions
+ * Base exception for presentation layer errors
  */
-export abstract class PresentationException extends Error {
-  abstract readonly code: string;
-  abstract readonly statusCode: number;
-  
+export class CodexPresentationException extends Error {
   constructor(
     message: string,
-    public readonly context?: Record<string, any>
+    public readonly code: string,
+    public readonly recoverable: boolean = false,
+    public readonly originalError?: Error
   ) {
     super(message);
-    this.name = this.constructor.name;
+    this.name = 'CodexPresentationException';
   }
 }
 
 /**
- * Exception thrown when command parsing fails
+ * Exception thrown when CLI command execution fails
  */
-export class CommandParsingException extends PresentationException {
-  readonly code = 'COMMAND_PARSING_ERROR';
-  readonly statusCode = 400;
-  
-  constructor(command: string, args: string[], originalError: Error) {
-    super(
-      `Failed to parse command '${command}' with args [${args.join(', ')}]: ${originalError.message}`,
-      { command, args, originalError: originalError.message }
-    );
+export class CodexCLICommandException extends CodexPresentationException {
+  constructor(
+    message: string,
+    public readonly command: string,
+    public readonly args: readonly string[],
+    originalError?: Error
+  ) {
+    super(message, 'CODEX_CLI_COMMAND_ERROR', true, originalError);
+    this.name = 'CodexCLICommandException';
   }
 }
 
 /**
- * Exception thrown when command validation fails
+ * Exception thrown when user interface operations fail
  */
-export class CommandValidationException extends PresentationException {
-  readonly code = 'COMMAND_VALIDATION_ERROR';
-  readonly statusCode = 400;
-  
-  constructor(command: string, errors: ValidationError[]) {
-    super(
-      `Command validation failed for '${command}': ${errors.map(e => e.message).join(', ')}`,
-      { command, errors }
-    );
+export class CodexUserInterfaceException extends CodexPresentationException {
+  constructor(
+    message: string,
+    public readonly operation: string,
+    originalError?: Error
+  ) {
+    super(message, 'CODEX_USER_INTERFACE_ERROR', true, originalError);
+    this.name = 'CodexUserInterfaceException';
   }
 }
 
 /**
- * Exception thrown when output operations fail
+ * Exception thrown when output formatting fails
  */
-export class OutputException extends PresentationException {
-  readonly code = 'OUTPUT_ERROR';
-  readonly statusCode = 500;
-  
-  constructor(operation: string, originalError: Error) {
-    super(
-      `Output operation '${operation}' failed: ${originalError.message}`,
-      { operation, originalError: originalError.message }
-    );
+export class CodexOutputFormattingException extends CodexPresentationException {
+  constructor(
+    message: string,
+    public readonly format: OutputFormat,
+    public readonly data: any,
+    originalError?: Error
+  ) {
+    super(message, 'CODEX_OUTPUT_FORMATTING_ERROR', false, originalError);
+    this.name = 'CodexOutputFormattingException';
   }
 }
 
-/**
- * Exception thrown when formatting fails
- */
-export class FormattingException extends PresentationException {
-  readonly code = 'FORMATTING_ERROR';
-  readonly statusCode = 500;
-  
-  constructor(format: string, data: any, originalError: Error) {
-    super(
-      `Formatting failed for format '${format}': ${originalError.message}`,
-      { format, data, originalError: originalError.message }
-    );
-  }
-}
+// ============================================================================
+// Presentation Utilities
+// ============================================================================
 
 /**
- * Exception thrown when IDE integration fails
+ * Utility class for presentation operations
  */
-export class IDEIntegrationException extends PresentationException {
-  readonly code = 'IDE_INTEGRATION_ERROR';
-  readonly statusCode = 500;
-  
-  constructor(ide: string, operation: string, originalError: Error) {
-    super(
-      `IDE integration failed for '${ide}' during '${operation}': ${originalError.message}`,
-      { ide, operation, originalError: originalError.message }
-    );
+export class CodexPresentationUtils {
+  /**
+   * Create default CLI command options
+   */
+  static createDefaultCLIOptions(): readonly CLICommandOption[] {
+    return [
+      {
+        name: 'help',
+        shortName: 'h',
+        description: 'Display help information',
+        type: 'boolean',
+        required: false,
+        defaultValue: false
+      },
+      {
+        name: 'verbose',
+        shortName: 'v',
+        description: 'Enable verbose output',
+        type: 'boolean',
+        required: false,
+        defaultValue: false
+      },
+      {
+        name: 'output',
+        shortName: 'o',
+        description: 'Output format',
+        type: 'string',
+        required: false,
+        defaultValue: 'text',
+        choices: ['text', 'json', 'yaml', 'table', 'markdown']
+      }
+    ];
   }
-}
-
-/**
- * Exception thrown when slash command execution fails
- */
-export class SlashCommandException extends PresentationException {
-  readonly code = 'SLASH_COMMAND_ERROR';
-  readonly statusCode = 500;
   
-  constructor(command: string, args: string[], originalError: Error) {
-    super(
-      `Slash command '${command}' failed with args [${args.join(', ')}]: ${originalError.message}`,
-      { command, args, originalError: originalError.message }
-    );
+  /**
+   * Format validation response for display
+   */
+  static formatValidationResponse(response: CodexValidationResponse): string {
+    const status = response.result === 'success' ? '✓' : '✗';
+    const message = response.result === 'success' 
+      ? `Codex CLI validation successful (${response.version})`
+      : `Codex CLI validation failed: ${response.errorMessage}`;
+    
+    return `${status} ${message}`;
+  }
+  
+  /**
+   * Format status for display
+   */
+  static formatStatus(status: CodexStatus): string {
+    const lines = [
+      `Status: ${status.status}`,
+      `Initialized: ${status.isInitialized ? 'Yes' : 'No'}`,
+      `Configured: ${status.isConfigured ? 'Yes' : 'No'}`,
+      `CLI Available: ${status.cliAvailable ? 'Yes' : 'No'}`,
+      `Templates Generated: ${status.templatesGenerated ? 'Yes' : 'No'}`,
+      `Error Count: ${status.errorCount}`
+    ];
+    
+    if (status.lastValidation) {
+      lines.push(`Last Validation: ${status.lastValidation.toISOString()}`);
+    }
+    
+    return lines.join('\n');
+  }
+  
+  /**
+   * Create user-friendly error message
+   */
+  static createUserFriendlyError(error: CodexError): string {
+    let message = `Error: ${error.message}`;
+    
+    if (error.suggestions && error.suggestions.length > 0) {
+      message += '\n\nSuggestions:';
+      error.suggestions.forEach(suggestion => {
+        message += `\n  • ${suggestion}`;
+      });
+    }
+    
+    if (error.recoverable) {
+      message += '\n\nThis error is recoverable. You can try again or use alternative options.';
+    }
+    
+    return message;
   }
 }

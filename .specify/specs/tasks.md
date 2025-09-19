@@ -1,791 +1,539 @@
-# UX-Kit TypeScript CLI Implementation Tasks
+# Tasks: Remote Install Support
 
-**Feature**: UX-Kit TypeScript CLI Implementation  
-**Architecture**: Spec-Driven Development (SDD) inspired by GitHub's spec-kit  
-**Methodology**: Test-Driven Development (TDD)  
-**File Strategy**: Small, focused files with composition over inheritance  
-**Scope**: Lightweight CLI tool that creates text files and scripts to support AI agent research workflows in IDEs  
-**Inspiration**: GitHub's spec-kit for specification-driven development  
-**Architecture**: Simple layered architecture (CLI, Service, Utility layers) with file-based approach
+## Task Generation Summary
 
-## Task Execution Strategy
+**Feature**: Remote Install Support  
+**Tech Stack**: Bash, Shell Scripts, GitHub API, Package Managers (Homebrew, APT, YUM)  
+**Architecture**: Modular shell script architecture with clear separation of concerns  
+**Total Tasks**: 25 tasks across 5 phases  
 
-### Parallel Execution Groups
-- **[P]** = Can run in parallel with other [P] tasks
-- **Sequential** = Must run after dependencies complete
-- **Different files** = Can be parallel [P]
-- **Same file** = Sequential (no [P])
+## Setup Tasks
 
-### File Organization Principles
-- Keep source files small (< 200 lines)
-- Focus on file generation and script creation
-- Separate concerns into focused modules
-- One responsibility per file
-- Clear interfaces between modules
-
-### Core Functionality (Inspired by GitHub's spec-kit)
-- **Spec-Driven Research**: Create structured research specifications
-- **Research Planning**: Generate research plans and methodologies
-- **Task Breakdown**: Create actionable research task lists
-- **AI Integration**: Support AI agents in research workflows
-- **File Generation**: Create research artifact files (questions.md, sources.md, etc.)
-- **IDE Integration**: Provide slash commands for seamless workflow integration
-- **Template System**: Structured templates for consistent research outputs
-- **Simple Architecture**: Lightweight CLI with file-based approach, no complex data models
-
-### Spec-Kit Inspiration
-GitHub's spec-kit provides a specification-driven development workflow with commands like:
-- `/specify` - Define project requirements and user stories
-- `/plan` - Outline technical approach and architecture
-- `/tasks` - Break down into actionable development tasks
-
-UX-Kit adapts this approach for UX research with commands like:
-- `/research:questions` - Define research questions and objectives
-- `/research:sources` - Gather and organize research sources
-- `/research:summarize` - Create structured summaries
-- `/research:interview` - Format interview data
-- `/research:synthesize` - Synthesize insights and findings
-
-Both tools emphasize:
-- **Specification-first approach**: Define "what" and "why" before "how"
-- **AI agent integration**: Leverage AI for content generation and refinement
-- **Structured workflows**: Clear phases and consistent outputs
-- **IDE integration**: Seamless integration with development environments
-- **File-based approach**: Simple text files and scripts, no complex databases
-- **Lightweight implementation**: Focus on essential functionality
-
----
-
-## Phase 1: Foundation Setup
-
-### T001: Project Initialization
+### T001: Project Structure Setup
 **Type**: Setup  
 **Priority**: Critical  
-**Effort**: 0.5 days  
+**Effort**: 1 day  
+**Size**: small  
 **Dependencies**: None  
 
-**Description**: Initialize TypeScript CLI project with minimal dependencies.
+**Description**: Create the directory structure and initial files for the remote installation system.
 
 **Acceptance Criteria**:
-- [x] TypeScript project with strict mode enabled
-- [x] ESLint and Prettier configured
-- [x] Jest testing framework set up
-- [x] Package.json with CLI dependencies only
-- [x] Git repository with proper .gitignore
-- [x] Basic project structure created
+- [ ] Create scripts/install/ directory structure
+- [ ] Create scripts/modules/ directory for core components
+- [ ] Create scripts/utils/ directory for utility functions
+- [ ] Create tests/install/ directory for test files
+- [ ] Create docs/install/ directory for documentation
+- [ ] Initialize main install.sh script with basic structure
 
-**Files to Create**:
-- `package.json`
-- `tsconfig.json`
-- `.eslintrc.js`
-- `.prettierrc`
-- `jest.config.js`
-- `.gitignore`
-- `README.md`
-- `src/index.ts`
+**Files to Create/Modify**:
+- `scripts/install/install.sh`
+- `scripts/modules/`
+- `scripts/utils/`
+- `tests/install/`
+- `docs/install/`
 
 **Technical Tasks**:
-- [x] Initialize npm project with TypeScript
-- [x] Configure tsconfig.json with strict mode
-- [x] Set up ESLint with TypeScript rules
-- [x] Configure Prettier for code formatting
-- [x] Install Jest for testing
-- [x] Set up basic project structure
+- [ ] Create directory structure following modular architecture
+- [ ] Initialize main install.sh with shebang and basic error handling
+- [ ] Set up proper file permissions for executable scripts
+- [ ] Create placeholder files for all modules
 
-**Status**: ✅ COMPLETED - 2024-01-18
-
-### T002: CLI Framework Setup
+### T002: Utility Functions Setup
 **Type**: Setup  
-**Priority**: Critical  
-**Effort**: 0.5 days  
+**Priority**: High  
+**Effort**: 1 day  
+**Size**: small  
 **Dependencies**: T001  
 
-**Description**: Set up Commander.js CLI framework with basic command structure.
+**Description**: Create common utility functions used across all installation modules.
 
 **Acceptance Criteria**:
-- [x] Commander.js integration
-- [x] Basic CLI application structure
-- [x] Command registration system
-- [x] Help system
-- [x] Error handling
-- [x] 100% test coverage
+- [ ] Create common.sh with shared functions
+- [ ] Implement logging utilities
+- [ ] Implement error handling utilities
+- [ ] Implement color and formatting utilities
+- [ ] Implement file system utilities
 
-**Files to Create**:
-- `src/cli/CLIApplication.ts`
-- `src/cli/CommandRegistry.ts`
-- `src/cli/HelpSystem.ts`
-- `src/cli/ErrorHandler.ts`
-- `tests/unit/cli/CLIApplication.test.ts`
-
-**Technical Tasks**:
-- [x] Install and configure Commander.js
-- [x] Create CLIApplication class
-- [x] Implement CommandRegistry
-- [x] Create HelpSystem
-- [x] Add ErrorHandler
-- [x] Write basic tests
-
-**Status**: ✅ COMPLETED - 2024-01-18
-
----
-
-## Phase 2: Core CLI Commands
-
-### T003: Init Command Implementation [P]
-**Type**: Core  
-**Priority**: Critical  
-**Effort**: 0.5 days  
-**Dependencies**: T002  
-
-**Description**: Implement the init command to create .uxkit/ directory structure.
-
-**Acceptance Criteria**:
-- [x] InitCommand implementation
-- [x] .uxkit/ directory creation
-- [x] Template files copying
-- [x] Configuration file generation
-- [x] Validation and error handling
-- [x] 100% test coverage
-
-**Files to Create**:
-- `src/commands/InitCommand.ts`
-- `src/services/DirectoryService.ts`
-- `src/services/TemplateService.ts`
-- `src/templates/` (template files)
-- `tests/unit/commands/InitCommand.test.ts`
-- `tests/integration/commands/InitCommand.integration.test.ts`
+**Files to Create/Modify**:
+- `scripts/utils/common.sh`
+- `scripts/utils/logger.sh`
+- `scripts/utils/error-handler.sh`
+- `scripts/utils/colors.sh`
+- `scripts/utils/filesystem.sh`
 
 **Technical Tasks**:
-- [x] Implement InitCommand
-- [x] Create DirectoryService for .uxkit/ creation
-- [x] Create TemplateService for file copying
-- [x] Create template files
-- [x] Add validation and error handling
-- [x] Write comprehensive tests
+- [ ] Implement log_info, log_error, log_warn, log_debug functions
+- [ ] Implement error handling with trap and cleanup
+- [ ] Implement colored output for better UX
+- [ ] Implement file system operations with proper error handling
+- [ ] Add input validation and sanitization functions
 
-**Status**: ✅ COMPLETED - 2024-01-18
+## Test Tasks [P]
 
-### T004: Study Commands Implementation [C]
-**Type**: Core  
-**Priority**: Critical  
-**Effort**: 0.5 days  
-**Dependencies**: T002  
-**Status**: ✅ COMPLETED - 2024-01-18
-
-**Description**: Implement study management commands (create, list, show, delete).
-
-**Acceptance Criteria**:
-- [x] CreateStudyCommand implementation
-- [x] ListStudiesCommand implementation
-- [x] ShowStudyCommand implementation
-- [x] DeleteStudyCommand implementation
-- [x] Study directory management
-- [x] 100% test coverage (62/62 tests passing, 100% coverage)
-
-**Files to Create**:
-- `src/commands/study/CreateStudyCommand.ts`
-- `src/commands/study/ListStudiesCommand.ts`
-- `src/commands/study/ShowStudyCommand.ts`
-- `src/commands/study/DeleteStudyCommand.ts`
-- `src/services/StudyService.ts`
-- `tests/unit/commands/study/`
-- `tests/integration/commands/study/`
-
-**Technical Tasks**:
-- [x] Implement CreateStudyCommand
-- [x] Implement ListStudiesCommand
-- [x] Implement ShowStudyCommand
-- [x] Implement DeleteStudyCommand
-- [x] Create StudyService for directory management
-- [x] Write comprehensive tests
-- [x] Fix test isolation issues
-- [x] Resolve ESLint configuration
-- [x] Achieve 100% test coverage (62/62 tests passing)
-
-### T005: Research Commands Implementation [C]
-**Type**: Core  
-**Priority**: Critical  
-**Effort**: 1 day  
-**Dependencies**: T002  
-**Status**: ✅ COMPLETED - 2024-01-18
-
-**Description**: Implement research workflow commands that generate artifact files.
-
-**Acceptance Criteria**:
-- [x] QuestionsCommand implementation
-- [x] SourcesCommand implementation
-- [x] SummarizeCommand implementation
-- [x] InterviewCommand implementation
-- [x] SynthesizeCommand implementation
-- [x] File generation and management
-- [x] 100% test coverage (78/78 tests passing)
-
-**Files to Create**:
-- `src/commands/research/QuestionsCommand.ts`
-- `src/commands/research/SourcesCommand.ts`
-- `src/commands/research/SummarizeCommand.ts`
-- `src/commands/research/InterviewCommand.ts`
-- `src/commands/research/SynthesizeCommand.ts`
-- `src/services/ResearchService.ts`
-- `src/services/FileGenerator.ts`
-- `tests/unit/commands/research/`
-- `tests/integration/commands/research/`
-
-**Technical Tasks**:
-- [x] Implement QuestionsCommand
-- [x] Implement SourcesCommand
-- [x] Implement SummarizeCommand
-- [x] Implement InterviewCommand
-- [x] Implement SynthesizeCommand
-- [x] Create ResearchService for workflow management
-- [x] Create FileGenerator for artifact creation
-- [x] Write comprehensive tests
-- [x] Implement TDD approach with use case tests first
-- [x] Add AI integration mock implementations
-- [x] Implement file generation and management
-- [x] Add comprehensive error handling and validation
-
----
-
-## Phase 3: File Generation and Templates
-
-### T006: Template System Implementation [P]
-**Type**: Core  
+### T003: System Detection Tests [P]
+**Type**: Test  
 **Priority**: High  
-**Effort**: 0.5 days  
-**Dependencies**: T003  
+**Effort**: 2 days  
+**Size**: medium  
+**Dependencies**: T002  
 
-**Description**: Implement template system for generating research artifact files.
+**Description**: Create comprehensive tests for system detection functionality.
 
 **Acceptance Criteria**:
-- [x] TemplateEngine implementation
-- [x] Template file management
-- [x] Variable substitution
-- [x] Template validation
-- [x] 100% test coverage
+- [ ] Test OS detection on macOS and Linux
+- [ ] Test architecture detection (x86_64, ARM64)
+- [ ] Test package manager detection
+- [ ] Test dependency checking (Node.js, Git, SSH)
+- [ ] Test error handling for unsupported systems
 
-**Files to Create**:
-- `src/templates/TemplateEngine.ts`
-- `src/templates/TemplateManager.ts`
-- `src/templates/TemplateValidator.ts`
-- `templates/questions-template.md`
-- `templates/sources-template.md`
-- `templates/summarize-template.md`
-- `templates/interview-template.md`
-- `templates/synthesis-template.md`
-- `tests/unit/templates/`
+**Files to Create/Modify**:
+- `tests/install/system-detector.test.sh`
+- `tests/fixtures/system-info/`
+- `tests/mocks/system-detector.mock.sh`
 
 **Technical Tasks**:
-- [x] Implement TemplateEngine
-- [x] Create TemplateManager
-- [x] Create TemplateValidator
-- [x] Create template files
-- [x] Add variable substitution
-- [x] Write comprehensive tests
+- [ ] Create test fixtures for different system configurations
+- [ ] Mock system commands for consistent testing
+- [ ] Test edge cases and error conditions
+- [ ] Verify cross-platform compatibility
+- [ ] Test performance and reliability
 
-**Status**: ✅ COMPLETED - 2024-01-18
-
-### T007: File Generator Implementation [P]
-**Type**: Core  
+### T004: Dependency Manager Tests [P]
+**Type**: Test  
 **Priority**: High  
-**Effort**: 0.5 days  
-**Dependencies**: T006  
+**Effort**: 2 days  
+**Size**: medium  
+**Dependencies**: T002  
 
-**Description**: Implement file generator for creating research artifacts.
+**Description**: Create tests for dependency installation and management.
 
 **Acceptance Criteria**:
-- [x] FileGenerator implementation
-- [x] Markdown file generation
-- [x] Directory structure creation
-- [x] File validation
-- [x] Error handling
-- [x] 100% test coverage
+- [ ] Test Homebrew installation on macOS
+- [ ] Test APT package installation on Ubuntu/Debian
+- [ ] Test YUM package installation on RHEL/CentOS
+- [ ] Test Node.js and Git installation
+- [ ] Test fallback mechanisms
 
-**Files to Create**:
-- `src/generators/FileGenerator.ts`
-- `src/generators/MarkdownGenerator.ts`
-- `src/generators/DirectoryGenerator.ts`
-- `src/validators/FileValidator.ts`
-- `tests/unit/generators/`
-- `tests/integration/generators/`
+**Files to Create/Modify**:
+- `tests/install/dependency-manager.test.sh`
+- `tests/fixtures/package-managers/`
+- `tests/mocks/package-manager.mock.sh`
 
 **Technical Tasks**:
-- [x] Implement FileGenerator
-- [x] Create MarkdownGenerator
-- [x] Create DirectoryGenerator
-- [x] Create FileValidator
-- [x] Add error handling
-- [x] Write comprehensive tests
+- [ ] Mock package manager commands
+- [ ] Test installation success and failure scenarios
+- [ ] Test version checking and validation
+- [ ] Test network connectivity issues
+- [ ] Test permission and sudo requirements
 
-**Status**: ✅ COMPLETED - 2024-01-18
+### T005: Binary Manager Tests [P]
+**Type**: Test  
+**Priority**: High  
+**Effort**: 2 days  
+**Size**: medium  
+**Dependencies**: T002  
 
-### T008: Configuration Management [P]
-**Type**: Core  
+**Description**: Create tests for binary download, verification, and installation.
+
+**Acceptance Criteria**:
+- [ ] Test GitHub API integration
+- [ ] Test binary download functionality
+- [ ] Test checksum verification
+- [ ] Test binary installation and permissions
+- [ ] Test version management
+
+**Files to Create/Modify**:
+- `tests/install/binary-manager.test.sh`
+- `tests/fixtures/github-releases/`
+- `tests/mocks/github-api.mock.sh`
+
+**Technical Tasks**:
+- [ ] Mock GitHub API responses
+- [ ] Test download progress and error handling
+- [ ] Test checksum validation
+- [ ] Test file permissions and symlinks
+- [ ] Test network failure recovery
+
+### T006: Configuration Manager Tests [P]
+**Type**: Test  
 **Priority**: Medium  
-**Effort**: 0.5 days  
-**Dependencies**: T003  
+**Effort**: 1 day  
+**Size**: small  
+**Dependencies**: T002  
 
-**Description**: Implement configuration management for UX-Kit settings.
+**Description**: Create tests for configuration setup and management.
 
 **Acceptance Criteria**:
-- [x] ConfigurationService implementation
-- [x] YAML configuration support
-- [x] Default configuration
-- [x] Configuration validation
-- [x] 100% test coverage
+- [ ] Test configuration directory creation
+- [ ] Test environment variable setup
+- [ ] Test SSH configuration
+- [ ] Test configuration validation
+- [ ] Test error handling
 
-**Files to Create**:
-- `src/config/ConfigurationService.ts`
-- `src/config/ConfigurationValidator.ts`
-- `src/config/DefaultConfiguration.ts`
-- `config/default-config.yaml`
-- `tests/unit/config/`
+**Files to Create/Modify**:
+- `tests/install/config-manager.test.sh`
+- `tests/fixtures/config-files/`
+- `tests/mocks/config-manager.mock.sh`
 
 **Technical Tasks**:
-- [x] Implement ConfigurationService
-- [x] Create ConfigurationValidator
-- [x] Create DefaultConfiguration
-- [x] Add YAML support
-- [x] Write comprehensive tests
+- [ ] Test configuration file creation
+- [ ] Test environment variable manipulation
+- [ ] Test SSH key validation
+- [ ] Test permission handling
+- [ ] Test configuration backup and restore
 
-**Status**: ✅ COMPLETED - 2024-01-18
-
----
-
-## Phase 4: IDE Integration
-
-### T009: Slash Command System [P]
-**Type**: Core  
+### T007: Security Manager Tests [P]
+**Type**: Test  
 **Priority**: High  
-**Effort**: 0.5 days  
+**Effort**: 2 days  
+**Size**: medium  
+**Dependencies**: T002  
+
+**Description**: Create tests for security features and validation.
+
+**Acceptance Criteria**:
+- [ ] Test checksum verification
+- [ ] Test SSH key validation
+- [ ] Test input sanitization
+- [ ] Test HTTPS enforcement
+- [ ] Test permission checks
+
+**Files to Create/Modify**:
+- `tests/install/security-manager.test.sh`
+- `tests/fixtures/security/`
+- `tests/mocks/security-manager.mock.sh`
+
+**Technical Tasks**:
+- [ ] Test cryptographic functions
+- [ ] Test input validation and sanitization
+- [ ] Test security policy enforcement
+- [ ] Test error handling for security failures
+- [ ] Test audit logging
+
+## Core Tasks
+
+### T008: System Detection Module
+**Type**: Core  
+**Priority**: Critical  
+**Effort**: 3 days  
+**Size**: medium  
+**Dependencies**: T003  
+
+**Description**: Implement system detection logic to identify OS, architecture, and available tools.
+
+**Acceptance Criteria**:
+- [ ] Detect macOS and Linux distributions
+- [ ] Identify x86_64 and ARM64 architectures
+- [ ] Check for Node.js, Git, and SSH availability
+- [ ] Validate system requirements
+- [ ] Provide clear error messages for unsupported systems
+
+**Files to Create/Modify**:
+- `scripts/modules/system-detector.sh`
+- `scripts/utils/system-info.sh`
+
+**Technical Tasks**:
+- [ ] Implement detect_os() function
+- [ ] Implement detect_architecture() function
+- [ ] Implement detect_distribution() function
+- [ ] Implement check_node_version() function
+- [ ] Implement check_git_version() function
+- [ ] Implement check_ssh_access() function
+- [ ] Implement validate_system_requirements() function
+
+### T009: Dependency Manager Module
+**Type**: Core  
+**Priority**: Critical  
+**Effort**: 4 days  
+**Size**: large  
+**Dependencies**: T004, T008  
+
+**Description**: Implement dependency installation and management for different package managers.
+
+**Acceptance Criteria**:
+- [ ] Support Homebrew on macOS
+- [ ] Support APT on Ubuntu/Debian
+- [ ] Support YUM on RHEL/CentOS
+- [ ] Install Node.js 18+ if missing
+- [ ] Install Git if missing
+- [ ] Handle package manager unavailability
+
+**Files to Create/Modify**:
+- `scripts/modules/dependency-manager.sh`
+- `scripts/modules/package-managers/homebrew.sh`
+- `scripts/modules/package-managers/apt.sh`
+- `scripts/modules/package-managers/yum.sh`
+
+**Technical Tasks**:
+- [ ] Implement install_homebrew() function
+- [ ] Implement install_nodejs() function
+- [ ] Implement install_git() function
+- [ ] Implement check_dependencies() function
+- [ ] Implement install_missing_dependencies() function
+- [ ] Implement handle_package_manager_errors() function
+- [ ] Add fallback installation methods
+
+### T010: GitHub Integration Module
+**Type**: Core  
+**Priority**: Critical  
+**Effort**: 3 days  
+**Size**: medium  
 **Dependencies**: T005  
 
-**Description**: Implement slash command system for IDE integration.
+**Description**: Implement GitHub API integration for fetching releases and downloading binaries.
 
 **Acceptance Criteria**:
-- [x] SlashCommandHandler implementation
-- [x] Command parsing and validation
-- [x] Response formatting
-- [x] Error handling
-- [x] 100% test coverage
+- [ ] Fetch latest release information
+- [ ] Download specific version releases
+- [ ] Handle GitHub API rate limiting
+- [ ] Support private repository access
+- [ ] Implement retry logic for network issues
 
-**Files to Create**:
-- `src/slash/SlashCommandHandler.ts`
-- `src/slash/CommandParser.ts`
-- `src/slash/ResponseFormatter.ts`
-- `src/slash/IDEIntegration.ts`
-- `tests/unit/slash/`
-- `tests/integration/slash/`
+**Files to Create/Modify**:
+- `scripts/modules/github-manager.sh`
+- `scripts/utils/github-api.sh`
 
 **Technical Tasks**:
-- [x] Implement SlashCommandHandler
-- [x] Create CommandParser
-- [x] Create ResponseFormatter
-- [x] Create IDEIntegration
-- [x] Add error handling
-- [x] Write comprehensive tests
+- [ ] Implement fetch_latest_release() function
+- [ ] Implement fetch_specific_release() function
+- [ ] Implement download_binary_asset() function
+- [ ] Implement handle_api_rate_limiting() function
+- [ ] Implement authenticate_with_github() function
+- [ ] Add retry logic with exponential backoff
 
-**Status**: ✅ COMPLETED - 2024-01-18
-
-### T010: Cursor Integration [P]
+### T011: Binary Manager Module
 **Type**: Core  
-**Priority**: High  
-**Effort**: 0.5 days  
-**Dependencies**: T009  
-
-**Description**: Implement Cursor IDE integration for slash commands.
-
-**Acceptance Criteria**:
-- [x] CursorIntegration implementation
-- [x] Slash command registration
-- [x] Command execution
-- [x] Response handling
-- [x] 100% test coverage
-
-**Files to Create**:
-- `src/integrations/CursorIntegration.ts`
-- `src/integrations/IDEInterface.ts`
-- `src/integrations/CommandExecutor.ts`
-- `tests/unit/integrations/`
-- `tests/integration/integrations/`
-
-**Technical Tasks**:
-- [x] Implement CursorIntegration
-- [x] Create IDEInterface
-- [x] Create CommandExecutor
-- [x] Add command registration
-- [x] Write comprehensive tests
-
-**Status**: ✅ COMPLETED - 2025-09-18
-
----
-
-## Phase 5: Utilities and Services
-
-### T011: File System Utilities [P]
-**Type**: Core  
-**Priority**: Medium  
-**Effort**: 0.5 days  
-**Dependencies**: T002  
-
-**Description**: Implement file system utilities for cross-platform support.
-
-**Acceptance Criteria**:
-- [x] FileSystemService implementation
-- [x] Path handling utilities
-- [x] File operations
-- [x] Directory operations
-- [x] Cross-platform support
-- [x] 100% test coverage
-
-**Files to Create**:
-- `src/utils/FileSystemService.ts`
-- `src/utils/PathUtils.ts`
-- `src/utils/FileUtils.ts`
-- `src/utils/DirectoryUtils.ts`
-- `tests/unit/utils/`
-
-**Technical Tasks**:
-- [x] Implement FileSystemService
-- [x] Create PathUtils
-- [x] Create FileUtils
-- [x] Create DirectoryUtils
-- [x] Add cross-platform support
-- [x] Write comprehensive tests
-
-**Status**: ✅ COMPLETED - 2025-09-18
-
-### T012: Output Formatting [P]
-**Type**: Core  
-**Priority**: Medium  
-**Effort**: 0.5 days  
-**Dependencies**: T002  
-
-**Description**: Implement output formatting for CLI responses.
-
-**Acceptance Criteria**:
-- [x] OutputFormatter implementation
-- [x] Color and styling support
-- [x] Progress indicators
-- [x] Table formatting
-- [x] 100% test coverage
-
-**Files to Create**:
-- `src/output/OutputFormatter.ts`
-- `src/output/ColorTheme.ts`
-- `src/output/ProgressIndicator.ts`
-- `src/output/TableFormatter.ts`
-- `tests/unit/output/`
-
-**Technical Tasks**:
-- [x] Implement OutputFormatter
-- [x] Create ColorTheme
-- [x] Create ProgressIndicator
-- [x] Create TableFormatter
-- [x] Add styling support
-- [x] Write comprehensive tests
-
-**Status**: ✅ COMPLETED - 2025-09-18
-
-### T013: Validation System [P]
-**Type**: Core  
-**Priority**: Medium  
-**Effort**: 0.5 days  
-**Dependencies**: T002  
-
-**Description**: Implement validation system for inputs and configurations.
-
-**Acceptance Criteria**:
-- [x] ValidationService implementation
-- [x] Input validation
-- [x] Configuration validation
-- [x] File validation
-- [x] Error reporting
-- [x] 100% test coverage
-
-**Files to Create**:
-- `src/validation/ValidationService.ts`
-- `src/validation/InputValidator.ts`
-- `src/validation/ConfigValidator.ts`
-- `src/validation/FileValidator.ts`
-- `tests/unit/validation/`
-
-**Technical Tasks**:
-- [x] Implement ValidationService
-- [x] Create InputValidator
-- [x] Create ConfigValidator
-- [x] Create FileValidator
-- [x] Add error reporting
-- [x] Write comprehensive tests
-
-**Status**: ✅ COMPLETED - 2025-09-18
-
----
-
-## Phase 6: Testing and Quality
-
-### T014: Unit Test Suite [P]
-**Type**: Test  
 **Priority**: Critical  
-**Effort**: 1 day  
-**Dependencies**: T011, T012, T013  
+**Effort**: 3 days  
+**Size**: medium  
+**Dependencies**: T005, T010  
 
-**Description**: Implement comprehensive unit test suite.
+**Description**: Implement binary download, verification, and installation.
 
 **Acceptance Criteria**:
-- [x] Unit tests for all commands
-- [x] Unit tests for all services
-- [x] Unit tests for all utilities
-- [x] Mock implementations
-- [x] Test fixtures
-- [x] 85%+ test coverage (85.03% achieved)
+- [ ] Download pre-compiled binaries
+- [ ] Verify binary checksums
+- [ ] Install binaries to system PATH
+- [ ] Create symlinks and set permissions
+- [ ] Handle version management
 
-**Files to Create**:
-- `tests/unit/commands/` (complete coverage)
-- `tests/unit/services/` (complete coverage)
-- `tests/unit/utils/` (complete coverage)
-- `tests/mocks/` (mock implementations)
-- `tests/fixtures/` (test data)
+**Files to Create/Modify**:
+- `scripts/modules/binary-manager.sh`
+- `scripts/utils/binary-utils.sh`
 
 **Technical Tasks**:
-- [x] Write unit tests for commands
-- [x] Write unit tests for services
-- [x] Write unit tests for utilities
-- [x] Create mock implementations
-- [x] Create test fixtures
-- [x] Generate coverage reports
+- [ ] Implement download_binary() function
+- [ ] Implement verify_checksum() function
+- [ ] Implement install_binary() function
+- [ ] Implement create_symlinks() function
+- [ ] Implement set_permissions() function
+- [ ] Implement manage_versions() function
 
-**Status**: ✅ COMPLETED - 2025-09-18
-
-### T015: Integration Test Suite [P] ✅
-**Type**: Test  
+### T012: Configuration Manager Module
+**Type**: Core  
 **Priority**: High  
-**Effort**: 0.5 days  
-**Dependencies**: T014
+**Effort**: 2 days  
+**Size**: small  
+**Dependencies**: T006, T008  
 
-**Description**: Implement integration tests for complete workflows.
-
-**Acceptance Criteria**:
-- [x] End-to-end workflow tests
-- [x] File generation tests
-- [x] Directory structure tests
-- [x] Configuration tests
-- [x] Error scenario tests
-
-**Files Created**:
-- `tests/integration/basic-integration.test.ts` - Comprehensive integration tests for StudyService
-- `tests/integration/integrations/cursor-integration.test.ts` - Existing Cursor integration tests
-
-**Technical Tasks**:
-- [x] Create workflow tests
-- [x] Create file generation tests
-- [x] Create directory structure tests
-- [x] Create configuration tests
-- [x] Create error scenario tests
-
-**Implementation Notes**:
-- Created comprehensive integration tests covering StudyService functionality
-- Fixed FileSystemService to include listDirectories method
-- Tests cover study creation, listing, retrieval, deletion, and error handling
-- All integration tests passing (27 tests total)
-
-### T016: Cross-Platform Testing [P] ✅
-**Type**: Test  
-**Priority**: Very Low  
-**Effort**: 0.5 days  
-**Dependencies**: T015
-
-**Description**: Test cross-platform compatibility.
+**Description**: Set up user configuration and environment variables.
 
 **Acceptance Criteria**:
-- [x] macOS compatibility tests
-- [x] Linux compatibility tests
-- [x] WSL compatibility tests
-- [x] Path handling tests
-- [x] File permission tests
+- [ ] Create configuration directories
+- [ ] Set up environment variables
+- [ ] Create default configuration files
+- [ ] Handle SSH configuration if needed
+- [ ] Validate configuration setup
 
-**Files Created**:
-- `tests/platform/macos.test.ts` - macOS compatibility tests
-- `tests/platform/linux.test.ts` - Linux compatibility tests
-- `tests/platform/wsl.test.ts` - WSL compatibility tests
-- `tests/platform/path-handling.test.ts` - Cross-platform path handling tests
-- `tests/platform/file-permission.test.ts` - File permission tests
+**Files to Create/Modify**:
+- `scripts/modules/config-manager.sh`
+- `scripts/utils/config-utils.sh`
 
 **Technical Tasks**:
-- [x] Test on macOS
-- [x] Test on Linux
-- [x] Test on WSL
-- [x] Test path handling
-- [x] Test file permissions
+- [ ] Implement create_config_directories() function
+- [ ] Implement setup_environment_variables() function
+- [ ] Implement create_default_config() function
+- [ ] Implement setup_ssh_config() function
+- [ ] Implement validate_configuration() function
 
-**Implementation Notes**:
-- Created comprehensive cross-platform compatibility tests
-- Tests cover macOS, Linux, and WSL environments
-- Includes path handling, file permissions, and error scenarios
-- All tests passing (67 tests total)
-- Tests are designed to run on respective platforms or in containers
-
----
-
-## Phase 7: Documentation and Deployment
-
-### T017: Documentation Generation [P] ✅
-**Type**: Polish  
+### T013: Security Manager Module
+**Type**: Core  
 **Priority**: High  
-**Effort**: 0.5 days  
-**Dependencies**: T016  
+**Effort**: 3 days  
+**Size**: medium  
+**Dependencies**: T007, T011  
 
-**Description**: Generate comprehensive documentation.
+**Description**: Implement security features including checksum verification and input sanitization.
 
 **Acceptance Criteria**:
-- [x] CLI command documentation
-- [x] Configuration guide
-- [x] Examples and tutorials
-- [x] API documentation
-- [x] User guide
+- [ ] Verify binary checksums
+- [ ] Validate SSH keys and permissions
+- [ ] Sanitize user inputs and file paths
+- [ ] Use HTTPS for all downloads
+- [ ] Follow principle of least privilege
 
-**Files Created**:
-- `src/services/DocumentationGenerator.ts` - Main documentation generation service
-- `src/services/CommandDocumentationGenerator.ts` - CLI command documentation
-- `src/services/ConfigurationDocumentationGenerator.ts` - Configuration guide
-- `src/services/APIDocumentationGenerator.ts` - API documentation
-- `src/services/UserGuideGenerator.ts` - User guide generation
-- `tests/use-cases/documentation-generation.test.ts` - Use case tests
-- `tests/unit/services/DocumentationGenerator.test.ts` - Unit tests
-- `tests/unit/services/CommandDocumentationGenerator.test.ts` - Unit tests
-- `tests/unit/services/ConfigurationDocumentationGenerator.test.ts` - Unit tests
-- `tests/unit/services/APIDocumentationGenerator.test.ts` - Unit tests
-- `tests/unit/services/UserGuideGenerator.test.ts` - Unit tests
-- `tests/integration/documentation-generation.integration.test.ts` - Integration tests
+**Files to Create/Modify**:
+- `scripts/modules/security-manager.sh`
+- `scripts/utils/security-utils.sh`
 
 **Technical Tasks**:
-- [x] Generate command documentation
-- [x] Write configuration guide
-- [x] Create examples and tutorials
-- [x] Generate API documentation
-- [x] Write user guide
-- [x] Write comprehensive use case tests
-- [x] Write unit tests for all components
-- [x] Write integration tests for complete workflow
+- [ ] Implement verify_checksums() function
+- [ ] Implement validate_ssh_keys() function
+- [ ] Implement sanitize_inputs() function
+- [ ] Implement enforce_https() function
+- [ ] Implement check_permissions() function
+- [ ] Add cryptographic utilities
 
-**Implementation Notes**:
-- Created comprehensive documentation generation system with 5 specialized generators
-- All documentation includes proper structure, examples, and cross-references
-- Full test coverage with use case, unit, and integration tests
-- Documentation generators handle missing source files gracefully
-- All tests passing (13 use case tests, 12 unit tests, 8 integration tests)
+### T014: Progress Tracker Module
+**Type**: Core  
+**Priority**: Medium  
+**Effort**: 2 days  
+**Size**: small  
+**Dependencies**: T002  
 
-### T018: Build and Packaging [P]
-**Type**: Polish  
+**Description**: Implement progress tracking and user feedback during installation.
+
+**Acceptance Criteria**:
+- [ ] Show installation progress
+- [ ] Provide clear status messages
+- [ ] Handle progress updates
+- [ ] Display estimated time remaining
+- [ ] Support both interactive and non-interactive modes
+
+**Files to Create/Modify**:
+- `scripts/modules/progress-tracker.sh`
+- `scripts/utils/progress-utils.sh`
+
+**Technical Tasks**:
+- [ ] Implement show_progress() function
+- [ ] Implement update_status() function
+- [ ] Implement estimate_time_remaining() function
+- [ ] Implement handle_interactive_mode() function
+- [ ] Implement handle_non_interactive_mode() function
+
+## Integration Tasks
+
+### T015: Main Installation Script
+**Type**: Integration  
 **Priority**: Critical  
-**Effort**: 0.5 days  
-**Dependencies**: T017  
+**Effort**: 3 days  
+**Size**: medium  
+**Dependencies**: T008, T009, T010, T011, T012, T013, T014  
 
-**Description**: Set up build system and packaging for distribution.
+**Description**: Integrate all modules into the main installation script.
 
 **Acceptance Criteria**:
-- [ ] TypeScript compilation
-- [ ] NPM package creation
-- [ ] Binary distribution
-- [ ] CI/CD pipeline
-- [ ] Automated testing
+- [ ] Orchestrate complete installation flow
+- [ ] Handle command line arguments
+- [ ] Implement error recovery and rollback
+- [ ] Provide comprehensive user feedback
+- [ ] Support both interactive and non-interactive modes
 
-**Files to Create**:
-- `build/`
-- `dist/`
-- `.github/workflows/`
-- `package.json` (build scripts)
+**Files to Create/Modify**:
+- `scripts/install/install.sh`
+- `scripts/install/install-options.sh`
 
 **Technical Tasks**:
-- [ ] Configure build system
-- [ ] Create NPM package
-- [ ] Set up binary distribution
-- [ ] Set up CI/CD pipeline
-- [ ] Add automated testing
+- [ ] Implement main installation flow
+- [ ] Add command line argument parsing
+- [ ] Implement error handling and recovery
+- [ ] Add progress tracking integration
+- [ ] Implement rollback mechanisms
+- [ ] Add comprehensive logging
 
----
+### T016: Uninstall Script
+**Type**: Integration  
+**Priority**: Medium  
+**Effort**: 2 days  
+**Size**: small  
+**Dependencies**: T015  
+
+**Description**: Create uninstall script to clean up installation.
+
+**Acceptance Criteria**:
+- [ ] Remove installed binaries
+- [ ] Clean up configuration files
+- [ ] Remove environment variables
+- [ ] Clean up temporary files
+- [ ] Provide confirmation prompts
+
+**Files to Create/Modify**:
+- `scripts/install/uninstall.sh`
+
+**Technical Tasks**:
+- [ ] Implement binary removal
+- [ ] Implement configuration cleanup
+- [ ] Implement environment variable cleanup
+- [ ] Add confirmation prompts
+- [ ] Implement safe cleanup with backups
+
+### T017: Update Script
+**Type**: Integration  
+**Priority**: Medium  
+**Effort**: 2 days  
+**Size**: small  
+**Dependencies**: T015  
+
+**Description**: Create update script to upgrade to newer versions.
+
+**Acceptance Criteria**:
+- [ ] Check for available updates
+- [ ] Download and install new version
+- [ ] Preserve user configuration
+- [ ] Handle rollback on failure
+- [ ] Provide update notifications
+
+**Files to Create/Modify**:
+- `scripts/install/update.sh`
+
+**Technical Tasks**:
+- [ ] Implement version checking
+- [ ] Implement update download and installation
+- [ ] Implement configuration preservation
+- [ ] Implement rollback on failure
+- [ ] Add update notifications
 
 ## Parallel Execution Examples
 
-### Phase 2: Core Commands (Can run in parallel)
+### Phase 1: Setup and Tests
 ```bash
-# These can run in parallel - different files
-Task agent execute T003  # Init Command
-Task agent execute T004  # Study Commands
-Task agent execute T005  # Research Commands
+# These can run in parallel after T002
+Task agent execute T003  # System Detection Tests
+Task agent execute T004  # Dependency Manager Tests
+Task agent execute T005  # Binary Manager Tests
+Task agent execute T006  # Configuration Manager Tests
+Task agent execute T007  # Security Manager Tests
 ```
 
-### Phase 3: File Generation (Can run in parallel)
+### Phase 2: Core Implementation
 ```bash
-# These can run in parallel - different files
-Task agent execute T006  # Template System
-Task agent execute T007  # File Generator
-Task agent execute T008  # Configuration Management
+# These can run in parallel after their respective tests
+Task agent execute T008  # System Detection Module
+Task agent execute T009  # Dependency Manager Module
+Task agent execute T010  # GitHub Integration Module
+Task agent execute T011  # Binary Manager Module
+Task agent execute T012  # Configuration Manager Module
+Task agent execute T013  # Security Manager Module
+Task agent execute T014  # Progress Tracker Module
 ```
 
-### Phase 4: IDE Integration (Can run in parallel)
+### Phase 3: Integration
 ```bash
-# These can run in parallel - different files
-Task agent execute T009  # Slash Command System
-Task agent execute T010  # Cursor Integration
+# Sequential execution required
+Task agent execute T015  # Main Installation Script
+Task agent execute T016  # Uninstall Script
+Task agent execute T017  # Update Script
 ```
 
-### Phase 5: Utilities (Can run in parallel)
-```bash
-# These can run in parallel - different files
-Task agent execute T011  # File System Utilities
-Task agent execute T012  # Output Formatting
-Task agent execute T013  # Validation System
-```
+## Task Summary
 
-### Phase 6: Testing (Can run in parallel)
-```bash
-# These can run in parallel - different files
-Task agent execute T014  # Unit Test Suite
-Task agent execute T015  # Integration Test Suite
-Task agent execute T016  # Cross-Platform Testing
-```
+- **Total Tasks**: 17
+- **Setup Tasks**: 2
+- **Test Tasks**: 5 (all parallel)
+- **Core Tasks**: 7
+- **Integration Tasks**: 3
 
-### Phase 7: Polish (Can run in parallel)
-```bash
-# These can run in parallel - different files
-Task agent execute T017  # Documentation Generation
-Task agent execute T018  # Build and Packaging
-```
-
-## Task Dependencies Summary
-
-### Critical Path
-T001 → T002 → T003 → T006 → T007 → T009 → T010 → T014 → T015 → T016 → T017 → T018
-
-### Parallel Execution Opportunities
-- **T003-T005**: Core commands (3 parallel tasks)
-- **T006-T008**: File generation (3 parallel tasks)
-- **T009-T010**: IDE integration (2 parallel tasks)
-- **T011-T013**: Utilities (3 parallel tasks)
-- **T014-T016**: Testing (3 parallel tasks)
-- **T017-T018**: Polish (2 parallel tasks)
-
-## Success Metrics
-
-### Technical Metrics
-- [ ] 90%+ test coverage
-- [ ] <2 second command response time
-- [ ] Cross-platform compatibility
-- [ ] Clean architecture compliance
-
-### File Organization Metrics
-- [ ] Source files < 200 lines
-- [ ] Clear separation of concerns
-- [ ] Composition over inheritance
-- [ ] One responsibility per file
-- [ ] Clear interfaces between modules
-
-### Functionality Metrics
-- [ ] All CLI commands working
-- [ ] File generation working
-- [ ] IDE integration working
-- [ ] Template system working
-- [ ] Configuration management working
-
-This revised task breakdown focuses on the actual scope: a lightweight CLI tool that creates text files and scripts to support AI agent research workflows in IDEs. Each task is specific enough for an LLM to complete without additional context while maintaining the focus on small, composable files.
+**Estimated Total Effort**: 45 days  
+**Estimated Duration**: 9 weeks (with parallel execution)  
+**Critical Path**: T001 → T002 → T003-T007 → T008-T014 → T015 → T016 → T017

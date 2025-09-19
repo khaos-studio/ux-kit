@@ -18,7 +18,7 @@ export class HelpSystem {
     if (command.arguments && command.arguments.length > 0) {
       help += `\nArguments:\n`;
       command.arguments.forEach(arg => {
-        help += `  ${arg.name}${arg.required ? ' (required)' : ' (optional)'}: ${arg.description}\n`;
+        help += `  ${arg} (required)\n`;
       });
     }
 
@@ -49,8 +49,22 @@ export class HelpSystem {
       help += `  ${command.name.padEnd(20)} ${command.description}\n`;
     });
 
+    help += `\nAI Agent Integration:\n`;
+    help += `  --codex              Enable Codex AI agent integration\n`;
+    help += `  --cursor             Enable Cursor IDE integration\n`;
+    help += `  --custom             Enable custom AI agent integration\n`;
+
+    help += `\nCodex Setup Commands:\n`;
+    help += `  codex-setup --validate    Validate Codex CLI installation\n`;
+    help += `  codex-setup --configure   Configure Codex settings\n`;
+    help += `  codex-setup --test        Test Codex integration\n`;
+
     help += `\nFor more information about a specific command, use:\n`;
     help += `  uxkit <command> --help\n`;
+
+    help += `\nDocumentation:\n`;
+    help += `  CODEX_SETUP_GUIDE.md      Complete Codex setup guide\n`;
+    help += `  CODEX_TROUBLESHOOTING_GUIDE.md  Troubleshooting guide\n`;
 
     return help;
   }

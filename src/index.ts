@@ -30,6 +30,14 @@ import { CursorCommandGenerator } from './services/CursorCommandGenerator';
 import { FileSystemService } from './utils/FileSystemService';
 import { InputService } from './utils/InputService';
 
+// Codex Integration Services
+import { CodexIntegration } from './services/codex/CodexIntegration';
+import { CodexValidator } from './services/codex/CodexValidator';
+import { CodexCommandGenerator } from './services/codex/CodexCommandGenerator';
+import { CodexCLIService } from './services/codex/CodexCLIService';
+import { CodexErrorHandler } from './services/codex/CodexErrorHandler';
+import { CLIExecutionService } from './services/CLIExecutionService';
+
 // Simple console output implementation
 class ConsoleOutput {
   write(text: string): void {
@@ -72,13 +80,21 @@ async function main(): Promise<void> {
     const cursorCommandGenerator = new CursorCommandGenerator(fileSystem);
     const inputService = new InputService(output);
 
+    // Create Codex integration services
+    const cliExecutionService = new CLIExecutionService();
+    const codexCLIService = new CodexCLIService(cliExecutionService);
+    const codexErrorHandler = new CodexErrorHandler();
+    const codexValidator = new CodexValidator(cliExecutionService);
+    const codexCommandGenerator = new CodexCommandGenerator(fileSystem);
+    const codexIntegration = new CodexIntegration(codexValidator, codexCommandGenerator);
+
     // Create CLI application
     const cliApp = new CLIApplication();
     cliApp.setOutput(output);
     cliApp.setErrorOutput(output);
 
     // Register commands
-    cliApp.registerCommand(new InitCommand(directoryService, templateService, cursorCommandGenerator, inputService, output));
+    cliApp.registerCommand(new InitCommand(directoryService, templateService, cursorCommandGenerator, inputService, output, codexIntegration));
     cliApp.registerCommand(new CreateStudyCommand(studyService, output));
     cliApp.registerCommand(new ListStudiesCommand(studyService, output));
     cliApp.registerCommand(new ShowStudyCommand(studyService, output));

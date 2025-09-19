@@ -97,6 +97,28 @@ UX-Kit now includes comprehensive Cursor IDE integration:
 - **IDE Detection**: Smart detection of Cursor IDE installation
 - **Enhanced UX**: Emojis, colors, and engaging visual feedback
 
+#### Codex AI Agent Integration
+UX-Kit includes comprehensive Codex AI agent integration for advanced research capabilities:
+
+**Core Features:**
+- **Codex CLI Integration**: Seamless integration with Codex CLI for advanced AI capabilities
+- **Comprehensive Error Handling**: User-friendly error messages with specific recovery suggestions
+- **Performance Monitoring**: Execution time tracking and optimization detection
+- **Template Generation**: Dynamic command template creation and validation
+- **Concurrent Execution**: Support for running multiple commands simultaneously
+
+**Error Handling:**
+- **API Error Categorization**: Specific handling for rate limits, authentication, and connection errors
+- **Recovery Suggestions**: Context-aware recommendations for resolving issues
+- **Fallback Handling**: Graceful degradation when services are unavailable
+- **User-Friendly Messages**: Clear, actionable error descriptions
+
+**Configuration:**
+- **Flexible Settings**: API endpoints, timeouts, and retry attempts
+- **Validation**: Installation and configuration verification
+- **Testing**: Integration testing with sample requests
+- **Monitoring**: Performance metrics and error statistics
+
 **Generated Commands:**
 - `/specify` - Create or update feature specifications
 - `/research` - Generate research questions and collect sources
