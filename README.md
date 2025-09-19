@@ -45,7 +45,7 @@ npm install
 npm run build
 
 # Run the CLI
-node dist/index.js --help
+uxkit --help
 ```
 
 ## 🚀 Current Status
@@ -53,7 +53,7 @@ node dist/index.js --help
 **UX-Kit CLI is fully functional!** All core features are implemented and working:
 
 ### ✅ **Core Features**
-- **Project Initialization**: `node dist/index.js init` - Sets up UX-Kit directory structure with beautiful ASCII banner
+- **Project Initialization**: `uxkit init` - Sets up UX-Kit directory structure with beautiful ASCII banner
 - **Interactive AI Agent Selection**: Choose between Cursor, Codex v2, or Custom AI agents during initialization
 - **Cursor IDE Integration**: Automatic generation of custom slash commands for seamless IDE workflow
 - **Codex v2 Integration**: Creates `codex.md` configuration and `.codex/prompts/` directory with UX research prompts
@@ -77,14 +77,17 @@ node dist/index.js --help
 - **Progress Indicators**: Visual feedback during setup with animated progress
 - **Enhanced UX**: Emojis, colors, and engaging visual feedback throughout the process
 
-### Future: NPM Package (Planned)
+### NPM Package Installation
 
 ```bash
-# Install globally (when published)
+# Install globally
 npm install -g @ux-kit/cli
 
 # Or install locally in your project
 npm install --save-dev @ux-kit/cli
+
+# Verify installation
+uxkit --help
 ```
 
 ## Quick Start
@@ -104,25 +107,25 @@ cat demo/generated-output/synthesis.md
 
 ```bash
 # Initialize UX-Kit in your project (with beautiful ASCII banner!)
-node dist/index.js init
+uxkit init
 
 # Or specify your AI agent directly
-node dist/index.js init --aiAgent cursor
+uxkit init --aiAgent cursor
 
 # Create a research study
-node dist/index.js create "User Onboarding Research"
+uxkit study:create --name "User Onboarding Research"
 
 # List all studies
-node dist/index.js list
+uxkit study:list
 
 # Show study details
-node dist/index.js show <study-id>
+uxkit study:show <study-id>
 
 # Delete a study
-node dist/index.js delete <study-id>
+uxkit study:delete <study-id>
 
 # Show help
-node dist/index.js --help
+uxkit --help
 ```
 
 ### Option 3: AI Agent Integration
@@ -130,7 +133,7 @@ node dist/index.js --help
 #### Cursor IDE Integration
 ```bash
 # Initialize with Cursor IDE integration
-node dist/index.js init --aiAgent cursor
+uxkit init --aiAgent cursor
 
 # This creates:
 # - .cursor/commands/ directory with custom slash commands
@@ -147,7 +150,7 @@ node dist/index.js init --aiAgent cursor
 #### Codex v2 Integration
 ```bash
 # Initialize with Codex v2 integration
-node dist/index.js init --aiAgent codex
+uxkit init --aiAgent codex
 
 # This creates:
 # - codex.md configuration file in project root
@@ -246,34 +249,34 @@ Here's how to use UX-Kit for a complete research study:
 
 ```bash
 # 1. Initialize UX-Kit in your project
-node dist/index.js init
+uxkit init
 
 # 2. Create a research study
-node dist/index.js study:create --name "E-commerce Checkout Optimization" --description "Research study for optimizing checkout flow"
+uxkit study:create --name "E-commerce Checkout Optimization" --description "Research study for optimizing checkout flow"
 
 # 3. List all studies
-node dist/index.js study:list
+uxkit study:list
 
 # 4. Show study details (use the study ID from the list)
-node dist/index.js study:show 001-e-commerce-checkout-optimization
+uxkit study:show 001-e-commerce-checkout-optimization
 
 # 5. Generate research questions
-node dist/index.js research:questions --study 001-e-commerce-checkout-optimization --topic "How do users experience our checkout flow?"
+uxkit research:questions --study 001-e-commerce-checkout-optimization --topic "How do users experience our checkout flow?"
 
 # 6. Collect research sources
-node dist/index.js research:sources --study 001-e-commerce-checkout-optimization
+uxkit research:sources --study 001-e-commerce-checkout-optimization
 
 # 7. Process interview transcripts
-node dist/index.js research:interview --study 001-e-commerce-checkout-optimization --transcript "User interview transcript content..."
+uxkit research:interview --study 001-e-commerce-checkout-optimization --transcript "User interview transcript content..."
 
 # 8. Generate source summaries
-node dist/index.js research:summarize --study 001-e-commerce-checkout-optimization --sourceId source-123
+uxkit research:summarize --study 001-e-commerce-checkout-optimization --sourceId source-123
 
 # 9. Synthesize insights from all artifacts
-node dist/index.js research:synthesize --study 001-e-commerce-checkout-optimization
+uxkit research:synthesize --study 001-e-commerce-checkout-optimization
 
 # 10. Delete a study when done
-node dist/index.js study:delete 001-e-commerce-checkout-optimization
+uxkit study:delete 001-e-commerce-checkout-optimization
 ```
 
 ## 📚 Research Commands Tutorial
@@ -285,7 +288,7 @@ Let's walk through a complete UX research study using UX-Kit:
 #### Step 1: Project Setup
 ```bash
 # Initialize UX-Kit in your project
-node dist/index.js init
+uxkit init
 
 # This creates:
 # - .uxkit/ directory structure
@@ -297,7 +300,7 @@ node dist/index.js init
 #### Step 2: Create a Research Study
 ```bash
 # Create a new research study
-node dist/index.js create "E-commerce Checkout Optimization" --description "Research study for optimizing checkout flow"
+uxkit study:create --name "E-commerce Checkout Optimization" --description "Research study for optimizing checkout flow"
 
 # Output:
 # Creating study: E-commerce Checkout Optimization
@@ -308,7 +311,7 @@ node dist/index.js create "E-commerce Checkout Optimization" --description "Rese
 #### Step 3: Generate Research Questions
 ```bash
 # Generate research questions for the study
-node dist/index.js questions "How do users experience our checkout flow?" --study 001-e-commerce-checkout-optimization
+uxkit research:questions --study 001-e-commerce-checkout-optimization --topic "How do users experience our checkout flow?"
 
 # This creates: .uxkit/studies/001-e-commerce-checkout-optimization/questions.md
 ```
@@ -316,10 +319,10 @@ node dist/index.js questions "How do users experience our checkout flow?" --stud
 #### Step 4: View Generated Files
 ```bash
 # List all studies
-node dist/index.js list
+uxkit study:list
 
 # Show study details
-node dist/index.js show 001-e-commerce-checkout-optimization
+uxkit study:show 001-e-commerce-checkout-optimization
 
 # View the generated questions file
 cat .uxkit/studies/001-e-commerce-checkout-optimization/questions.md
@@ -328,13 +331,13 @@ cat .uxkit/studies/001-e-commerce-checkout-optimization/questions.md
 #### Step 5: Study Management
 ```bash
 # List all studies
-node dist/index.js list
+uxkit study:list
 
 # Show specific study details
-node dist/index.js show 001-e-commerce-checkout-optimization
+uxkit study:show 001-e-commerce-checkout-optimization
 
 # Delete a study when done
-node dist/index.js delete 001-e-commerce-checkout-optimization
+uxkit study:delete 001-e-commerce-checkout-optimization
 ```
 
 ### Generated File Structure
@@ -429,8 +432,11 @@ The demo demonstrates our powerful template system:
 
 ## Development
 
+### For Contributors
 ```bash
-# Install dependencies
+# Clone and setup
+git clone https://github.com/ux-kit/cli.git
+cd ux-kit
 npm install
 
 # Build the project
@@ -444,6 +450,19 @@ npm run lint
 
 # Format code
 npm run format
+
+# Test CLI during development
+node dist/index.js --help
+```
+
+### For Users
+```bash
+# Install globally
+npm install -g @ux-kit/cli
+
+# Use the CLI
+uxkit --help
+uxkit init
 ```
 
 ## 🤖 AI Agent Integration
