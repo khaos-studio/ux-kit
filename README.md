@@ -1,9 +1,6 @@
-# UX-Kit CLI
+# UX-Kit
 
 > **Transform shallow research into systematic knowledge-building with AI-powered tools**
-
-[![npm version](https://badge.fury.io/js/%40ux-kit%2Fcli.svg)](https://badge.fury.io/js/%40ux-kit%2Fcli)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## 🎯 What is UX-Kit?
 
@@ -25,25 +22,19 @@ UX-Kit is a research empowerment system that leverages AI tools like Cursor IDE 
 ## 🚀 Quick Start
 
 ```bash
-# Clone and install (recommended)
+# Install UX-Kit
 git clone https://github.com/khaos-studio/ux-kit.git
 cd ux-kit
-npm install
-npm run build
-npm link
+npm install && npm run build && npm link
 
-# Initialize and create your first study
+# Create your first research study
 uxkit init
 uxkit study:create --name "My UX Research"
 ```
 
-**Alternative: Direct Install**
-```bash
-# Install directly from GitHub
-npm install -g https://github.com/khaos-studio/ux-kit.git
-```
-
 **That's it!** You now have a structured research environment ready to accumulate knowledge.
+
+*Need detailed setup instructions? Check our [Setup Guide](docs/setup.md)*
 
 ## 🎮 See It In Action
 

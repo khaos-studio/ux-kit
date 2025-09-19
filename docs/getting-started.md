@@ -16,11 +16,10 @@ By the end of this guide, you'll:
 ## Prerequisites
 
 **You need:**
-- Node.js 18 or higher ([Download here](https://nodejs.org))
-- A terminal/command line
+- A computer with internet access
 - 5 minutes of your time
 
-**That's it!** No complex setup, no dependencies, no configuration files to manage.
+**That's it!** No complex setup, no technical knowledge required.
 
 ## Installation
 
@@ -43,7 +42,7 @@ npm link
 uxkit --help
 ```
 
-You should see the UX-Kit help menu. If you get an error, check that Node.js is installed correctly.
+You should see the UX-Kit help menu. If you get an error, check the [Setup Guide](setup.md) for detailed installation instructions.
 
 ## Your First Research Study
 
@@ -77,17 +76,11 @@ You'll see your study listed with metadata and timestamps.
 
 UX-Kit creates a systematic research environment that accumulates knowledge:
 
-```
-.uxkit/
-├── config.yaml              # Your research configuration
-├── templates/               # Research process templates
-└── studies/                 # Your research studies
-    └── my-first-research-study/
-        ├── study-info.json  # Study metadata and context
-        ├── questions.md     # Research questions and hypotheses
-        ├── sources.md       # Research sources and references
-        └── synthesis.md     # Research synthesis and evidence
-```
+**What Gets Created:**
+- **Research Studies** - Organized containers for your research projects
+- **Research Questions** - Structured questions that build upon previous work
+- **Research Sources** - Organized references and data sources
+- **Research Synthesis** - Evidence and insights that accumulate over time
 
 **Key Benefits:**
 - **Knowledge Accumulation** - Each study builds upon previous research
@@ -105,11 +98,11 @@ UX-Kit works beautifully with AI tools to accelerate your research processes. Ch
 uxkit init --aiAgent cursor
 ```
 
-This creates custom slash commands in your IDE that accelerate research:
-- `/specify` - Create research specifications and hypotheses
-- `/research` - Generate research questions and analysis frameworks
-- `/study` - Create research studies with systematic data collection
-- `/synthesize` - Synthesize research insights and build evidence
+This creates custom commands in your IDE that accelerate research:
+- Create research specifications and hypotheses
+- Generate research questions and analysis frameworks
+- Create research studies with systematic data collection
+- Synthesize research insights and build evidence
 
 ### For Codex v2 Users
 
@@ -123,7 +116,7 @@ This sets up natural language prompts for research acceleration:
 - "Synthesize insights from last week's user interviews"
 - "Analyze patterns in user feedback data"
 
-### For Custom AI Tools
+### For Other AI Tools
 
 ```bash
 uxkit init --aiAgent custom
@@ -209,7 +202,7 @@ No! UX-Kit enhances your existing research methods with systematic data accumula
 Yes! UX-Kit enhances your existing workflow by adding systematic data accumulation and AI acceleration.
 
 ### "What if I'm not technical?"
-UX-Kit is designed for UX researchers, not developers. The commands are simple and the documentation is clear.
+UX-Kit is designed for UX researchers, not developers. The commands are simple and the documentation is clear. If you need help with setup, check our [Setup Guide](setup.md).
 
 ### "Can I customize the research processes?"
 Absolutely! UX-Kit uses templates that you can customize to match your research methods and team needs.
