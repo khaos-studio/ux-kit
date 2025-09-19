@@ -85,6 +85,39 @@ describe('CodexCommandGenerator', () => {
       expect(mockFileSystemService.createDirectory).not.toHaveBeenCalled();
     });
 
+    it('should create prompts directory in .codex', async () => {
+      mockFileSystemService.directoryExists.mockResolvedValue(false);
+      mockFileSystemService.createDirectory.mockResolvedValue();
+      mockFileSystemService.writeFile.mockResolvedValue();
+
+      await codexCommandGenerator.generateTemplates(mockConfig);
+
+      expect(mockFileSystemService.directoryExists).toHaveBeenCalledWith('/test/project/.codex/prompts');
+      expect(mockFileSystemService.createDirectory).toHaveBeenCalledWith('/test/project/.codex/prompts');
+    });
+
+    it('should create UX research prompt files', async () => {
+      mockFileSystemService.directoryExists.mockResolvedValue(false);
+      mockFileSystemService.createDirectory.mockResolvedValue();
+      mockFileSystemService.writeFile.mockResolvedValue();
+
+      await codexCommandGenerator.generateTemplates(mockConfig);
+
+      // Check that prompt files are created
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        '/test/project/.codex/prompts/create-study.md',
+        expect.stringContaining('# Create UX Research Study')
+      );
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        '/test/project/.codex/prompts/generate-questions.md',
+        expect.stringContaining('# Generate Research Questions')
+      );
+      expect(mockFileSystemService.writeFile).toHaveBeenCalledWith(
+        '/test/project/.codex/prompts/synthesize-findings.md',
+        expect.stringContaining('# Synthesize Research Findings')
+      );
+    });
+
     it('should create README.md in .codex directory', async () => {
       mockFileSystemService.directoryExists.mockResolvedValue(false);
       mockFileSystemService.createDirectory.mockResolvedValue();
@@ -197,6 +230,8 @@ describe('CodexCommandGenerator', () => {
       expect(readme).toContain('Codex v2 reads the `codex.md` file in the project root');
       expect(readme).toContain('natural language prompts');
       expect(readme).toContain('configured in your IDE');
+      expect(readme).toContain('prompts/');
+      expect(readme).toContain('Available Prompts');
     });
 
     it('should include example usage', () => {

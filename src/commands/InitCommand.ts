@@ -312,6 +312,7 @@ ${brightMagenta}                    🎨 User Experience Research & Design Toolk
       this.output.writeln('🎉 Codex v2 integration ready!');
       this.output.writeln('  📄 Configuration file created: codex.md');
       this.output.writeln('  📁 Additional config in: .codex/');
+      this.output.writeln('  📝 UX research prompts in: .codex/prompts/');
       this.output.writeln('  🚀 You can now use natural language prompts with Codex for UX research');
       this.output.writeln('  💡 Note: Codex v2 works through IDE integration, not CLI commands');
       this.output.writeln('');

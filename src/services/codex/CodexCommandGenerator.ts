@@ -25,7 +25,7 @@ export class CodexCommandGenerator implements ICodexCommandGenerator {
   }
 
   /**
-   * Generate Codex v2 configuration file
+   * Generate Codex v2 configuration file and prompts
    */
   async generateTemplates(config: CodexConfiguration): Promise<void> {
     try {
@@ -37,12 +37,22 @@ export class CodexCommandGenerator implements ICodexCommandGenerator {
       const codexConfig = this.generateCodexConfig();
       await this.fileSystemService.writeFile(codexConfigPath, codexConfig);
       
-      // Also create a .codex directory for any additional configuration if needed
+      // Create .codex directory structure following Codex v2 patterns
       const codexDir = `${projectRoot}/.codex`;
-      const directoryExists = await this.fileSystemService.directoryExists(codexDir);
-      if (!directoryExists) {
+      const promptsDir = `${codexDir}/prompts`;
+      
+      const codexDirExists = await this.fileSystemService.directoryExists(codexDir);
+      if (!codexDirExists) {
         await this.fileSystemService.createDirectory(codexDir);
       }
+      
+      const promptsDirExists = await this.fileSystemService.directoryExists(promptsDir);
+      if (!promptsDirExists) {
+        await this.fileSystemService.createDirectory(promptsDir);
+      }
+      
+      // Create UX research specific prompts following Codex v2 pattern
+      await this.generateUXResearchPrompts(promptsDir);
       
       // Create a README in the .codex directory explaining the setup
       const readmeContent = this.generateCodexReadme();
@@ -307,6 +317,117 @@ Remember: Always work within the UX-Kit structure and maintain the integrity of 
   }
 
   /**
+   * Generate UX research specific prompts following Codex v2 pattern
+   */
+  private async generateUXResearchPrompts(promptsDir: string): Promise<void> {
+    const prompts = [
+      {
+        name: 'create-study.md',
+        content: `# Create UX Research Study
+
+Create a new UX research study with proper structure and documentation.
+
+## Usage
+Use this prompt to set up a new research study with all necessary components.
+
+## Example
+"Create a new UX research study about mobile app onboarding experience"
+
+## What it does
+- Creates study directory structure
+- Sets up configuration files
+- Generates initial research plan
+- Creates templates for data collection
+`
+      },
+      {
+        name: 'generate-questions.md',
+        content: `# Generate Research Questions
+
+Generate comprehensive research questions for user interviews and surveys.
+
+## Usage
+Use this prompt to create well-structured research questions for your study.
+
+## Example
+"Generate interview questions for understanding user pain points in the checkout process"
+
+## What it does
+- Creates open-ended interview questions
+- Generates follow-up questions
+- Suggests survey questions
+- Provides question validation guidelines
+`
+      },
+      {
+        name: 'synthesize-findings.md',
+        content: `# Synthesize Research Findings
+
+Analyze and synthesize findings from user research data.
+
+## Usage
+Use this prompt to process and analyze research data to extract insights.
+
+## Example
+"Synthesize findings from 5 user interviews about mobile app usability"
+
+## What it does
+- Analyzes interview transcripts
+- Identifies common themes and patterns
+- Creates affinity diagrams
+- Generates actionable insights
+- Produces research reports
+`
+      },
+      {
+        name: 'create-personas.md',
+        content: `# Create User Personas
+
+Develop user personas based on research findings and data.
+
+## Usage
+Use this prompt to create detailed user personas from research insights.
+
+## Example
+"Create user personas based on our mobile app research findings"
+
+## What it does
+- Analyzes user data and behaviors
+- Identifies distinct user segments
+- Creates detailed persona profiles
+- Generates persona documentation
+- Suggests design implications
+`
+      },
+      {
+        name: 'research-plan.md',
+        content: `# Create Research Plan
+
+Develop a comprehensive research plan for your UX study.
+
+## Usage
+Use this prompt to create a structured research plan with methodology and timeline.
+
+## Example
+"Create a research plan for studying e-commerce checkout experience"
+
+## What it does
+- Defines research objectives
+- Selects appropriate methodologies
+- Creates timeline and milestones
+- Identifies required resources
+- Plans data collection and analysis
+`
+      }
+    ];
+
+    for (const prompt of prompts) {
+      const promptPath = `${promptsDir}/${prompt.name}`;
+      await this.fileSystemService.writeFile(promptPath, prompt.content);
+    }
+  }
+
+  /**
    * Generate README for .codex directory
    */
   generateCodexReadme(): string {
@@ -317,6 +438,7 @@ This directory contains additional configuration for Codex v2 integration with U
 ## What's Here
 
 - \`README.md\` - This file explaining the Codex integration
+- \`prompts/\` - Directory containing UX research specific prompts
 - Future configuration files may be added here
 
 ## How It Works
@@ -328,6 +450,15 @@ Codex v2 reads the \`codex.md\` file in the project root to understand how to he
 1. Make sure Codex v2 is installed and configured in your IDE
 2. The \`codex.md\` file in the project root contains all the instructions
 3. Use natural language prompts to ask Codex for help with UX research tasks
+4. Access the custom prompts in the \`prompts/\` directory via Codex's slash commands
+
+## Available Prompts
+
+- \`create-study.md\` - Create new UX research studies
+- \`generate-questions.md\` - Generate research questions
+- \`synthesize-findings.md\` - Analyze and synthesize research data
+- \`create-personas.md\` - Develop user personas
+- \`research-plan.md\` - Create comprehensive research plans
 
 ## Example Usage
 
