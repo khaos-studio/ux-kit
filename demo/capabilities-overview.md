@@ -199,3 +199,4 @@ The tool is production-ready and provides everything needed for structured UX re
 ---
 
 *This overview demonstrates the comprehensive capabilities of UX-Kit for UX research workflows.*
+

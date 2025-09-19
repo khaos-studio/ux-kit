@@ -183,3 +183,4 @@ The tool is ready for CLI integration, slash commands, and IDE integration, maki
 ---
 
 *This demo suite showcases the full power of UX-Kit for structured UX research workflows.*
+

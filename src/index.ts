@@ -26,7 +26,9 @@ import { TemplateService } from './services/TemplateService';
 import { StudyService } from './services/StudyService';
 import { ResearchService } from './services/ResearchService';
 import { FileGenerator } from './services/FileGenerator';
+import { CursorCommandGenerator } from './services/CursorCommandGenerator';
 import { FileSystemService } from './utils/FileSystemService';
+import { InputService } from './utils/InputService';
 
 // Simple console output implementation
 class ConsoleOutput {
@@ -61,12 +63,14 @@ async function main(): Promise<void> {
     const fileSystem = new FileSystemService();
     
     // Create services with proper dependencies
+    const output = new ConsoleOutput();
     const directoryService = new DirectoryService(fileSystem);
     const templateService = new TemplateService(fileSystem);
     const studyService = new StudyService(fileSystem);
     const fileGenerator = new FileGenerator(fileSystem);
     const researchService = new ResearchService(fileSystem, fileGenerator);
-    const output = new ConsoleOutput();
+    const cursorCommandGenerator = new CursorCommandGenerator(fileSystem);
+    const inputService = new InputService(output);
 
     // Create CLI application
     const cliApp = new CLIApplication();
@@ -74,7 +78,7 @@ async function main(): Promise<void> {
     cliApp.setErrorOutput(output);
 
     // Register commands
-    cliApp.registerCommand(new InitCommand(directoryService, templateService, output));
+    cliApp.registerCommand(new InitCommand(directoryService, templateService, cursorCommandGenerator, inputService, output));
     cliApp.registerCommand(new CreateStudyCommand(studyService, output));
     cliApp.registerCommand(new ListStudiesCommand(studyService, output));
     cliApp.registerCommand(new ShowStudyCommand(studyService, output));

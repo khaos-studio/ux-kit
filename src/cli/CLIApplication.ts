@@ -46,17 +46,26 @@ export class CLIApplication {
     });
 
     command.options.forEach(option => {
-      const optionStr = option.aliases && option.aliases.length > 0 
+      let optionStr = option.aliases && option.aliases.length > 0 
         ? `-${option.aliases[0]}, --${option.name}`
         : `--${option.name}`;
+      
+      // Add value placeholder for string options
+      if (option.type === 'string') {
+        optionStr += ` <${option.name}>`;
+      }
       
       cmd.option(optionStr, option.description, option.defaultValue);
     });
 
     cmd.action(async (...args) => {
       try {
-        const options = args[args.length - 1];
+        // Commander.js passes the Command object as the last argument
+        const cmdInstance = args[args.length - 1];
         const commandArgs = args.slice(0, -1);
+        
+        // Get parsed options using program.opts()
+        const options = cmdInstance.opts();
         
         await command.execute(commandArgs, options);
       } catch (error) {

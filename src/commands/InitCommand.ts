@@ -7,6 +7,8 @@
 import { ICommand, CommandResult, ValidationResult } from '../contracts/presentation-contracts';
 import { DirectoryService } from '../services/DirectoryService';
 import { TemplateService } from '../services/TemplateService';
+import { CursorCommandGenerator } from '../services/CursorCommandGenerator';
+import { InputService } from '../utils/InputService';
 import { IOutput } from '../contracts/presentation-contracts';
 
 export class InitCommand implements ICommand {
@@ -46,12 +48,17 @@ export class InitCommand implements ICommand {
   constructor(
     private directoryService: DirectoryService,
     private templateService: TemplateService,
+    private cursorCommandGenerator: CursorCommandGenerator,
+    private inputService: InputService,
     private output: IOutput
   ) {}
 
   async execute(args: string[], options: Record<string, any>): Promise<CommandResult> {
     try {
       const projectRoot = options.projectRoot || process.cwd();
+      
+      // Display ASCII art banner
+      this.displayBanner();
       
       // Check if already initialized
       if (await this.directoryService.isUXKitInitialized(projectRoot)) {
@@ -61,36 +68,25 @@ export class InitCommand implements ICommand {
         };
       }
 
-      this.output.writeln('Creating .uxkit directory structure...');
+      // Use provided AI agent or prompt for selection
+      const aiAgent = options.aiAgent || await this.promptForAiAgent();
+
+      // Enhanced setup process with better progress indicators
+      await this.setupWithProgress(projectRoot, aiAgent, options.template || 'default');
       
-      // Create directory structure
-      await this.directoryService.createUXKitStructure(projectRoot);
+      // IDE Confirmation and Cursor command generation
+      await this.handleIdeConfirmation(projectRoot, aiAgent);
       
-      this.output.writeln('Creating configuration file...');
-      
-      // Create configuration file
-      await this.directoryService.createConfigFile(projectRoot, {
-        aiAgent: options.aiAgent
-      });
-      
-      this.output.writeln('Creating memory/principles.md...');
-      
-      // Create principles file
-      await this.directoryService.createPrinciplesFile(projectRoot);
-      
-      this.output.writeln('Copying template files...');
-      
-      // Copy template files
-      await this.templateService.copyTemplates(projectRoot, options.template);
-      
-      this.output.writeln('UX-Kit initialized successfully!');
+      this.output.writeln('');
+      this.output.writeln('🎉 UX-Kit initialized successfully!');
+      this.output.writeln('   Ready to start your UX research journey! 🚀');
       
       return {
         success: true,
         message: 'UX-Kit initialized successfully in this project',
         data: {
           projectRoot,
-          aiAgent: options.aiAgent || 'cursor',
+          aiAgent: aiAgent,
           template: options.template || 'default'
         }
       };
@@ -131,6 +127,139 @@ export class InitCommand implements ICommand {
       valid: errors.length === 0,
       errors
     };
+  }
+
+  /**
+   * Display ASCII art banner for UX-Kit
+   */
+  private displayBanner(): void {
+    // ANSI color codes
+    const reset = '\x1b[0m';
+    const brightBlue = '\x1b[94m';
+    const brightCyan = '\x1b[96m';
+    const brightGreen = '\x1b[92m';
+    const brightYellow = '\x1b[93m';
+    const brightMagenta = '\x1b[95m';
+    const brightWhite = '\x1b[97m';
+    const brightRed = '\x1b[91m';
+    
+    const banner = `
+${brightCyan}UUUUUUUU     UUUUUUUUXXXXXXX       XXXXXXX     kkkkkkkk             iiii          tttt${reset}          
+${brightCyan}U::::::U     U::::::UX:::::X       X:::::X     k::::::k            i::::i      ttt:::t${reset}          
+${brightCyan}U::::::U     U::::::UX:::::X       X:::::X     k::::::k             iiii       t:::::t${reset}          
+${brightCyan}UU:::::U     U:::::UUX::::::X     X::::::X     k::::::k                        t:::::t${reset}          
+${brightCyan} U:::::U     U:::::U XXX:::::X   X:::::XXX      k:::::k    kkkkkkkiiiiiiittttttt:::::ttttttt${reset}    
+${brightCyan} U:::::D     D:::::U    X:::::X X:::::X         k:::::k   k:::::k i:::::it:::::::::::::::::t${reset}    
+${brightCyan} U:::::D     D:::::U     X:::::X:::::X          k:::::k  k:::::k   i::::it:::::::::::::::::t${reset}    
+${brightCyan} U:::::D     D:::::U      X:::::::::X           k:::::k k:::::k    i::::itttttt:::::::tttttt${reset}    
+${brightCyan} U:::::D     D:::::U      X:::::::::X           k::::::k:::::k     i::::i      t:::::t${reset}          
+${brightCyan} U:::::D     D:::::U     X:::::X:::::X          k:::::::::::k      i::::i      t:::::t${reset}          
+${brightCyan} U:::::D     D:::::U    X:::::X X:::::X         k:::::::::::k      i::::i      t:::::t${reset}          
+${brightCyan} U::::::U   U::::::U XXX:::::X   X:::::XXX      k::::::k:::::k     i::::i      t:::::t    tttttt${reset}
+${brightCyan} U:::::::UUU:::::::U X::::::X     X::::::X     k::::::k k:::::k   i::::::i     t::::::tttt:::::t${reset}
+${brightCyan}  UU:::::::::::::UU  X:::::X       X:::::X     k::::::k  k:::::k  i::::::i     tt::::::::::::::t${reset}
+${brightCyan}    UU:::::::::UU    X:::::X       X:::::X     k::::::k   k:::::k i::::::i       tt:::::::::::tt${reset}
+${brightCyan}      UUUUUUUUU      XXXXXXX       XXXXXXX     kkkkkkkk    kkkkkkkiiiiiiii         ttttttttttt${reset}  
+
+${brightMagenta}                    🎨 User Experience Research & Design Toolkit${reset}
+`;
+    this.output.writeln(banner);
+  }
+
+  /**
+   * Enhanced setup process with progress indicators
+   */
+  private async setupWithProgress(projectRoot: string, aiAgent: string, template: string): Promise<void> {
+    const steps = [
+      { name: 'Creating .uxkit directory structure', action: () => this.directoryService.createUXKitStructure(projectRoot) },
+      { name: 'Creating configuration file', action: () => this.directoryService.createConfigFile(projectRoot, { aiAgent }) },
+      { name: 'Creating memory/principles.md', action: () => this.directoryService.createPrinciplesFile(projectRoot) },
+      { name: 'Copying template files', action: () => this.templateService.copyTemplates(projectRoot, template) }
+    ];
+
+    for (let i = 0; i < steps.length; i++) {
+      const step = steps[i];
+      if (!step) continue;
+      
+      const progress = `[${i + 1}/${steps.length}]`;
+      
+      // Show progress with animation
+      this.output.write(`${progress} ${step.name}...`);
+      
+      try {
+        await step.action();
+        this.output.writeln(` ✓`);
+      } catch (error) {
+        this.output.writeln(` ✗`);
+        throw error;
+      }
+      
+      // Small delay for visual effect
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+  }
+
+  /**
+   * Interactive prompt for AI agent selection
+   */
+  private async promptForAiAgent(): Promise<string> {
+    const choices = [
+      {
+        value: 'cursor',
+        label: 'Cursor',
+        description: 'Full IDE integration with Cursor commands (Recommended)'
+      },
+      {
+        value: 'codex',
+        label: 'Codex',
+        description: 'OpenAI Codex integration'
+      },
+      {
+        value: 'custom',
+        label: 'Custom',
+        description: 'Custom AI agent configuration'
+      }
+    ];
+
+    return await this.inputService.select('🤖 AI Agent Configuration\nPlease select your preferred AI agent:', choices, 'cursor');
+  }
+
+  /**
+   * Handle IDE confirmation and Cursor command generation
+   */
+  private async handleIdeConfirmation(projectRoot: string, aiAgent: string): Promise<void> {
+    // If AI agent is Cursor, confirm IDE and generate Cursor commands
+    if (aiAgent === 'cursor') {
+      this.output.write('🔍 Checking for Cursor IDE...');
+      
+      const isCursorAvailable = await this.cursorCommandGenerator.isCursorAvailable();
+      
+      if (isCursorAvailable) {
+        this.output.writeln(' ✓');
+        this.output.write('⚙️  Generating Cursor commands...');
+        
+        try {
+          await this.cursorCommandGenerator.generateCursorCommands(projectRoot);
+          this.output.writeln(' ✓');
+          this.output.writeln('');
+          this.output.writeln('🎉 Cursor integration ready!');
+          this.output.writeln('  📁 Commands available in .cursor/commands/ directory');
+          this.output.writeln('  🚀 You can now use /specify, /research, /study, and /synthesize commands in Cursor');
+          this.output.writeln('  💡 Tip: If commands don\'t appear, try restarting Cursor IDE');
+        } catch (error) {
+          this.output.writeln(' ✗');
+          this.output.writeErrorln(`Failed to generate Cursor commands: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        }
+      } else {
+        this.output.writeln(' ⚠');
+        this.output.writeln('');
+        this.output.writeln('⚠️  Cursor IDE not detected in PATH');
+        this.output.writeln('  📝 You can still use UX-Kit CLI commands');
+        this.output.writeln('  🔧 To enable Cursor integration, install Cursor and ensure it\'s in your PATH');
+      }
+    } else {
+      this.output.writeln(`✓ Configured for AI agent: ${aiAgent}`);
+    }
   }
 
   showHelp(): void {

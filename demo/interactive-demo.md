@@ -365,3 +365,4 @@ After completing this demo, you can:
 ---
 
 *This demo showcases the full power of UX-Kit for structured UX research workflows.*
+
