@@ -133,7 +133,7 @@ describe('InitCommand Codex Integration', () => {
           enabled: true,
           validationEnabled: true,
           fallbackToCustom: true,
-          templatePath: '/test/project/.uxkit/templates/codex-commands',
+          templatePath: '/test/project',
           timeout: 30000
         })
       );
@@ -383,7 +383,7 @@ describe('InitCommand Codex Integration', () => {
 
       expect(mockCodexIntegration.initialize).toHaveBeenCalledWith(
         expect.objectContaining({
-          templatePath: '/custom/project/.uxkit/templates/codex-commands'
+          templatePath: '/custom/project'
         })
       );
     });
@@ -438,9 +438,10 @@ describe('InitCommand Codex Integration', () => {
 
       await (initCommand as any).handleCodexInitialization('/test/project');
 
-      expect(mockOutput.writeln).toHaveBeenCalledWith('🎉 Codex integration ready!');
-      expect(mockOutput.writeln).toHaveBeenCalledWith('  📁 Command templates available in .uxkit/templates/codex-commands/');
-      expect(mockOutput.writeln).toHaveBeenCalledWith('  🚀 You can now use Codex commands for UX research');
+      expect(mockOutput.writeln).toHaveBeenCalledWith('🎉 Codex v2 integration ready!');
+      expect(mockOutput.writeln).toHaveBeenCalledWith('  📄 Configuration file created: codex.md');
+      expect(mockOutput.writeln).toHaveBeenCalledWith('  📁 Additional config in: .codex/');
+      expect(mockOutput.writeln).toHaveBeenCalledWith('  🚀 You can now use natural language prompts with Codex for UX research');
       expect(mockOutput.writeln).toHaveBeenCalledWith('  💡 Codex CLI version: 2.1.0');
     });
 
@@ -567,7 +568,7 @@ describe('InitCommand Codex Integration', () => {
 
       expect(mockCodexIntegration.initialize).toHaveBeenCalledWith(
         expect.objectContaining({
-          templatePath: '/.uxkit/templates/codex-commands'
+          templatePath: ''
         })
       );
     });
@@ -594,7 +595,7 @@ describe('InitCommand Codex Integration', () => {
 
       expect(mockCodexIntegration.initialize).toHaveBeenCalledWith(
         expect.objectContaining({
-          templatePath: 'null/.uxkit/templates/codex-commands'
+          templatePath: 'null'
         })
       );
     });
@@ -621,9 +622,92 @@ describe('InitCommand Codex Integration', () => {
 
       expect(mockCodexIntegration.initialize).toHaveBeenCalledWith(
         expect.objectContaining({
-          templatePath: 'undefined/.uxkit/templates/codex-commands'
+          templatePath: 'undefined'
         })
       );
+    });
+  });
+
+  describe('Fallback Behavior When CLI Validation Fails', () => {
+    it('should create configuration files even when CLI validation fails', async () => {
+      mockCodexIntegration.validate.mockResolvedValue({
+        result: CodexValidationResult.CLI_NOT_FOUND,
+        errorMessage: 'Codex CLI not found',
+        suggestions: ['Install Codex CLI', 'Check PATH'],
+        timestamp: new Date()
+      });
+      mockCodexIntegration.initialize.mockResolvedValue();
+      mockCodexIntegration.generateCommandTemplates.mockResolvedValue();
+
+      const result = await (initCommand as any).handleCodexInitialization('/test/project');
+
+      expect(result).toBe(true);
+      expect(mockOutput.writeln).toHaveBeenCalledWith(' ⚠');
+      expect(mockOutput.writeln).toHaveBeenCalledWith('⚠️  Codex CLI not available, but creating configuration files anyway...');
+      expect(mockOutput.writeln).toHaveBeenCalledWith('  📝 Codex v2 works through IDE integration, not CLI commands');
+      expect(mockCodexIntegration.initialize).toHaveBeenCalledWith(
+        expect.objectContaining({
+          enabled: true,
+          validationEnabled: false,
+          fallbackToCustom: true,
+          templatePath: '/test/project',
+          timeout: 30000
+        })
+      );
+      expect(mockCodexIntegration.generateCommandTemplates).toHaveBeenCalled();
+    });
+
+    it('should display fallback success messages when CLI is not available', async () => {
+      mockCodexIntegration.validate.mockResolvedValue({
+        result: CodexValidationResult.CLI_NOT_FOUND,
+        errorMessage: 'Codex CLI not found',
+        suggestions: ['Install Codex CLI'],
+        timestamp: new Date()
+      });
+      mockCodexIntegration.initialize.mockResolvedValue();
+      mockCodexIntegration.generateCommandTemplates.mockResolvedValue();
+
+      await (initCommand as any).handleCodexInitialization('/test/project');
+
+      expect(mockOutput.writeln).toHaveBeenCalledWith('🎉 Codex v2 configuration ready!');
+      expect(mockOutput.writeln).toHaveBeenCalledWith('  📄 Configuration file created: codex.md');
+      expect(mockOutput.writeln).toHaveBeenCalledWith('  📁 Additional config in: .codex/');
+      expect(mockOutput.writeln).toHaveBeenCalledWith('  🚀 You can now use natural language prompts with Codex for UX research');
+      expect(mockOutput.writeln).toHaveBeenCalledWith('  💡 Note: Codex v2 works through IDE integration, not CLI commands');
+    });
+
+    it('should handle fallback initialization errors gracefully', async () => {
+      mockCodexIntegration.validate.mockResolvedValue({
+        result: CodexValidationResult.CLI_NOT_FOUND,
+        errorMessage: 'Codex CLI not found',
+        suggestions: ['Install Codex CLI'],
+        timestamp: new Date()
+      });
+      mockCodexIntegration.initialize.mockRejectedValue(new Error('Fallback initialization failed'));
+
+      const result = await (initCommand as any).handleCodexInitialization('/test/project');
+
+      expect(result).toBe(false);
+      expect(mockOutput.writeln).toHaveBeenCalledWith(' ✗');
+      expect(mockOutput.writeErrorln).toHaveBeenCalledWith('Failed to create Codex configuration: Fallback initialization failed');
+      expect(mockOutput.writeln).toHaveBeenCalledWith('⚠️  Codex integration will be skipped');
+    });
+
+    it('should handle fallback template generation errors gracefully', async () => {
+      mockCodexIntegration.validate.mockResolvedValue({
+        result: CodexValidationResult.CLI_NOT_FOUND,
+        errorMessage: 'Codex CLI not found',
+        suggestions: ['Install Codex CLI'],
+        timestamp: new Date()
+      });
+      mockCodexIntegration.initialize.mockResolvedValue();
+      mockCodexIntegration.generateCommandTemplates.mockRejectedValue(new Error('Template generation failed'));
+
+      const result = await (initCommand as any).handleCodexInitialization('/test/project');
+
+      expect(result).toBe(false);
+      expect(mockOutput.writeln).toHaveBeenCalledWith(' ✗');
+      expect(mockOutput.writeErrorln).toHaveBeenCalledWith('Failed to create Codex configuration: Template generation failed');
     });
   });
 

@@ -44,23 +44,27 @@ export class CodexIntegration implements ICodexIntegration {
       this.currentConfig = config;
       this.isConfigured = true;
 
-      // Check if Codex CLI is available
-      try {
-        this.cliAvailable = await this.validator.isCodexAvailable();
-      } catch (error) {
-        this.errorCount++;
+      // Check if Codex CLI is available (only if validation is enabled)
+      if (config.validationEnabled) {
+        try {
+          this.cliAvailable = await this.validator.isCodexAvailable();
+        } catch (error) {
+          this.errorCount++;
+          this.cliAvailable = false;
+        }
+      } else {
+        // For Codex v2, we don't need CLI validation
         this.cliAvailable = false;
       }
 
-      if (this.cliAvailable) {
-        try {
-          // Generate templates if CLI is available
-          await this.commandGenerator.generateTemplates(config);
-          this.templatesGenerated = true;
-        } catch (error) {
-          this.errorCount++;
-          this.templatesGenerated = false;
-        }
+      // Generate templates regardless of CLI availability for Codex v2
+      try {
+        await this.commandGenerator.generateTemplates(config);
+        this.templatesGenerated = true;
+      } catch (error) {
+        this.errorCount++;
+        this.templatesGenerated = false;
+        throw error; // Re-throw template generation errors
       }
 
       this.isInitialized = true;

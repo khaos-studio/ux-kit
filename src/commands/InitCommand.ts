@@ -10,8 +10,7 @@ import { TemplateService } from '../services/TemplateService';
 import { CursorCommandGenerator } from '../services/CursorCommandGenerator';
 import { InputService } from '../utils/InputService';
 import { IOutput } from '../contracts/presentation-contracts';
-import { ICodexIntegration } from '../contracts/domain-contracts';
-import { CodexConfiguration, CodexValidationResponse, CodexValidationResult } from '../contracts/domain-contracts';
+import { ICodexIntegration, CodexConfiguration, CodexValidationResponse, CodexValidationResult } from '../contracts/domain-contracts';
 
 export class InitCommand implements ICommand {
   readonly name = 'init';
@@ -24,7 +23,6 @@ export class InitCommand implements ICommand {
       description: 'AI agent provider to use (cursor, codex, custom)',
       type: 'string' as const,
       required: false,
-      defaultValue: 'cursor',
       aliases: ['a']
     },
     {
@@ -292,62 +290,37 @@ ${brightMagenta}                    🎨 User Experience Research & Design Toolk
     }
 
     try {
-      this.output.write('🔍 Checking Codex CLI availability...');
+      this.output.write('⚙️  Initializing Codex v2 integration...');
       
-      // Validate Codex CLI
-      const validationResponse = await this.codexIntegration.validate();
+      // Initialize Codex with configuration (no CLI validation needed for v2)
+      const codexConfig: CodexConfiguration = {
+        enabled: true,
+        validationEnabled: false, // No CLI validation needed for Codex v2
+        fallbackToCustom: true,
+        templatePath: projectRoot, // Set to project root for Codex v2
+        timeout: 30000
+      };
       
-      if (validationResponse.result === CodexValidationResult.SUCCESS) {
-        this.output.writeln(' ✓');
-        this.output.write('⚙️  Initializing Codex integration...');
-        
-        // Initialize Codex with default configuration
-        const codexConfig: CodexConfiguration = {
-          enabled: true,
-          ...(validationResponse.cliPath && { cliPath: validationResponse.cliPath }),
-          validationEnabled: true,
-          fallbackToCustom: true,
-          templatePath: `${projectRoot}/.uxkit/templates/codex-commands`,
-          timeout: 30000
-        };
-        
-        await this.codexIntegration.initialize(codexConfig);
-        this.output.writeln(' ✓');
-        
-        this.output.write('📝 Generating Codex command templates...');
-        await this.codexIntegration.generateCommandTemplates();
-        this.output.writeln(' ✓');
-        
-        this.output.writeln('');
-        this.output.writeln('🎉 Codex integration ready!');
-        this.output.writeln('  📁 Command templates available in .uxkit/templates/codex-commands/');
-        this.output.writeln('  🚀 You can now use Codex commands for UX research');
-        this.output.writeln(`  💡 Codex CLI version: ${validationResponse.version || 'Unknown'}`);
-        
-        // Get and display integration status
-        const status = await this.codexIntegration.getStatus();
-        this.output.writeln(`  📊 Integration status: ${status.status}`);
-        
-        return true;
-      } else {
-        this.output.writeln(' ✗');
-        this.output.writeln('');
-        this.output.writeErrorln(`Codex CLI validation failed: ${validationResponse.errorMessage || 'Unknown error'}`);
-        
-        if (validationResponse.suggestions && validationResponse.suggestions.length > 0) {
-          this.output.writeln('Suggestions:');
-          validationResponse.suggestions.forEach((suggestion, index) => {
-            this.output.writeln(`  ${index + 1}. ${suggestion}`);
-          });
-        }
-        
-        this.output.writeln('');
-        this.output.writeln('⚠️  Codex integration will be skipped');
-        this.output.writeln('  📝 You can still use UX-Kit CLI commands');
-        this.output.writeln('  🔧 To enable Codex integration, resolve the CLI issues above');
-        
-        return false;
-      }
+      await this.codexIntegration.initialize(codexConfig);
+      this.output.writeln(' ✓');
+      
+      this.output.write('📝 Generating Codex configuration files...');
+      await this.codexIntegration.generateCommandTemplates();
+      this.output.writeln(' ✓');
+      
+      this.output.writeln('');
+      this.output.writeln('🎉 Codex v2 integration ready!');
+      this.output.writeln('  📄 Configuration file created: codex.md');
+      this.output.writeln('  📁 Additional config in: .codex/');
+      this.output.writeln('  🚀 You can now use natural language prompts with Codex for UX research');
+      this.output.writeln('  💡 Note: Codex v2 works through IDE integration, not CLI commands');
+      this.output.writeln('');
+      this.output.writeln('💡 Example prompts to try:');
+      this.output.writeln('  • "Create a new UX research study about user onboarding"');
+      this.output.writeln('  • "Generate interview questions for understanding user pain points"');
+      this.output.writeln('  • "Help me synthesize findings from user interviews"');
+      
+      return true;
     } catch (error) {
       this.output.writeln(' ✗');
       this.output.writeln('');
