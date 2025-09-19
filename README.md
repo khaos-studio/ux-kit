@@ -37,6 +37,11 @@ uxkit init
 uxkit study:create --name "My UX Research"
 ```
 
+**Alternative: Direct NPM Install (Experimental)**
+```bash
+npm install -g https://github.com/khaos-studio/ux-kit.git
+```
+
 **That's it!** You now have a structured research environment ready to accumulate knowledge.
 
 ## 🎮 See It In Action
