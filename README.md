@@ -147,6 +147,32 @@ node dist/index.js init --aiAgent cursor
 # /synthesize "Synthesize insights from research data"
 ```
 
+### Option 4: Codex AI Agent Integration
+
+```bash
+# Initialize with Codex AI agent integration
+node dist/index.js init --codex
+
+# This enables:
+# - Codex CLI integration for advanced AI capabilities
+# - Comprehensive error handling and recovery
+# - Performance monitoring and optimization
+# - Template generation and validation
+
+# Configure Codex settings
+node dist/index.js codex-setup --configure
+
+# Validate Codex installation
+node dist/index.js codex-setup --validate
+
+# Test Codex integration
+node dist/index.js codex-setup --test
+
+# Use Codex for research workflows
+node dist/index.js research:questions --study <study-id> --codex
+node dist/index.js research:synthesize --study <study-id> --codex
+```
+
 ## Features
 
 ### Core Capabilities
@@ -179,6 +205,17 @@ node dist/index.js init --aiAgent cursor
 - **Cursor IDE Integration**: Automatic generation of custom slash commands ✅ **Implemented**
 - **Interactive CLI Experience**: Beautiful ASCII banners, progress indicators, and user prompts ✅ **Implemented**
 - **Slash Command System**: IDE integration for seamless workflow ✅ **Implemented**
+
+### Codex AI Agent Integration ✅ **Implemented**
+
+- **Codex CLI Integration**: Seamless integration with Codex CLI for advanced AI capabilities
+- **Comprehensive Error Handling**: User-friendly error messages with recovery suggestions
+- **Performance Monitoring**: Execution time tracking and optimization detection
+- **Template Generation**: Dynamic command template creation and validation
+- **Concurrent Execution**: Support for running multiple commands simultaneously
+- **Error Recovery**: Automatic retry logic with exponential backoff
+- **API Error Categorization**: Specific handling for rate limits, authentication, and connection errors
+- **Configuration Management**: Flexible settings for API endpoints, timeouts, and retry attempts
 
 ### Planned Features
 
