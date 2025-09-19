@@ -51,7 +51,9 @@ node dist/index.js --help
 **UX-Kit CLI is now fully functional!** The core study management features are implemented and working:
 
 ### ✅ **Working Features**
-- **Project Initialization**: `node dist/index.js init` - Sets up UX-Kit directory structure
+- **Project Initialization**: `node dist/index.js init` - Sets up UX-Kit directory structure with beautiful ASCII banner
+- **Interactive AI Agent Selection**: Choose between Cursor, Claude, or custom AI agents during initialization
+- **Cursor IDE Integration**: Automatic generation of custom slash commands for seamless IDE workflow
 - **Study Creation**: `node dist/index.js study:create --name "Study Name"` - Creates new research studies
 - **Study Listing**: `node dist/index.js study:list` - Lists all research studies
 - **Study Details**: `node dist/index.js study:show <study-id>` - Shows detailed study information
@@ -66,10 +68,18 @@ node dist/index.js --help
 - **File Generation**: Professional Markdown files with proper formatting
 - **Cross-Platform**: Works on macOS, Linux, and WSL
 
+### 🎨 **New Cursor IDE Features**
+- **Beautiful ASCII Banner**: Eye-catching UX-Kit initialization with colors and emojis
+- **Interactive Prompts**: User-friendly AI agent selection with descriptions
+- **Progress Indicators**: Visual feedback during setup with animated progress
+- **Cursor Commands**: Automatic generation of `/specify`, `/research`, `/study`, and `/synthesize` commands
+- **IDE Detection**: Smart detection of Cursor IDE installation
+- **Enhanced UX**: Emojis, colors, and engaging visual feedback throughout the process
+
 ### 🔄 **In Development**
-- AI agent integration for enhanced question generation
-- Slash command system for IDE integration
 - Advanced template features and customization
+- Additional AI agent integrations
+- Enhanced slash command functionality
 
 ### Future: NPM Package (Planned)
 
@@ -97,8 +107,11 @@ cat demo/generated-output/synthesis.md
 ### Option 2: Use UX-Kit CLI
 
 ```bash
-# Initialize UX-Kit in your project
+# Initialize UX-Kit in your project (with beautiful ASCII banner!)
 node dist/index.js init
+
+# Or specify your AI agent directly
+node dist/index.js init --aiAgent cursor
 
 # Create a research study
 node dist/index.js create "User Onboarding Research"
@@ -116,15 +129,35 @@ node dist/index.js delete <study-id>
 node dist/index.js --help
 ```
 
+### Option 3: Cursor IDE Integration
+
+```bash
+# Initialize with Cursor IDE integration
+node dist/index.js init --aiAgent cursor
+
+# This creates:
+# - .cursor/commands/ directory with custom slash commands
+# - /specify, /research, /study, and /synthesize commands
+# - Ready-to-use IDE integration
+
+# In Cursor IDE, you can now use:
+# /specify "Create a new feature specification"
+# /research "Generate research questions for user onboarding"
+# /study "Create a new research study"
+# /synthesize "Synthesize insights from research data"
+```
+
 ## Features
 
 ### Core Capabilities
 
 - **Spec-Driven Research**: Create structured research specifications
-- **AI Agent Integration**: Support for Cursor, Codex, and custom AI agents
+- **AI Agent Integration**: Support for Cursor, Claude, and custom AI agents
 - **File-Based Approach**: Simple text files and scripts, no complex databases
 - **IDE Integration**: Slash commands for seamless workflow integration
 - **Template System**: Handlebars-style templates for consistent research outputs
+- **Beautiful CLI Experience**: ASCII art banners, progress indicators, and interactive prompts
+- **Cursor IDE Integration**: Automatic generation of custom slash commands
 
 ### Research Workflow
 
@@ -140,12 +173,18 @@ node dist/index.js --help
 - **Research Synthesis**: Comprehensive insights with actionable recommendations ✅ **Implemented**
 - **Source Summarization**: Generate summaries for individual research sources ✅ **Implemented**
 
-### Advanced Features (Planned)
+### Advanced Features
 
-- **AI Agent Integration**: Enhanced question generation with Cursor, Codex, or custom agents
+- **AI Agent Integration**: Enhanced question generation with Cursor, Claude, or custom agents ✅ **Implemented**
+- **Cursor IDE Integration**: Automatic generation of custom slash commands ✅ **Implemented**
+- **Interactive CLI Experience**: Beautiful ASCII banners, progress indicators, and user prompts ✅ **Implemented**
+- **Slash Command System**: IDE integration for seamless workflow ✅ **Implemented**
+
+### Planned Features
+
 - **Executive Summaries**: Stakeholder-ready summaries with key findings
 - **Advanced Templates**: More sophisticated Handlebars templates with conditional logic
-- **Slash Command System**: IDE integration for seamless workflow
+- **Additional AI Agents**: Support for more AI platforms and integrations
 
 ### Technical Features
 
