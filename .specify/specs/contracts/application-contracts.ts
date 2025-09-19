@@ -1,499 +1,239 @@
 /**
- * Application Layer Contracts
+ * Application Contracts for Codex Support Integration
  * 
- * This file defines the application layer interfaces and types for the UX-Kit TypeScript CLI.
- * The application layer orchestrates domain services and handles use cases, following
- * clean architecture principles and protocol-oriented design.
- * 
- * The application layer is inspired by GitHub's spec-kit approach for structured workflows.
+ * These contracts define the application layer interfaces and services for Codex integration,
+ * following the existing UX-Kit architecture patterns.
  */
 
 import {
-  ResearchStudyDirectory,
-  ResearchQuestion,
-  ResearchSource,
-  ResearchSummary,
-  Interview,
-  ResearchInsight,
-  StudyStatus,
-  Priority,
-  QuestionCategory,
-  SourceType,
-  InsightCategory,
-  ValidationStatus
+  CodexConfiguration,
+  CodexValidationResponse,
+  CodexCommandTemplate,
+  CodexStatus,
+  CodexError,
+  ICodexValidator,
+  ICodexCommandGenerator,
+  ICodexIntegration
 } from './domain-contracts';
-
-// ============================================================================
-// Use Case Interfaces
-// ============================================================================
-
-/**
- * Use case for creating a new research study
- */
-export interface ICreateStudyUseCase {
-  execute(request: CreateStudyRequest): Promise<CreateStudyResponse>;
-}
-
-export interface CreateStudyRequest {
-  name: string;
-  description?: string;
-  tags?: string[];
-  priority?: Priority;
-  teamMembers?: string[];
-}
-
-export interface CreateStudyResponse {
-  study: ResearchStudyDirectory;
-  success: boolean;
-  message: string;
-}
-
-/**
- * Use case for generating research questions
- */
-export interface IGenerateQuestionsUseCase {
-  execute(request: GenerateQuestionsRequest): Promise<GenerateQuestionsResponse>;
-}
-
-export interface GenerateQuestionsRequest {
-  studyId: string;
-  prompt: string;
-  categories?: QuestionCategory[];
-  maxQuestions?: number;
-}
-
-export interface GenerateQuestionsResponse {
-  questions: ResearchQuestion[];
-  success: boolean;
-  message: string;
-  metadata: {
-    prompt: string;
-    aiAgent: string;
-    processingTime: number;
-  };
-}
-
-/**
- * Use case for discovering research sources
- */
-export interface IDiscoverSourcesUseCase {
-  execute(request: DiscoverSourcesRequest): Promise<DiscoverSourcesResponse>;
-}
-
-export interface DiscoverSourcesRequest {
-  studyId: string;
-  query: string;
-  types?: SourceType[];
-  maxSources?: number;
-  autoDiscover?: boolean;
-}
-
-export interface DiscoverSourcesResponse {
-  sources: ResearchSource[];
-  success: boolean;
-  message: string;
-  metadata: {
-    query: string;
-    autoDiscovered: boolean;
-    aiAgent: string;
-    processingTime: number;
-  };
-}
-
-/**
- * Use case for summarizing research sources
- */
-export interface ISummarizeSourceUseCase {
-  execute(request: SummarizeSourceRequest): Promise<SummarizeSourceResponse>;
-}
-
-export interface SummarizeSourceRequest {
-  sourceId: string;
-  studyId: string;
-  content: string;
-  focusAreas?: string[];
-  maxLength?: number;
-}
-
-export interface SummarizeSourceResponse {
-  summary: ResearchSummary;
-  success: boolean;
-  message: string;
-  metadata: {
-    sourceId: string;
-    aiAgent: string;
-    processingTime: number;
-    wordCount: number;
-  };
-}
-
-/**
- * Use case for formatting interview transcripts
- */
-export interface IFormatInterviewUseCase {
-  execute(request: FormatInterviewRequest): Promise<FormatInterviewResponse>;
-}
-
-export interface FormatInterviewRequest {
-  studyId: string;
-  participantId: string;
-  transcript: string;
-  participantInfo?: {
-    demographics?: any;
-    experience?: any;
-  };
-  focusAreas?: string[];
-}
-
-export interface FormatInterviewResponse {
-  interview: Interview;
-  success: boolean;
-  message: string;
-  metadata: {
-    participantId: string;
-    aiAgent: string;
-    processingTime: number;
-    duration: number;
-  };
-}
-
-/**
- * Use case for synthesizing research insights
- */
-export interface ISynthesizeInsightsUseCase {
-  execute(request: SynthesizeInsightsRequest): Promise<SynthesizeInsightsResponse>;
-}
-
-export interface SynthesizeInsightsRequest {
-  studyId: string;
-  artifactIds: string[];
-  focusAreas?: string[];
-  categories?: InsightCategory[];
-  minConfidence?: number;
-}
-
-export interface SynthesizeInsightsResponse {
-  insights: ResearchInsight[];
-  success: boolean;
-  message: string;
-  metadata: {
-    sourceArtifacts: string[];
-    aiAgent: string;
-    processingTime: number;
-    insightCount: number;
-  };
-}
-
-// ============================================================================
-// Command Interfaces
-// ============================================================================
-
-/**
- * Base interface for all commands
- */
-export interface ICommand {
-  readonly name: string;
-  readonly description: string;
-  readonly arguments: CommandArgument[];
-  readonly options: CommandOption[];
-  execute(args: string[], options: Record<string, any>): Promise<CommandResult>;
-}
-
-/**
- * Command argument definition
- */
-export interface CommandArgument {
-  name: string;
-  description: string;
-  required: boolean;
-  type: 'string' | 'number' | 'boolean' | 'array';
-  defaultValue?: any;
-}
-
-/**
- * Command option definition
- */
-export interface CommandOption {
-  name: string;
-  description: string;
-  type: 'string' | 'number' | 'boolean' | 'array';
-  required: boolean;
-  defaultValue?: any;
-  aliases?: string[];
-}
-
-/**
- * Command execution result
- */
-export interface CommandResult {
-  success: boolean;
-  message: string;
-  data?: any;
-  errors?: string[];
-  metadata?: Record<string, any>;
-}
-
-/**
- * Command for initializing UX-Kit
- */
-export interface IInitCommand extends ICommand {
-  execute(args: string[], options: {
-    'ai-agent'?: string;
-    'template'?: string;
-    'force'?: boolean;
-  }): Promise<CommandResult>;
-}
-
-/**
- * Command for creating research studies
- */
-export interface ICreateStudyCommand extends ICommand {
-  execute(args: string[], options: {
-    'description'?: string;
-    'tags'?: string[];
-    'priority'?: Priority;
-    'team'?: string[];
-  }): Promise<CommandResult>;
-}
-
-/**
- * Command for generating research questions
- */
-export interface IGenerateQuestionsCommand extends ICommand {
-  execute(args: string[], options: {
-    'study'?: string;
-    'categories'?: QuestionCategory[];
-    'max-questions'?: number;
-  }): Promise<CommandResult>;
-}
-
-/**
- * Command for discovering research sources
- */
-export interface IDiscoverSourcesCommand extends ICommand {
-  execute(args: string[], options: {
-    'study'?: string;
-    'types'?: SourceType[];
-    'max-sources'?: number;
-    'auto-discover'?: boolean;
-  }): Promise<CommandResult>;
-}
-
-/**
- * Command for summarizing research sources
- */
-export interface ISummarizeSourceCommand extends ICommand {
-  execute(args: string[], options: {
-    'study'?: string;
-    'focus-areas'?: string[];
-    'max-length'?: number;
-  }): Promise<CommandResult>;
-}
-
-/**
- * Command for formatting interview transcripts
- */
-export interface IFormatInterviewCommand extends ICommand {
-  execute(args: string[], options: {
-    'study'?: string;
-    'participant'?: string;
-    'focus-areas'?: string[];
-  }): Promise<CommandResult>;
-}
-
-/**
- * Command for synthesizing research insights
- */
-export interface ISynthesizeInsightsCommand extends ICommand {
-  execute(args: string[], options: {
-    'study'?: string;
-    'format'?: string;
-    'focus-areas'?: string[];
-    'categories'?: InsightCategory[];
-    'min-confidence'?: number;
-  }): Promise<CommandResult>;
-}
 
 // ============================================================================
 // Application Services
 // ============================================================================
 
 /**
- * Service for managing research workflows
+ * Application service for managing Codex integration
  */
-export interface IResearchWorkflowService {
-  initializeProject(config: ProjectConfig): Promise<void>;
-  createStudy(request: CreateStudyRequest): Promise<ResearchStudyDirectory>;
-  generateQuestions(request: GenerateQuestionsRequest): Promise<ResearchQuestion[]>;
-  discoverSources(request: DiscoverSourcesRequest): Promise<ResearchSource[]>;
-  summarizeSource(request: SummarizeSourceRequest): Promise<ResearchSummary>;
-  formatInterview(request: FormatInterviewRequest): Promise<Interview>;
-  synthesizeInsights(request: SynthesizeInsightsRequest): Promise<ResearchInsight[]>;
+export interface ICodexIntegrationService {
+  /**
+   * Initialize Codex integration with configuration
+   */
+  initializeCodex(config: CodexConfiguration): Promise<void>;
+  
+  /**
+   * Validate Codex setup and configuration
+   */
+  validateCodexSetup(): Promise<CodexValidationResponse>;
+  
+  /**
+   * Generate Codex command templates
+   */
+  generateCodexTemplates(): Promise<void>;
+  
+  /**
+   * Get current Codex integration status
+   */
+  getCodexStatus(): Promise<CodexStatus>;
+  
+  /**
+   * Handle Codex integration errors
+   */
+  handleCodexError(error: CodexError): Promise<void>;
+  
+  /**
+   * Reset Codex integration
+   */
+  resetCodexIntegration(): Promise<void>;
 }
 
 /**
- * Service for managing AI agent interactions
+ * Application service for managing AI agent selection
  */
-export interface IAIAgentService {
-  generateQuestions(prompt: string, context: ResearchContext): Promise<ResearchQuestion[]>;
-  discoverSources(query: string, context: ResearchContext): Promise<ResearchSource[]>;
-  summarizeContent(content: string, context: ResearchContext): Promise<ResearchSummary>;
-  formatInterview(transcript: string, context: ResearchContext): Promise<Interview>;
-  synthesizeInsights(artifacts: string[], context: ResearchContext): Promise<ResearchInsight[]>;
-  isAvailable(): Promise<boolean>;
-  getCapabilities(): Promise<AIAgentCapabilities>;
+export interface IAIAgentSelectionService {
+  /**
+   * Get available AI agent options
+   */
+  getAvailableAgents(): Promise<readonly string[]>;
+  
+  /**
+   * Validate selected AI agent
+   */
+  validateAgent(agentType: string): Promise<boolean>;
+  
+  /**
+   * Initialize selected AI agent
+   */
+  initializeAgent(agentType: string, config: any): Promise<void>;
+  
+  /**
+   * Get agent-specific configuration
+   */
+  getAgentConfiguration(agentType: string): Promise<any>;
 }
 
 /**
- * Service for managing file operations
+ * Application service for command template management
  */
-export interface IFileService {
-  createStudyDirectory(study: ResearchStudyDirectory): Promise<void>;
-  generateQuestionsFile(studyId: string, questions: ResearchQuestion[]): Promise<string>;
-  generateSourcesFile(studyId: string, sources: ResearchSource[]): Promise<string>;
-  generateSummaryFile(sourceId: string, summary: ResearchSummary): Promise<string>;
-  generateInterviewFile(studyId: string, participantId: string, interview: Interview): Promise<string>;
-  generateInsightsFile(studyId: string, insights: ResearchInsight[]): Promise<string>;
-  readFile(path: string): Promise<string>;
-  writeFile(path: string, content: string): Promise<void>;
-  exists(path: string): Promise<boolean>;
-  createDirectory(path: string): Promise<void>;
-}
-
-/**
- * Service for managing templates
- */
-export interface ITemplateService {
-  loadTemplate(name: string): Promise<string>;
-  renderTemplate(template: string, data: Record<string, any>): Promise<string>;
-  validateTemplate(template: string): Promise<boolean>;
-  getAvailableTemplates(): Promise<TemplateInfo[]>;
-  createTemplate(name: string, content: string): Promise<void>;
-  updateTemplate(name: string, content: string): Promise<void>;
-  deleteTemplate(name: string): Promise<void>;
-}
-
-/**
- * Service for managing configuration
- */
-export interface IConfigurationService {
-  loadConfig(): Promise<UXKitConfig>;
-  saveConfig(config: UXKitConfig): Promise<void>;
-  getValue(key: string): Promise<any>;
-  setValue(key: string, value: any): Promise<void>;
-  resetConfig(): Promise<void>;
-  validateConfig(config: UXKitConfig): Promise<boolean>;
+export interface ICommandTemplateService {
+  /**
+   * Generate templates for specific AI agent
+   */
+  generateTemplatesForAgent(agentType: string): Promise<void>;
+  
+  /**
+   * Get available templates for agent
+   */
+  getTemplatesForAgent(agentType: string): Promise<readonly CodexCommandTemplate[]>;
+  
+  /**
+   * Validate template structure
+   */
+  validateTemplate(template: CodexCommandTemplate): Promise<boolean>;
+  
+  /**
+   * Update template configuration
+   */
+  updateTemplateConfiguration(agentType: string, config: any): Promise<void>;
 }
 
 // ============================================================================
-// Data Transfer Objects
+// Application DTOs
 // ============================================================================
 
 /**
- * Project configuration
+ * Data Transfer Object for Codex initialization request
  */
-export interface ProjectConfig {
-  name: string;
-  description?: string;
-  aiAgent: {
-    provider: string;
-    settings: Record<string, any>;
-  };
-  storage: {
-    basePath: string;
-    format: 'markdown' | 'json' | 'yaml';
-  };
-  research: {
-    defaultTemplates: string[];
-    autoSave: boolean;
-  };
+export interface CodexInitializationRequest {
+  readonly projectPath: string;
+  readonly configuration: Partial<CodexConfiguration>;
+  readonly skipValidation?: boolean;
+  readonly forceReinit?: boolean;
 }
 
 /**
- * UX-Kit configuration
+ * Data Transfer Object for Codex initialization response
  */
-export interface UXKitConfig {
-  version: string;
-  aiAgent: {
-    provider: 'cursor' | 'codex' | 'custom';
-    settings: Record<string, any>;
-    timeout: number;
-    retries: number;
-  };
-  storage: {
-    basePath: string;
-    format: 'markdown' | 'json' | 'yaml';
-    autoSave: boolean;
-    backup: boolean;
-  };
-  research: {
-    defaultTemplates: string[];
-    autoDiscovery: boolean;
-    qualityThreshold: number;
-  };
-  ui: {
-    theme: 'light' | 'dark' | 'auto';
-    verbose: boolean;
-    progress: boolean;
-  };
+export interface CodexInitializationResponse {
+  readonly success: boolean;
+  readonly status: CodexStatus;
+  readonly error?: CodexError;
+  readonly validationResult?: CodexValidationResponse;
 }
 
 /**
- * Research context for AI agent operations
+ * Data Transfer Object for template generation request
  */
-export interface ResearchContext {
-  studyId: string;
-  studyName: string;
-  studyDescription?: string;
-  existingArtifacts: string[];
-  focusAreas?: string[];
-  constraints?: Record<string, any>;
+export interface TemplateGenerationRequest {
+  readonly agentType: string;
+  readonly outputPath: string;
+  readonly templateFormat: 'markdown' | 'json' | 'yaml';
+  readonly includeExamples: boolean;
+  readonly includeDocumentation: boolean;
 }
 
 /**
- * AI agent capabilities
+ * Data Transfer Object for template generation response
  */
-export interface AIAgentCapabilities {
-  name: string;
-  version: string;
-  supportedOperations: string[];
-  maxContentLength: number;
-  responseTime: number;
-  reliability: number;
+export interface TemplateGenerationResponse {
+  readonly success: boolean;
+  readonly templatesGenerated: number;
+  readonly outputPath: string;
+  readonly error?: CodexError;
 }
 
 /**
- * Template information
+ * Data Transfer Object for validation request
  */
-export interface TemplateInfo {
-  name: string;
-  description: string;
-  type: string;
-  path: string;
-  variables: TemplateVariable[];
-  metadata: TemplateMetadata;
+export interface ValidationRequest {
+  readonly agentType: string;
+  readonly skipCLICheck?: boolean;
+  readonly timeout?: number;
 }
 
 /**
- * Template variable definition
+ * Data Transfer Object for validation response
  */
-export interface TemplateVariable {
-  name: string;
-  type: 'string' | 'number' | 'boolean' | 'array' | 'object';
-  required: boolean;
-  defaultValue?: any;
-  description: string;
+export interface ValidationResponse {
+  readonly success: boolean;
+  readonly result: CodexValidationResponse;
+  readonly error?: CodexError;
+}
+
+// ============================================================================
+// Application Commands
+// ============================================================================
+
+/**
+ * Command for initializing Codex integration
+ */
+export interface InitializeCodexCommand {
+  readonly type: 'InitializeCodex';
+  readonly request: CodexInitializationRequest;
+  readonly timestamp: Date;
 }
 
 /**
- * Template metadata
+ * Command for validating Codex setup
  */
-export interface TemplateMetadata {
-  version: string;
-  author: string;
-  createdAt: Date;
-  updatedAt: Date;
-  tags: string[];
+export interface ValidateCodexCommand {
+  readonly type: 'ValidateCodex';
+  readonly request: ValidationRequest;
+  readonly timestamp: Date;
+}
+
+/**
+ * Command for generating Codex templates
+ */
+export interface GenerateCodexTemplatesCommand {
+  readonly type: 'GenerateCodexTemplates';
+  readonly request: TemplateGenerationRequest;
+  readonly timestamp: Date;
+}
+
+/**
+ * Command for resetting Codex integration
+ */
+export interface ResetCodexCommand {
+  readonly type: 'ResetCodex';
+  readonly timestamp: Date;
+}
+
+// ============================================================================
+// Application Queries
+// ============================================================================
+
+/**
+ * Query for getting Codex status
+ */
+export interface GetCodexStatusQuery {
+  readonly type: 'GetCodexStatus';
+  readonly timestamp: Date;
+}
+
+/**
+ * Query for getting available AI agents
+ */
+export interface GetAvailableAgentsQuery {
+  readonly type: 'GetAvailableAgents';
+  readonly timestamp: Date;
+}
+
+/**
+ * Query for getting templates for agent
+ */
+export interface GetTemplatesForAgentQuery {
+  readonly type: 'GetTemplatesForAgent';
+  readonly agentType: string;
+  readonly timestamp: Date;
 }
 
 // ============================================================================
@@ -501,60 +241,143 @@ export interface TemplateMetadata {
 // ============================================================================
 
 /**
- * Base interface for application events
+ * Event fired when Codex initialization starts
  */
-export interface ApplicationEvent {
-  readonly id: string;
-  readonly type: string;
+export interface CodexInitializationStartedEvent {
+  readonly eventType: 'CodexInitializationStarted';
+  readonly request: CodexInitializationRequest;
   readonly timestamp: Date;
-  readonly correlationId: string;
 }
 
 /**
- * Event fired when a command is executed
+ * Event fired when Codex initialization completes
  */
-export interface CommandExecutedEvent extends ApplicationEvent {
-  readonly type: 'CommandExecuted';
-  readonly command: string;
-  readonly args: string[];
-  readonly options: Record<string, any>;
-  readonly result: CommandResult;
-  readonly executionTime: number;
+export interface CodexInitializationCompletedEvent {
+  readonly eventType: 'CodexInitializationCompleted';
+  readonly response: CodexInitializationResponse;
+  readonly timestamp: Date;
 }
 
 /**
- * Event fired when a use case is executed
+ * Event fired when Codex validation starts
  */
-export interface UseCaseExecutedEvent extends ApplicationEvent {
-  readonly type: 'UseCaseExecuted';
-  readonly useCase: string;
-  readonly request: any;
-  readonly response: any;
-  readonly executionTime: number;
+export interface CodexValidationStartedEvent {
+  readonly eventType: 'CodexValidationStarted';
+  readonly request: ValidationRequest;
+  readonly timestamp: Date;
 }
 
 /**
- * Event fired when AI agent communication occurs
+ * Event fired when Codex validation completes
  */
-export interface AIAgentCommunicationEvent extends ApplicationEvent {
-  readonly type: 'AIAgentCommunication';
-  readonly agent: string;
-  readonly operation: string;
-  readonly request: any;
-  readonly response: any;
-  readonly executionTime: number;
-  readonly success: boolean;
+export interface CodexValidationCompletedEvent {
+  readonly eventType: 'CodexValidationCompleted';
+  readonly response: ValidationResponse;
+  readonly timestamp: Date;
 }
 
 /**
- * Event fired when file operations occur
+ * Event fired when template generation starts
  */
-export interface FileOperationEvent extends ApplicationEvent {
-  readonly type: 'FileOperation';
-  readonly operation: 'create' | 'read' | 'update' | 'delete';
-  readonly path: string;
-  readonly success: boolean;
-  readonly executionTime: number;
+export interface TemplateGenerationStartedEvent {
+  readonly eventType: 'TemplateGenerationStarted';
+  readonly request: TemplateGenerationRequest;
+  readonly timestamp: Date;
+}
+
+/**
+ * Event fired when template generation completes
+ */
+export interface TemplateGenerationCompletedEvent {
+  readonly eventType: 'TemplateGenerationCompleted';
+  readonly response: TemplateGenerationResponse;
+  readonly timestamp: Date;
+}
+
+// ============================================================================
+// Application Handlers
+// ============================================================================
+
+/**
+ * Handler for Codex initialization commands
+ */
+export interface ICodexInitializationHandler {
+  handle(command: InitializeCodexCommand): Promise<CodexInitializationResponse>;
+}
+
+/**
+ * Handler for Codex validation commands
+ */
+export interface ICodexValidationHandler {
+  handle(command: ValidateCodexCommand): Promise<ValidationResponse>;
+}
+
+/**
+ * Handler for template generation commands
+ */
+export interface ITemplateGenerationHandler {
+  handle(command: GenerateCodexTemplatesCommand): Promise<TemplateGenerationResponse>;
+}
+
+/**
+ * Handler for Codex reset commands
+ */
+export interface ICodexResetHandler {
+  handle(command: ResetCodexCommand): Promise<void>;
+}
+
+// ============================================================================
+// Application Query Handlers
+// ============================================================================
+
+/**
+ * Handler for Codex status queries
+ */
+export interface ICodexStatusQueryHandler {
+  handle(query: GetCodexStatusQuery): Promise<CodexStatus>;
+}
+
+/**
+ * Handler for available agents queries
+ */
+export interface IAvailableAgentsQueryHandler {
+  handle(query: GetAvailableAgentsQuery): Promise<readonly string[]>;
+}
+
+/**
+ * Handler for templates queries
+ */
+export interface ITemplatesQueryHandler {
+  handle(query: GetTemplatesForAgentQuery): Promise<readonly CodexCommandTemplate[]>;
+}
+
+// ============================================================================
+// Application Configuration
+// ============================================================================
+
+/**
+ * Application configuration for Codex integration
+ */
+export interface CodexApplicationConfig {
+  readonly defaultConfiguration: CodexConfiguration;
+  readonly validationTimeout: number;
+  readonly templateGenerationTimeout: number;
+  readonly maxRetryAttempts: number;
+  readonly retryDelay: number;
+  readonly enableLogging: boolean;
+  readonly logLevel: 'debug' | 'info' | 'warn' | 'error';
+}
+
+/**
+ * Configuration for template generation
+ */
+export interface TemplateGenerationConfig {
+  readonly outputDirectory: string;
+  readonly templateFormat: 'markdown' | 'json' | 'yaml';
+  readonly includeExamples: boolean;
+  readonly includeDocumentation: boolean;
+  readonly customTemplates: readonly string[];
+  readonly validationEnabled: boolean;
 }
 
 // ============================================================================
@@ -562,107 +385,120 @@ export interface FileOperationEvent extends ApplicationEvent {
 // ============================================================================
 
 /**
- * Base class for application exceptions
+ * Base exception for application layer errors
  */
-export abstract class ApplicationException extends Error {
-  abstract readonly code: string;
-  abstract readonly statusCode: number;
-  
+export class CodexApplicationException extends Error {
   constructor(
     message: string,
-    public readonly context?: Record<string, any>
+    public readonly code: string,
+    public readonly recoverable: boolean = false,
+    public readonly originalError?: Error
   ) {
     super(message);
-    this.name = this.constructor.name;
+    this.name = 'CodexApplicationException';
   }
 }
 
 /**
- * Exception thrown when a use case fails
+ * Exception thrown when initialization fails
  */
-export class UseCaseException extends ApplicationException {
-  readonly code = 'USE_CASE_ERROR';
-  readonly statusCode = 500;
-  
-  constructor(useCase: string, operation: string, originalError: Error) {
-    super(
-      `Use case '${useCase}' failed during '${operation}': ${originalError.message}`,
-      { useCase, operation, originalError: originalError.message }
-    );
+export class CodexInitializationException extends CodexApplicationException {
+  constructor(
+    message: string,
+    public readonly request: CodexInitializationRequest,
+    originalError?: Error
+  ) {
+    super(message, 'CODEX_INITIALIZATION_FAILED', true, originalError);
+    this.name = 'CodexInitializationException';
   }
 }
 
 /**
- * Exception thrown when a command fails
+ * Exception thrown when validation fails
  */
-export class CommandException extends ApplicationException {
-  readonly code = 'COMMAND_ERROR';
-  readonly statusCode = 500;
-  
-  constructor(command: string, args: string[], originalError: Error) {
-    super(
-      `Command '${command}' failed with args [${args.join(', ')}]: ${originalError.message}`,
-      { command, args, originalError: originalError.message }
-    );
+export class CodexValidationApplicationException extends CodexApplicationException {
+  constructor(
+    message: string,
+    public readonly request: ValidationRequest,
+    originalError?: Error
+  ) {
+    super(message, 'CODEX_VALIDATION_APPLICATION_FAILED', true, originalError);
+    this.name = 'CodexValidationApplicationException';
   }
 }
 
 /**
- * Exception thrown when AI agent communication fails
+ * Exception thrown when template generation fails
  */
-export class AIAgentCommunicationException extends ApplicationException {
-  readonly code = 'AI_AGENT_COMMUNICATION_ERROR';
-  readonly statusCode = 502;
-  
-  constructor(agent: string, operation: string, originalError: Error) {
-    super(
-      `AI agent '${agent}' communication failed during '${operation}': ${originalError.message}`,
-      { agent, operation, originalError: originalError.message }
-    );
+export class TemplateGenerationApplicationException extends CodexApplicationException {
+  constructor(
+    message: string,
+    public readonly request: TemplateGenerationRequest,
+    originalError?: Error
+  ) {
+    super(message, 'TEMPLATE_GENERATION_APPLICATION_FAILED', false, originalError);
+    this.name = 'TemplateGenerationApplicationException';
   }
 }
 
-/**
- * Exception thrown when file operations fail
- */
-export class FileOperationException extends ApplicationException {
-  readonly code = 'FILE_OPERATION_ERROR';
-  readonly statusCode = 500;
-  
-  constructor(operation: string, path: string, originalError: Error) {
-    super(
-      `File operation '${operation}' failed for path '${path}': ${originalError.message}`,
-      { operation, path, originalError: originalError.message }
-    );
-  }
-}
+// ============================================================================
+// Application Utilities
+// ============================================================================
 
 /**
- * Exception thrown when template operations fail
+ * Utility class for application layer operations
  */
-export class TemplateException extends ApplicationException {
-  readonly code = 'TEMPLATE_ERROR';
-  readonly statusCode = 500;
+export class CodexApplicationUtils {
+  /**
+   * Create default Codex configuration
+   */
+  static createDefaultConfiguration(): CodexConfiguration {
+    return {
+      enabled: true,
+      validationEnabled: true,
+      fallbackToCustom: true,
+      templatePath: 'templates/codex-commands',
+      timeout: 30000 // 30 seconds
+    };
+  }
   
-  constructor(operation: string, template: string, originalError: Error) {
-    super(
-      `Template operation '${operation}' failed for template '${template}': ${originalError.message}`,
-      { operation, template, originalError: originalError.message }
+  /**
+   * Validate application configuration
+   */
+  static validateApplicationConfig(config: CodexApplicationConfig): boolean {
+    return (
+      config.validationTimeout > 0 &&
+      config.templateGenerationTimeout > 0 &&
+      config.maxRetryAttempts >= 0 &&
+      config.retryDelay >= 0
     );
   }
-}
-
-/**
- * Exception thrown when configuration operations fail
- */
-export class ConfigurationException extends ApplicationException {
-  readonly code = 'CONFIGURATION_ERROR';
-  readonly statusCode = 500;
   
-  constructor(operation: string, key: string, originalError: Error) {
-    super(
-      `Configuration operation '${operation}' failed for key '${key}': ${originalError.message}`,
-      { operation, key, originalError: originalError.message }
-    );
+  /**
+   * Create error response
+   */
+  static createErrorResponse(error: CodexError): any {
+    return {
+      success: false,
+      error: {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        suggestions: error.suggestions,
+        recoverable: error.recoverable,
+        timestamp: error.timestamp
+      }
+    };
+  }
+  
+  /**
+   * Create success response
+   */
+  static createSuccessResponse(data: any): any {
+    return {
+      success: true,
+      data,
+      timestamp: new Date()
+    };
   }
 }

@@ -1,791 +1,728 @@
-# UX-Kit TypeScript CLI Implementation Tasks
+# Tasks: Codex Support Integration
 
-**Feature**: UX-Kit TypeScript CLI Implementation  
-**Architecture**: Spec-Driven Development (SDD) inspired by GitHub's spec-kit  
-**Methodology**: Test-Driven Development (TDD)  
-**File Strategy**: Small, focused files with composition over inheritance  
-**Scope**: Lightweight CLI tool that creates text files and scripts to support AI agent research workflows in IDEs  
-**Inspiration**: GitHub's spec-kit for specification-driven development  
-**Architecture**: Simple layered architecture (CLI, Service, Utility layers) with file-based approach
+## Overview
 
-## Task Execution Strategy
+This document provides actionable, dependency-ordered tasks for implementing Codex support integration in UX-Kit CLI. Tasks are organized by implementation phases and marked for parallel execution where possible.
 
-### Parallel Execution Groups
-- **[P]** = Can run in parallel with other [P] tasks
-- **Sequential** = Must run after dependencies complete
-- **Different files** = Can be parallel [P]
-- **Same file** = Sequential (no [P])
+## Task Generation Summary
 
-### File Organization Principles
-- Keep source files small (< 200 lines)
-- Focus on file generation and script creation
-- Separate concerns into focused modules
-- One responsibility per file
-- Clear interfaces between modules
+**Available Design Documents**:
+- ✅ `plan.md` - Implementation plan with technical context
+- ✅ `data-model.md` - Complete data models and interfaces
+- ✅ `contracts/` - 4 contract files (domain, application, infrastructure, presentation)
+- ✅ `research.md` - Technical decisions and best practices
+- ✅ `quickstart.md` - Implementation guide and test scenarios
 
-### Core Functionality (Inspired by GitHub's spec-kit)
-- **Spec-Driven Research**: Create structured research specifications
-- **Research Planning**: Generate research plans and methodologies
-- **Task Breakdown**: Create actionable research task lists
-- **AI Integration**: Support AI agents in research workflows
-- **File Generation**: Create research artifact files (questions.md, sources.md, etc.)
-- **IDE Integration**: Provide slash commands for seamless workflow integration
-- **Template System**: Structured templates for consistent research outputs
-- **Simple Architecture**: Lightweight CLI with file-based approach, no complex data models
+**Task Categories**:
+- **Setup Tasks**: 2 tasks (project setup, dependencies)
+- **Test Tasks [P]**: 8 tasks (contract tests, unit tests, integration tests)
+- **Core Tasks**: 6 tasks (entity creation, service implementation)
+- **Integration Tasks**: 3 tasks (CLI integration, error handling)
+- **Polish Tasks [P]**: 3 tasks (documentation, performance, final testing)
 
-### Spec-Kit Inspiration
-GitHub's spec-kit provides a specification-driven development workflow with commands like:
-- `/specify` - Define project requirements and user stories
-- `/plan` - Outline technical approach and architecture
-- `/tasks` - Break down into actionable development tasks
+**Total**: 22 tasks across 5 categories
 
-UX-Kit adapts this approach for UX research with commands like:
-- `/research:questions` - Define research questions and objectives
-- `/research:sources` - Gather and organize research sources
-- `/research:summarize` - Create structured summaries
-- `/research:interview` - Format interview data
-- `/research:synthesize` - Synthesize insights and findings
+## Setup Tasks
 
-Both tools emphasize:
-- **Specification-first approach**: Define "what" and "why" before "how"
-- **AI agent integration**: Leverage AI for content generation and refinement
-- **Structured workflows**: Clear phases and consistent outputs
-- **IDE integration**: Seamless integration with development environments
-- **File-based approach**: Simple text files and scripts, no complex databases
-- **Lightweight implementation**: Focus on essential functionality
-
----
-
-## Phase 1: Foundation Setup
-
-### T001: Project Initialization
+### T001: Project Setup and Dependencies ✅ COMPLETED
 **Type**: Setup  
 **Priority**: Critical  
-**Effort**: 0.5 days  
+**Effort**: 1 hour  
 **Dependencies**: None  
+**Completed**: 2025-09-19 00:30:10 EDT
 
-**Description**: Initialize TypeScript CLI project with minimal dependencies.
+**Description**: Set up project structure and verify dependencies for Codex integration.
 
 **Acceptance Criteria**:
-- [x] TypeScript project with strict mode enabled
-- [x] ESLint and Prettier configured
-- [x] Jest testing framework set up
-- [x] Package.json with CLI dependencies only
-- [x] Git repository with proper .gitignore
-- [x] Basic project structure created
+- [x] Verify TypeScript 5.0+ and Node.js 18+ requirements
+- [x] Check existing UX-Kit codebase structure
+- [x] Verify no new runtime dependencies needed
+- [x] Confirm existing test framework setup
 
-**Files to Create**:
-- `package.json`
-- `tsconfig.json`
-- `.eslintrc.js`
-- `.prettierrc`
-- `jest.config.js`
-- `.gitignore`
-- `README.md`
-- `src/index.ts`
+**Files to Create/Modify**:
+- `package.json` (verify dependencies) ✅
+- `tsconfig.json` (verify TypeScript config) ✅
+- `jest.config.js` (verify test config) ✅
+- `src/services/ProjectSetupService.ts` (new) ✅
+- `tests/use-cases/T001-ProjectSetup.use-case.test.ts` (new) ✅
+- `tests/unit/services/ProjectSetupService.test.ts` (new) ✅
 
 **Technical Tasks**:
-- [x] Initialize npm project with TypeScript
-- [x] Configure tsconfig.json with strict mode
-- [x] Set up ESLint with TypeScript rules
-- [x] Configure Prettier for code formatting
-- [x] Install Jest for testing
-- [x] Set up basic project structure
+- [x] Run `npm install` to ensure dependencies are current
+- [x] Verify TypeScript strict mode is enabled
+- [x] Check ESLint configuration
+- [x] Verify Jest test framework setup
+- [x] Create ProjectSetupService with comprehensive verification
+- [x] Implement use case tests following TDD approach
+- [x] Add unit tests with 100% coverage
+- [x] Add @types/fs-extra dependency for TypeScript support
 
-**Status**: ✅ COMPLETED - 2024-01-18
+**Implementation Notes**:
+- Successfully verified Node.js v20.19.0 (meets >=18.0.0 requirement)
+- Successfully verified TypeScript 5.3.3 (meets >=5.0.0 requirement)
+- All existing dependencies are sufficient for Codex integration
+- TypeScript strict mode is properly configured
+- Jest test framework is properly configured with TypeScript support
+- Created comprehensive ProjectSetupService with error handling
+- All use case tests pass, demonstrating TDD approach
+- All unit tests pass with proper mocking
 
-### T002: CLI Framework Setup
+### T002: Codex Integration Directory Structure
 **Type**: Setup  
 **Priority**: Critical  
-**Effort**: 0.5 days  
+**Effort**: 30 minutes  
 **Dependencies**: T001  
 
-**Description**: Set up Commander.js CLI framework with basic command structure.
+**Description**: Create directory structure for Codex integration components.
 
 **Acceptance Criteria**:
-- [x] Commander.js integration
-- [x] Basic CLI application structure
-- [x] Command registration system
-- [x] Help system
-- [x] Error handling
-- [x] 100% test coverage
+- [ ] Create `src/services/codex/` directory
+- [ ] Create `src/contracts/codex/` directory
+- [ ] Create `tests/unit/services/codex/` directory
+- [ ] Create `tests/integration/codex/` directory
+- [ ] Create `templates/codex-commands/` directory
 
-**Files to Create**:
-- `src/cli/CLIApplication.ts`
-- `src/cli/CommandRegistry.ts`
-- `src/cli/HelpSystem.ts`
-- `src/cli/ErrorHandler.ts`
-- `tests/unit/cli/CLIApplication.test.ts`
+**Files to Create/Modify**:
+- `src/services/codex/` (new directory)
+- `src/contracts/codex/` (new directory)
+- `tests/unit/services/codex/` (new directory)
+- `tests/integration/codex/` (new directory)
+- `templates/codex-commands/` (new directory)
 
 **Technical Tasks**:
-- [x] Install and configure Commander.js
-- [x] Create CLIApplication class
-- [x] Implement CommandRegistry
-- [x] Create HelpSystem
-- [x] Add ErrorHandler
-- [x] Write basic tests
+- [ ] Create directory structure
+- [ ] Add `.gitkeep` files to empty directories
+- [ ] Update `.gitignore` if needed
 
-**Status**: ✅ COMPLETED - 2024-01-18
+## Test Tasks [P]
 
----
-
-## Phase 2: Core CLI Commands
-
-### T003: Init Command Implementation [P]
-**Type**: Core  
-**Priority**: Critical  
-**Effort**: 0.5 days  
+### T003: Domain Contract Tests [P]
+**Type**: Test  
+**Priority**: High  
+**Effort**: 2 hours  
 **Dependencies**: T002  
 
-**Description**: Implement the init command to create .uxkit/ directory structure.
+**Description**: Create unit tests for domain contracts and interfaces.
 
 **Acceptance Criteria**:
-- [x] InitCommand implementation
-- [x] .uxkit/ directory creation
-- [x] Template files copying
-- [x] Configuration file generation
-- [x] Validation and error handling
-- [x] 100% test coverage
+- [ ] Test `AIAgentType` enum values
+- [ ] Test `CodexConfiguration` interface validation
+- [ ] Test `CodexValidationResponse` structure
+- [ ] Test `CodexCommandTemplate` validation
+- [ ] Test domain exceptions
 
-**Files to Create**:
-- `src/commands/InitCommand.ts`
-- `src/services/DirectoryService.ts`
-- `src/services/TemplateService.ts`
-- `src/templates/` (template files)
-- `tests/unit/commands/InitCommand.test.ts`
-- `tests/integration/commands/InitCommand.integration.test.ts`
+**Files to Create/Modify**:
+- `tests/unit/contracts/domain-contracts.test.ts`
 
 **Technical Tasks**:
-- [x] Implement InitCommand
-- [x] Create DirectoryService for .uxkit/ creation
-- [x] Create TemplateService for file copying
-- [x] Create template files
-- [x] Add validation and error handling
-- [x] Write comprehensive tests
+- [ ] Create test file for domain contracts
+- [ ] Test enum values and type safety
+- [ ] Test interface structure validation
+- [ ] Test exception handling
+- [ ] Achieve 100% coverage for domain contracts
 
-**Status**: ✅ COMPLETED - 2024-01-18
+### T004: Application Contract Tests [P]
+**Type**: Test  
+**Priority**: High  
+**Effort**: 2 hours  
+**Dependencies**: T002  
 
-### T004: Study Commands Implementation [C]
+**Description**: Create unit tests for application contracts and services.
+
+**Acceptance Criteria**:
+- [ ] Test `ICodexIntegrationService` interface
+- [ ] Test `IAIAgentSelectionService` interface
+- [ ] Test `ICommandTemplateService` interface
+- [ ] Test DTOs and command structures
+- [ ] Test application exceptions
+
+**Files to Create/Modify**:
+- `tests/unit/contracts/application-contracts.test.ts`
+
+**Technical Tasks**:
+- [ ] Create test file for application contracts
+- [ ] Test service interface definitions
+- [ ] Test DTO structure validation
+- [ ] Test command and query structures
+- [ ] Achieve 100% coverage for application contracts
+
+### T005: Infrastructure Contract Tests [P]
+**Type**: Test  
+**Priority**: High  
+**Effort**: 2 hours  
+**Dependencies**: T002  
+
+**Description**: Create unit tests for infrastructure contracts and services.
+
+**Acceptance Criteria**:
+- [ ] Test `IFileSystemService` interface
+- [ ] Test `ICLIExecutionService` interface
+- [ ] Test `ICodexCLIService` interface
+- [ ] Test `ITemplateFileService` interface
+- [ ] Test infrastructure exceptions
+
+**Files to Create/Modify**:
+- `tests/unit/contracts/infrastructure-contracts.test.ts`
+
+**Technical Tasks**:
+- [ ] Create test file for infrastructure contracts
+- [ ] Test file system service interface
+- [ ] Test CLI execution service interface
+- [ ] Test Codex CLI service interface
+- [ ] Achieve 100% coverage for infrastructure contracts
+
+### T006: Presentation Contract Tests [P]
+**Type**: Test  
+**Priority**: High  
+**Effort**: 2 hours  
+**Dependencies**: T002  
+
+**Description**: Create unit tests for presentation contracts and CLI interfaces.
+
+**Acceptance Criteria**:
+- [ ] Test `ICLICommand` interface
+- [ ] Test `IUserInterface` interface
+- [ ] Test `IOutputFormatter` interface
+- [ ] Test `IInteractivePrompt` interface
+- [ ] Test presentation exceptions
+
+**Files to Create/Modify**:
+- `tests/unit/contracts/presentation-contracts.test.ts`
+
+**Technical Tasks**:
+- [ ] Create test file for presentation contracts
+- [ ] Test CLI command interface
+- [ ] Test user interface service
+- [ ] Test output formatting service
+- [ ] Achieve 100% coverage for presentation contracts
+
+### T007: CodexValidator Unit Tests [P]
+**Type**: Test  
+**Priority**: High  
+**Effort**: 3 hours  
+**Dependencies**: T010  
+
+**Description**: Create comprehensive unit tests for CodexValidator service.
+
+**Acceptance Criteria**:
+- [ ] Test CLI availability checking
+- [ ] Test version detection
+- [ ] Test path resolution
+- [ ] Test error handling scenarios
+- [ ] Test validation response generation
+
+**Files to Create/Modify**:
+- `tests/unit/services/codex/CodexValidator.test.ts`
+
+**Technical Tasks**:
+- [ ] Mock CLI execution service
+- [ ] Test successful validation scenarios
+- [ ] Test CLI not found scenarios
+- [ ] Test version detection failures
+- [ ] Test timeout and error handling
+- [ ] Achieve 90%+ test coverage
+
+### T008: CodexCommandGenerator Unit Tests [P]
+**Type**: Test  
+**Priority**: High  
+**Effort**: 3 hours  
+**Dependencies**: T011  
+
+**Description**: Create comprehensive unit tests for CodexCommandGenerator service.
+
+**Acceptance Criteria**:
+- [ ] Test template generation
+- [ ] Test template validation
+- [ ] Test file system operations
+- [ ] Test markdown formatting
+- [ ] Test error handling
+
+**Files to Create/Modify**:
+- `tests/unit/services/codex/CodexCommandGenerator.test.ts`
+
+**Technical Tasks**:
+- [ ] Mock file system service
+- [ ] Test template generation logic
+- [ ] Test template validation
+- [ ] Test markdown formatting
+- [ ] Test file system error handling
+- [ ] Achieve 90%+ test coverage
+
+### T009: CodexIntegration Unit Tests [P]
+**Type**: Test  
+**Priority**: High  
+**Effort**: 3 hours  
+**Dependencies**: T012  
+
+**Description**: Create comprehensive unit tests for CodexIntegration service.
+
+**Acceptance Criteria**:
+- [ ] Test initialization workflow
+- [ ] Test validation coordination
+- [ ] Test template generation coordination
+- [ ] Test status tracking
+- [ ] Test error handling and recovery
+
+**Files to Create/Modify**:
+- `tests/unit/services/codex/CodexIntegration.test.ts`
+
+**Technical Tasks**:
+- [ ] Mock validator and command generator
+- [ ] Test initialization flow
+- [ ] Test validation coordination
+- [ ] Test template generation coordination
+- [ ] Test status tracking
+- [ ] Achieve 90%+ test coverage
+
+### T010: InitCommand Integration Tests [P]
+**Type**: Test  
+**Priority**: High  
+**Effort**: 4 hours  
+**Dependencies**: T013  
+
+**Description**: Create integration tests for InitCommand with Codex support.
+
+**Acceptance Criteria**:
+- [ ] Test AI agent selection with Codex option
+- [ ] Test Codex initialization flow
+- [ ] Test error handling scenarios
+- [ ] Test backward compatibility
+- [ ] Test user interaction flows
+
+**Files to Create/Modify**:
+- `tests/integration/codex/InitCommand-Codex.integration.test.ts`
+
+**Technical Tasks**:
+- [ ] Create integration test file
+- [ ] Test full initialization flow
+- [ ] Test Codex CLI validation scenarios
+- [ ] Test template generation
+- [ ] Test error handling and recovery
+- [ ] Test user interaction flows
+
+## Core Tasks
+
+### T011: Create CodexValidator Service
 **Type**: Core  
 **Priority**: Critical  
-**Effort**: 0.5 days  
-**Dependencies**: T002  
-**Status**: ✅ COMPLETED - 2024-01-18
+**Effort**: 4 hours  
+**Dependencies**: T003, T005  
 
-**Description**: Implement study management commands (create, list, show, delete).
+**Description**: Implement CodexValidator service for CLI validation.
 
 **Acceptance Criteria**:
-- [x] CreateStudyCommand implementation
-- [x] ListStudiesCommand implementation
-- [x] ShowStudyCommand implementation
-- [x] DeleteStudyCommand implementation
-- [x] Study directory management
-- [x] 100% test coverage (62/62 tests passing, 100% coverage)
+- [ ] Implement `ICodexValidator` interface
+- [ ] Add CLI availability checking
+- [ ] Add version detection
+- [ ] Add path resolution
+- [ ] Add comprehensive error handling
 
-**Files to Create**:
-- `src/commands/study/CreateStudyCommand.ts`
-- `src/commands/study/ListStudiesCommand.ts`
-- `src/commands/study/ShowStudyCommand.ts`
-- `src/commands/study/DeleteStudyCommand.ts`
-- `src/services/StudyService.ts`
-- `tests/unit/commands/study/`
-- `tests/integration/commands/study/`
+**Files to Create/Modify**:
+- `src/services/codex/CodexValidator.ts`
 
 **Technical Tasks**:
-- [x] Implement CreateStudyCommand
-- [x] Implement ListStudiesCommand
-- [x] Implement ShowStudyCommand
-- [x] Implement DeleteStudyCommand
-- [x] Create StudyService for directory management
-- [x] Write comprehensive tests
-- [x] Fix test isolation issues
-- [x] Resolve ESLint configuration
-- [x] Achieve 100% test coverage (62/62 tests passing)
+- [ ] Create CodexValidator class
+- [ ] Implement validateCodexCLI method
+- [ ] Implement isCodexAvailable method
+- [ ] Implement getCodexPath method
+- [ ] Implement getCodexVersion method
+- [ ] Add error handling and logging
 
-### T005: Research Commands Implementation [C]
+### T012: Create CodexCommandGenerator Service
 **Type**: Core  
 **Priority**: Critical  
-**Effort**: 1 day  
-**Dependencies**: T002  
-**Status**: ✅ COMPLETED - 2024-01-18
+**Effort**: 6 hours  
+**Dependencies**: T003, T005  
 
-**Description**: Implement research workflow commands that generate artifact files.
+**Description**: Implement CodexCommandGenerator service for template generation.
 
 **Acceptance Criteria**:
-- [x] QuestionsCommand implementation
-- [x] SourcesCommand implementation
-- [x] SummarizeCommand implementation
-- [x] InterviewCommand implementation
-- [x] SynthesizeCommand implementation
-- [x] File generation and management
-- [x] 100% test coverage (78/78 tests passing)
+- [ ] Implement `ICodexCommandGenerator` interface
+- [ ] Add default template definitions
+- [ ] Add template file generation
+- [ ] Add markdown formatting
+- [ ] Add template validation
 
-**Files to Create**:
-- `src/commands/research/QuestionsCommand.ts`
-- `src/commands/research/SourcesCommand.ts`
-- `src/commands/research/SummarizeCommand.ts`
-- `src/commands/research/InterviewCommand.ts`
-- `src/commands/research/SynthesizeCommand.ts`
-- `src/services/ResearchService.ts`
-- `src/services/FileGenerator.ts`
-- `tests/unit/commands/research/`
-- `tests/integration/commands/research/`
+**Files to Create/Modify**:
+- `src/services/codex/CodexCommandGenerator.ts`
 
 **Technical Tasks**:
-- [x] Implement QuestionsCommand
-- [x] Implement SourcesCommand
-- [x] Implement SummarizeCommand
-- [x] Implement InterviewCommand
-- [x] Implement SynthesizeCommand
-- [x] Create ResearchService for workflow management
-- [x] Create FileGenerator for artifact creation
-- [x] Write comprehensive tests
-- [x] Implement TDD approach with use case tests first
-- [x] Add AI integration mock implementations
-- [x] Implement file generation and management
-- [x] Add comprehensive error handling and validation
+- [ ] Create CodexCommandGenerator class
+- [ ] Implement generateTemplates method
+- [ ] Implement getTemplate method
+- [ ] Implement listTemplates method
+- [ ] Implement validateTemplate method
+- [ ] Add default template definitions
+- [ ] Add markdown formatting logic
 
----
+### T013: Create CodexIntegration Service
+**Type**: Core  
+**Priority**: Critical  
+**Effort**: 4 hours  
+**Dependencies**: T011, T012  
 
-## Phase 3: File Generation and Templates
+**Description**: Implement CodexIntegration service for coordination.
 
-### T006: Template System Implementation [P]
+**Acceptance Criteria**:
+- [ ] Implement `ICodexIntegration` interface
+- [ ] Add initialization workflow
+- [ ] Add validation coordination
+- [ ] Add template generation coordination
+- [ ] Add status tracking
+
+**Files to Create/Modify**:
+- `src/services/codex/CodexIntegration.ts`
+
+**Technical Tasks**:
+- [ ] Create CodexIntegration class
+- [ ] Implement initialize method
+- [ ] Implement validate method
+- [ ] Implement generateCommandTemplates method
+- [ ] Implement getStatus method
+- [ ] Implement reset method
+- [ ] Add status tracking logic
+
+### T014: Create Codex CLI Service
 **Type**: Core  
 **Priority**: High  
-**Effort**: 0.5 days  
-**Dependencies**: T003  
-
-**Description**: Implement template system for generating research artifact files.
-
-**Acceptance Criteria**:
-- [x] TemplateEngine implementation
-- [x] Template file management
-- [x] Variable substitution
-- [x] Template validation
-- [x] 100% test coverage
-
-**Files to Create**:
-- `src/templates/TemplateEngine.ts`
-- `src/templates/TemplateManager.ts`
-- `src/templates/TemplateValidator.ts`
-- `templates/questions-template.md`
-- `templates/sources-template.md`
-- `templates/summarize-template.md`
-- `templates/interview-template.md`
-- `templates/synthesis-template.md`
-- `tests/unit/templates/`
-
-**Technical Tasks**:
-- [x] Implement TemplateEngine
-- [x] Create TemplateManager
-- [x] Create TemplateValidator
-- [x] Create template files
-- [x] Add variable substitution
-- [x] Write comprehensive tests
-
-**Status**: ✅ COMPLETED - 2024-01-18
-
-### T007: File Generator Implementation [P]
-**Type**: Core  
-**Priority**: High  
-**Effort**: 0.5 days  
-**Dependencies**: T006  
-
-**Description**: Implement file generator for creating research artifacts.
-
-**Acceptance Criteria**:
-- [x] FileGenerator implementation
-- [x] Markdown file generation
-- [x] Directory structure creation
-- [x] File validation
-- [x] Error handling
-- [x] 100% test coverage
-
-**Files to Create**:
-- `src/generators/FileGenerator.ts`
-- `src/generators/MarkdownGenerator.ts`
-- `src/generators/DirectoryGenerator.ts`
-- `src/validators/FileValidator.ts`
-- `tests/unit/generators/`
-- `tests/integration/generators/`
-
-**Technical Tasks**:
-- [x] Implement FileGenerator
-- [x] Create MarkdownGenerator
-- [x] Create DirectoryGenerator
-- [x] Create FileValidator
-- [x] Add error handling
-- [x] Write comprehensive tests
-
-**Status**: ✅ COMPLETED - 2024-01-18
-
-### T008: Configuration Management [P]
-**Type**: Core  
-**Priority**: Medium  
-**Effort**: 0.5 days  
-**Dependencies**: T003  
-
-**Description**: Implement configuration management for UX-Kit settings.
-
-**Acceptance Criteria**:
-- [x] ConfigurationService implementation
-- [x] YAML configuration support
-- [x] Default configuration
-- [x] Configuration validation
-- [x] 100% test coverage
-
-**Files to Create**:
-- `src/config/ConfigurationService.ts`
-- `src/config/ConfigurationValidator.ts`
-- `src/config/DefaultConfiguration.ts`
-- `config/default-config.yaml`
-- `tests/unit/config/`
-
-**Technical Tasks**:
-- [x] Implement ConfigurationService
-- [x] Create ConfigurationValidator
-- [x] Create DefaultConfiguration
-- [x] Add YAML support
-- [x] Write comprehensive tests
-
-**Status**: ✅ COMPLETED - 2024-01-18
-
----
-
-## Phase 4: IDE Integration
-
-### T009: Slash Command System [P]
-**Type**: Core  
-**Priority**: High  
-**Effort**: 0.5 days  
+**Effort**: 3 hours  
 **Dependencies**: T005  
 
-**Description**: Implement slash command system for IDE integration.
+**Description**: Implement CodexCLIService for CLI interactions.
 
 **Acceptance Criteria**:
-- [x] SlashCommandHandler implementation
-- [x] Command parsing and validation
-- [x] Response formatting
-- [x] Error handling
-- [x] 100% test coverage
+- [ ] Implement `ICodexCLIService` interface
+- [ ] Add CLI command execution
+- [ ] Add version detection
+- [ ] Add availability checking
+- [ ] Add error handling
 
-**Files to Create**:
-- `src/slash/SlashCommandHandler.ts`
-- `src/slash/CommandParser.ts`
-- `src/slash/ResponseFormatter.ts`
-- `src/slash/IDEIntegration.ts`
-- `tests/unit/slash/`
-- `tests/integration/slash/`
+**Files to Create/Modify**:
+- `src/services/codex/CodexCLIService.ts`
 
 **Technical Tasks**:
-- [x] Implement SlashCommandHandler
-- [x] Create CommandParser
-- [x] Create ResponseFormatter
-- [x] Create IDEIntegration
-- [x] Add error handling
-- [x] Write comprehensive tests
+- [ ] Create CodexCLIService class
+- [ ] Implement validateInstallation method
+- [ ] Implement getVersion method
+- [ ] Implement executeCodexCommand method
+- [ ] Implement isAvailable method
+- [ ] Implement getCLIPath method
 
-**Status**: ✅ COMPLETED - 2024-01-18
-
-### T010: Cursor Integration [P]
+### T015: Create Codex Configuration Service
 **Type**: Core  
 **Priority**: High  
-**Effort**: 0.5 days  
-**Dependencies**: T009  
+**Effort**: 2 hours  
+**Dependencies**: T003  
 
-**Description**: Implement Cursor IDE integration for slash commands.
+**Description**: Implement configuration management for Codex integration.
 
 **Acceptance Criteria**:
-- [x] CursorIntegration implementation
-- [x] Slash command registration
-- [x] Command execution
-- [x] Response handling
-- [x] 100% test coverage
+- [ ] Implement configuration loading
+- [ ] Add configuration validation
+- [ ] Add default configuration
+- [ ] Add configuration merging
+- [ ] Add error handling
 
-**Files to Create**:
-- `src/integrations/CursorIntegration.ts`
-- `src/integrations/IDEInterface.ts`
-- `src/integrations/CommandExecutor.ts`
-- `tests/unit/integrations/`
-- `tests/integration/integrations/`
+**Files to Create/Modify**:
+- `src/services/codex/CodexConfigurationService.ts`
 
 **Technical Tasks**:
-- [x] Implement CursorIntegration
-- [x] Create IDEInterface
-- [x] Create CommandExecutor
-- [x] Add command registration
-- [x] Write comprehensive tests
+- [ ] Create CodexConfigurationService class
+- [ ] Implement loadConfiguration method
+- [ ] Implement saveConfiguration method
+- [ ] Implement validateConfiguration method
+- [ ] Implement getDefaultConfiguration method
+- [ ] Implement mergeConfigurations method
 
-**Status**: ✅ COMPLETED - 2025-09-18
-
----
-
-## Phase 5: Utilities and Services
-
-### T011: File System Utilities [P]
+### T016: Create Codex Error Handler
 **Type**: Core  
-**Priority**: Medium  
-**Effort**: 0.5 days  
-**Dependencies**: T002  
+**Priority**: High  
+**Effort**: 2 hours  
+**Dependencies**: T003  
 
-**Description**: Implement file system utilities for cross-platform support.
-
-**Acceptance Criteria**:
-- [x] FileSystemService implementation
-- [x] Path handling utilities
-- [x] File operations
-- [x] Directory operations
-- [x] Cross-platform support
-- [x] 100% test coverage
-
-**Files to Create**:
-- `src/utils/FileSystemService.ts`
-- `src/utils/PathUtils.ts`
-- `src/utils/FileUtils.ts`
-- `src/utils/DirectoryUtils.ts`
-- `tests/unit/utils/`
-
-**Technical Tasks**:
-- [x] Implement FileSystemService
-- [x] Create PathUtils
-- [x] Create FileUtils
-- [x] Create DirectoryUtils
-- [x] Add cross-platform support
-- [x] Write comprehensive tests
-
-**Status**: ✅ COMPLETED - 2025-09-18
-
-### T012: Output Formatting [P]
-**Type**: Core  
-**Priority**: Medium  
-**Effort**: 0.5 days  
-**Dependencies**: T002  
-
-**Description**: Implement output formatting for CLI responses.
+**Description**: Implement error handling service for Codex operations.
 
 **Acceptance Criteria**:
-- [x] OutputFormatter implementation
-- [x] Color and styling support
-- [x] Progress indicators
-- [x] Table formatting
-- [x] 100% test coverage
+- [ ] Implement error handling interface
+- [ ] Add error categorization
+- [ ] Add user-friendly error messages
+- [ ] Add error recovery suggestions
+- [ ] Add error logging
 
-**Files to Create**:
-- `src/output/OutputFormatter.ts`
-- `src/output/ColorTheme.ts`
-- `src/output/ProgressIndicator.ts`
-- `src/output/TableFormatter.ts`
-- `tests/unit/output/`
+**Files to Create/Modify**:
+- `src/services/codex/CodexErrorHandler.ts`
 
 **Technical Tasks**:
-- [x] Implement OutputFormatter
-- [x] Create ColorTheme
-- [x] Create ProgressIndicator
-- [x] Create TableFormatter
-- [x] Add styling support
-- [x] Write comprehensive tests
+- [ ] Create CodexErrorHandler class
+- [ ] Implement handleFileSystemError method
+- [ ] Implement handleCLIExecutionError method
+- [ ] Implement handleValidationError method
+- [ ] Implement createUserFriendlyError method
+- [ ] Add error categorization logic
 
-**Status**: ✅ COMPLETED - 2025-09-18
+## Integration Tasks
 
-### T013: Validation System [P]
-**Type**: Core  
-**Priority**: Medium  
-**Effort**: 0.5 days  
-**Dependencies**: T002  
-
-**Description**: Implement validation system for inputs and configurations.
-
-**Acceptance Criteria**:
-- [x] ValidationService implementation
-- [x] Input validation
-- [x] Configuration validation
-- [x] File validation
-- [x] Error reporting
-- [x] 100% test coverage
-
-**Files to Create**:
-- `src/validation/ValidationService.ts`
-- `src/validation/InputValidator.ts`
-- `src/validation/ConfigValidator.ts`
-- `src/validation/FileValidator.ts`
-- `tests/unit/validation/`
-
-**Technical Tasks**:
-- [x] Implement ValidationService
-- [x] Create InputValidator
-- [x] Create ConfigValidator
-- [x] Create FileValidator
-- [x] Add error reporting
-- [x] Write comprehensive tests
-
-**Status**: ✅ COMPLETED - 2025-09-18
-
----
-
-## Phase 6: Testing and Quality
-
-### T014: Unit Test Suite [P]
-**Type**: Test  
+### T017: Update InitCommand for Codex Support
+**Type**: Integration  
 **Priority**: Critical  
-**Effort**: 1 day  
-**Dependencies**: T011, T012, T013  
+**Effort**: 4 hours  
+**Dependencies**: T013  
 
-**Description**: Implement comprehensive unit test suite.
+**Description**: Integrate Codex support into existing InitCommand.
 
 **Acceptance Criteria**:
-- [x] Unit tests for all commands
-- [x] Unit tests for all services
-- [x] Unit tests for all utilities
-- [x] Mock implementations
-- [x] Test fixtures
-- [x] 85%+ test coverage (85.03% achieved)
+- [ ] Add Codex to AI agent options
+- [ ] Add Codex initialization handling
+- [ ] Add error handling and user feedback
+- [ ] Maintain backward compatibility
+- [ ] Add user interaction flows
 
-**Files to Create**:
-- `tests/unit/commands/` (complete coverage)
-- `tests/unit/services/` (complete coverage)
-- `tests/unit/utils/` (complete coverage)
-- `tests/mocks/` (mock implementations)
-- `tests/fixtures/` (test data)
+**Files to Create/Modify**:
+- `src/commands/InitCommand.ts`
 
 **Technical Tasks**:
-- [x] Write unit tests for commands
-- [x] Write unit tests for services
-- [x] Write unit tests for utilities
-- [x] Create mock implementations
-- [x] Create test fixtures
-- [x] Generate coverage reports
+- [ ] Update AI_AGENT_OPTIONS array
+- [ ] Add handleCodexInitialization method
+- [ ] Add Codex integration service injection
+- [ ] Add error handling and user feedback
+- [ ] Add validation and fallback logic
+- [ ] Update help text and documentation
 
-**Status**: ✅ COMPLETED - 2025-09-18
-
-### T015: Integration Test Suite [P] ✅
-**Type**: Test  
+### T018: Add Codex CLI Integration
+**Type**: Integration  
 **Priority**: High  
-**Effort**: 0.5 days  
-**Dependencies**: T014
+**Effort**: 3 hours  
+**Dependencies**: T014  
 
-**Description**: Implement integration tests for complete workflows.
-
-**Acceptance Criteria**:
-- [x] End-to-end workflow tests
-- [x] File generation tests
-- [x] Directory structure tests
-- [x] Configuration tests
-- [x] Error scenario tests
-
-**Files Created**:
-- `tests/integration/basic-integration.test.ts` - Comprehensive integration tests for StudyService
-- `tests/integration/integrations/cursor-integration.test.ts` - Existing Cursor integration tests
-
-**Technical Tasks**:
-- [x] Create workflow tests
-- [x] Create file generation tests
-- [x] Create directory structure tests
-- [x] Create configuration tests
-- [x] Create error scenario tests
-
-**Implementation Notes**:
-- Created comprehensive integration tests covering StudyService functionality
-- Fixed FileSystemService to include listDirectories method
-- Tests cover study creation, listing, retrieval, deletion, and error handling
-- All integration tests passing (27 tests total)
-
-### T016: Cross-Platform Testing [P] ✅
-**Type**: Test  
-**Priority**: Very Low  
-**Effort**: 0.5 days  
-**Dependencies**: T015
-
-**Description**: Test cross-platform compatibility.
+**Description**: Integrate Codex CLI service with existing CLI infrastructure.
 
 **Acceptance Criteria**:
-- [x] macOS compatibility tests
-- [x] Linux compatibility tests
-- [x] WSL compatibility tests
-- [x] Path handling tests
-- [x] File permission tests
+- [ ] Integrate with existing CLI execution service
+- [ ] Add CLI command execution
+- [ ] Add error handling
+- [ ] Add logging and monitoring
+- [ ] Add performance tracking
 
-**Files Created**:
-- `tests/platform/macos.test.ts` - macOS compatibility tests
-- `tests/platform/linux.test.ts` - Linux compatibility tests
-- `tests/platform/wsl.test.ts` - WSL compatibility tests
-- `tests/platform/path-handling.test.ts` - Cross-platform path handling tests
-- `tests/platform/file-permission.test.ts` - File permission tests
+**Files to Create/Modify**:
+- `src/integrations/CodexCLIIntegration.ts`
 
 **Technical Tasks**:
-- [x] Test on macOS
-- [x] Test on Linux
-- [x] Test on WSL
-- [x] Test path handling
-- [x] Test file permissions
+- [ ] Create CodexCLIIntegration class
+- [ ] Integrate with CLIExecutionService
+- [ ] Add command execution logic
+- [ ] Add error handling
+- [ ] Add logging and monitoring
+- [ ] Add performance tracking
 
-**Implementation Notes**:
-- Created comprehensive cross-platform compatibility tests
-- Tests cover macOS, Linux, and WSL environments
-- Includes path handling, file permissions, and error scenarios
-- All tests passing (67 tests total)
-- Tests are designed to run on respective platforms or in containers
-
----
-
-## Phase 7: Documentation and Deployment
-
-### T017: Documentation Generation [P] ✅
-**Type**: Polish  
+### T019: Add Codex Error Handling Integration
+**Type**: Integration  
 **Priority**: High  
-**Effort**: 0.5 days  
+**Effort**: 2 hours  
 **Dependencies**: T016  
 
-**Description**: Generate comprehensive documentation.
+**Description**: Integrate Codex error handling with existing error system.
 
 **Acceptance Criteria**:
-- [x] CLI command documentation
-- [x] Configuration guide
-- [x] Examples and tutorials
-- [x] API documentation
-- [x] User guide
+- [ ] Integrate with existing error handling
+- [ ] Add error categorization
+- [ ] Add user-friendly error messages
+- [ ] Add error recovery suggestions
+- [ ] Add error logging
 
-**Files Created**:
-- `src/services/DocumentationGenerator.ts` - Main documentation generation service
-- `src/services/CommandDocumentationGenerator.ts` - CLI command documentation
-- `src/services/ConfigurationDocumentationGenerator.ts` - Configuration guide
-- `src/services/APIDocumentationGenerator.ts` - API documentation
-- `src/services/UserGuideGenerator.ts` - User guide generation
-- `tests/use-cases/documentation-generation.test.ts` - Use case tests
-- `tests/unit/services/DocumentationGenerator.test.ts` - Unit tests
-- `tests/unit/services/CommandDocumentationGenerator.test.ts` - Unit tests
-- `tests/unit/services/ConfigurationDocumentationGenerator.test.ts` - Unit tests
-- `tests/unit/services/APIDocumentationGenerator.test.ts` - Unit tests
-- `tests/unit/services/UserGuideGenerator.test.ts` - Unit tests
-- `tests/integration/documentation-generation.integration.test.ts` - Integration tests
+**Files to Create/Modify**:
+- `src/integrations/CodexErrorIntegration.ts`
 
 **Technical Tasks**:
-- [x] Generate command documentation
-- [x] Write configuration guide
-- [x] Create examples and tutorials
-- [x] Generate API documentation
-- [x] Write user guide
-- [x] Write comprehensive use case tests
-- [x] Write unit tests for all components
-- [x] Write integration tests for complete workflow
+- [ ] Create CodexErrorIntegration class
+- [ ] Integrate with existing error system
+- [ ] Add error categorization
+- [ ] Add user-friendly error messages
+- [ ] Add error recovery suggestions
+- [ ] Add error logging
 
-**Implementation Notes**:
-- Created comprehensive documentation generation system with 5 specialized generators
-- All documentation includes proper structure, examples, and cross-references
-- Full test coverage with use case, unit, and integration tests
-- Documentation generators handle missing source files gracefully
-- All tests passing (13 use case tests, 12 unit tests, 8 integration tests)
+## Polish Tasks [P]
 
-### T018: Build and Packaging [P]
+### T020: Update Documentation [P]
 **Type**: Polish  
-**Priority**: Critical  
-**Effort**: 0.5 days  
-**Dependencies**: T017  
+**Priority**: Medium  
+**Effort**: 3 hours  
+**Dependencies**: T017, T018, T019  
 
-**Description**: Set up build system and packaging for distribution.
+**Description**: Update all documentation to include Codex integration.
 
 **Acceptance Criteria**:
-- [ ] TypeScript compilation
-- [ ] NPM package creation
-- [ ] Binary distribution
-- [ ] CI/CD pipeline
-- [ ] Automated testing
+- [ ] Update README with Codex information
+- [ ] Update API documentation
+- [ ] Create user guide for Codex setup
+- [ ] Create troubleshooting guide
+- [ ] Update help text and commands
 
-**Files to Create**:
-- `build/`
-- `dist/`
-- `.github/workflows/`
-- `package.json` (build scripts)
+**Files to Create/Modify**:
+- `README.md`
+- `DOCUMENTATION.md`
+- `src/cli/HelpSystem.ts`
 
 **Technical Tasks**:
-- [ ] Configure build system
-- [ ] Create NPM package
-- [ ] Set up binary distribution
-- [ ] Set up CI/CD pipeline
-- [ ] Add automated testing
+- [ ] Add Codex section to README
+- [ ] Update API documentation
+- [ ] Create user guide
+- [ ] Create troubleshooting guide
+- [ ] Update help text
+- [ ] Update command documentation
 
----
+### T021: Performance Optimization [P]
+**Type**: Polish  
+**Priority**: Medium  
+**Effort**: 2 hours  
+**Dependencies**: T017, T018, T019  
+
+**Description**: Optimize performance and add monitoring.
+
+**Acceptance Criteria**:
+- [ ] Add performance metrics
+- [ ] Optimize initialization time
+- [ ] Add memory usage monitoring
+- [ ] Add execution time tracking
+- [ ] Verify performance requirements
+
+**Files to Create/Modify**:
+- `src/services/codex/CodexPerformanceMonitor.ts`
+
+**Technical Tasks**:
+- [ ] Create performance monitoring service
+- [ ] Add initialization time tracking
+- [ ] Add memory usage monitoring
+- [ ] Add execution time tracking
+- [ ] Add performance reporting
+- [ ] Verify < 100ms overhead requirement
+
+### T022: Final Testing and Validation [P]
+**Type**: Polish  
+**Priority**: High  
+**Effort**: 4 hours  
+**Dependencies**: T020, T021  
+
+**Description**: Perform final testing and validation of Codex integration.
+
+**Acceptance Criteria**:
+- [ ] Run full test suite
+- [ ] Perform integration testing
+- [ ] Test cross-platform compatibility
+- [ ] Validate performance requirements
+- [ ] Test error handling scenarios
+
+**Files to Create/Modify**:
+- `tests/integration/codex/CodexIntegration.integration.test.ts`
+
+**Technical Tasks**:
+- [ ] Run full test suite
+- [ ] Perform integration testing
+- [ ] Test cross-platform compatibility
+- [ ] Validate performance requirements
+- [ ] Test error handling scenarios
+- [ ] Verify backward compatibility
+- [ ] Test user interaction flows
 
 ## Parallel Execution Examples
 
-### Phase 2: Core Commands (Can run in parallel)
+### Example 1: Contract Tests (Can run in parallel)
 ```bash
-# These can run in parallel - different files
-Task agent execute T003  # Init Command
-Task agent execute T004  # Study Commands
-Task agent execute T005  # Research Commands
+# These can run in parallel
+Task agent execute T003  # Domain contract tests
+Task agent execute T004  # Application contract tests
+Task agent execute T005  # Infrastructure contract tests
+Task agent execute T006  # Presentation contract tests
 ```
 
-### Phase 3: File Generation (Can run in parallel)
+### Example 2: Service Unit Tests (Can run in parallel)
 ```bash
-# These can run in parallel - different files
-Task agent execute T006  # Template System
-Task agent execute T007  # File Generator
-Task agent execute T008  # Configuration Management
+# These can run in parallel
+Task agent execute T007  # CodexValidator unit tests
+Task agent execute T008  # CodexCommandGenerator unit tests
+Task agent execute T009  # CodexIntegration unit tests
 ```
 
-### Phase 4: IDE Integration (Can run in parallel)
+### Example 3: Core Service Implementation (Can run in parallel)
 ```bash
-# These can run in parallel - different files
-Task agent execute T009  # Slash Command System
-Task agent execute T010  # Cursor Integration
+# These can run in parallel
+Task agent execute T011  # CodexValidator service
+Task agent execute T012  # CodexCommandGenerator service
+Task agent execute T014  # CodexCLI service
+Task agent execute T015  # CodexConfiguration service
+Task agent execute T016  # CodexErrorHandler service
 ```
 
-### Phase 5: Utilities (Can run in parallel)
+### Example 4: Polish Tasks (Can run in parallel)
 ```bash
-# These can run in parallel - different files
-Task agent execute T011  # File System Utilities
-Task agent execute T012  # Output Formatting
-Task agent execute T013  # Validation System
+# These can run in parallel
+Task agent execute T020  # Update documentation
+Task agent execute T021  # Performance optimization
+Task agent execute T022  # Final testing and validation
 ```
 
-### Phase 6: Testing (Can run in parallel)
-```bash
-# These can run in parallel - different files
-Task agent execute T014  # Unit Test Suite
-Task agent execute T015  # Integration Test Suite
-Task agent execute T016  # Cross-Platform Testing
+## Task Dependencies
+
+```mermaid
+graph TD
+    A[T001: Project Setup] --> B[T002: Directory Structure]
+    B --> C[T003: Domain Contract Tests]
+    B --> D[T004: Application Contract Tests]
+    B --> E[T005: Infrastructure Contract Tests]
+    B --> F[T006: Presentation Contract Tests]
+    C --> G[T011: CodexValidator Service]
+    D --> H[T012: CodexCommandGenerator Service]
+    E --> G
+    E --> H
+    E --> I[T014: CodexCLI Service]
+    F --> J[T013: CodexIntegration Service]
+    G --> K[T007: CodexValidator Unit Tests]
+    H --> L[T008: CodexCommandGenerator Unit Tests]
+    I --> M[T015: CodexConfiguration Service]
+    J --> N[T009: CodexIntegration Unit Tests]
+    K --> O[T017: Update InitCommand]
+    L --> O
+    M --> O
+    N --> O
+    O --> P[T010: InitCommand Integration Tests]
+    P --> Q[T018: Codex CLI Integration]
+    P --> R[T019: Codex Error Handling Integration]
+    Q --> S[T020: Update Documentation]
+    R --> S
+    S --> T[T021: Performance Optimization]
+    S --> U[T022: Final Testing]
+    T --> U
 ```
 
-### Phase 7: Polish (Can run in parallel)
-```bash
-# These can run in parallel - different files
-Task agent execute T017  # Documentation Generation
-Task agent execute T018  # Build and Packaging
-```
+## Effort Summary
 
-## Task Dependencies Summary
+| Phase | Tasks | Total Effort | Priority |
+|-------|-------|--------------|----------|
+| Setup | 2 tasks | 1.5 hours | Critical |
+| Test | 8 tasks | 21 hours | High |
+| Core | 6 tasks | 21 hours | Critical/High |
+| Integration | 3 tasks | 9 hours | Critical/High |
+| Polish | 3 tasks | 9 hours | Medium/High |
+| **Total** | **22 tasks** | **61.5 hours** | |
 
-### Critical Path
-T001 → T002 → T003 → T006 → T007 → T009 → T010 → T014 → T015 → T016 → T017 → T018
+## Success Criteria
 
-### Parallel Execution Opportunities
-- **T003-T005**: Core commands (3 parallel tasks)
-- **T006-T008**: File generation (3 parallel tasks)
-- **T009-T010**: IDE integration (2 parallel tasks)
-- **T011-T013**: Utilities (3 parallel tasks)
-- **T014-T016**: Testing (3 parallel tasks)
-- **T017-T018**: Polish (2 parallel tasks)
+- [ ] All 22 tasks completed successfully
+- [ ] 90%+ test coverage for new code
+- [ ] No regression in existing functionality
+- [ ] Performance requirements met (< 100ms overhead)
+- [ ] Documentation complete and accurate
+- [ ] Code review approved
+- [ ] Integration testing passed
+- [ ] User acceptance testing passed
 
-## Success Metrics
+## Next Steps
 
-### Technical Metrics
-- [ ] 90%+ test coverage
-- [ ] <2 second command response time
-- [ ] Cross-platform compatibility
-- [ ] Clean architecture compliance
+1. **Immediate**: Begin with T002 (Codex Integration Directory Structure) - Next Up
+2. **Week 1**: Complete Setup and Test tasks (T002-T010)
+3. **Week 2**: Complete Core tasks (T011-T016)
+4. **Week 3**: Complete Integration tasks (T017-T019)
+5. **Week 4**: Complete Polish tasks (T020-T022)
 
-### File Organization Metrics
-- [ ] Source files < 200 lines
-- [ ] Clear separation of concerns
-- [ ] Composition over inheritance
-- [ ] One responsibility per file
-- [ ] Clear interfaces between modules
+---
 
-### Functionality Metrics
-- [ ] All CLI commands working
-- [ ] File generation working
-- [ ] IDE integration working
-- [ ] Template system working
-- [ ] Configuration management working
-
-This revised task breakdown focuses on the actual scope: a lightweight CLI tool that creates text files and scripts to support AI agent research workflows in IDEs. Each task is specific enough for an LLM to complete without additional context while maintaining the focus on small, composable files.
+*This tasks document was generated using UX-Kit's spec-driven development workflow. All tasks are immediately executable with clear file paths and acceptance criteria.*

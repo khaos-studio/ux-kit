@@ -1,517 +1,364 @@
-# UX-Kit Data Model Specification
+# Data Model: Codex Support Integration
 
 ## Overview
 
-This document defines the data model for the UX-Kit TypeScript CLI implementation, following a simple file-based approach inspired by GitHub's spec-kit. The system generates text files and scripts to support AI agent research workflows in IDEs.
+This document defines the data models and structures for the Codex support integration feature. The models follow the existing UX-Kit architecture patterns and maintain consistency with the current Cursor integration.
 
-## File Structure Model
+## Core Data Models
 
-### Research Study Directory
-Central directory representing a complete research effort.
+### AIAgentType Enum
 
 ```typescript
-interface ResearchStudyDirectory {
-  id: string;                    // UUID v4
-  name: string;                  // Human-readable study name
-  description?: string;          // Optional study description
-  createdAt: Date;              // Creation timestamp
-  updatedAt: Date;              // Last modification timestamp
-  status: StudyStatus;          // Current study status
-  path: string;                 // File system path
-  metadata: StudyMetadata;      // Additional study information
-}
-
-enum StudyStatus {
-  DRAFT = 'draft',
-  ACTIVE = 'active',
-  COMPLETED = 'completed',
-  ARCHIVED = 'archived'
-}
-
-interface StudyMetadata {
-  tags: string[];               // Study tags for categorization
-  priority: Priority;           // Study priority level
-  estimatedDuration?: number;   // Estimated duration in days
-  actualDuration?: number;      // Actual duration in days
-  teamMembers: string[];        // Team member identifiers
-}
-
-enum Priority {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical'
-}
-```
-
-### Generated Files
-
-#### Questions File
-```typescript
-interface QuestionsFile {
-  studyId: string;
-  generatedAt: Date;
-  questions: ResearchQuestion[];
-  metadata: {
-    prompt: string;
-    aiAgent: string;
-    version: string;
-  };
-}
-
-interface ResearchQuestion {
-  id: string;
-  question: string;
-  priority: Priority;
-  category: QuestionCategory;
-  context?: string;
-}
-
-enum QuestionCategory {
-  USER_BEHAVIOR = 'user_behavior',
-  USABILITY = 'usability',
-  ACCESSIBILITY = 'accessibility',
-  PERFORMANCE = 'performance',
-  CONTENT = 'content',
-  NAVIGATION = 'navigation',
-  FEEDBACK = 'feedback',
-  OTHER = 'other'
-}
-```
-
-#### Sources File
-```typescript
-interface SourcesFile {
-  studyId: string;
-  generatedAt: Date;
-  sources: ResearchSource[];
-  metadata: {
-    autoDiscovered: boolean;
-    aiAgent: string;
-    version: string;
-  };
-}
-
-interface ResearchSource {
-  id: string;
-  title: string;
-  url?: string;
-  filePath?: string;
-  type: SourceType;
-  addedAt: Date;
-  metadata: SourceMetadata;
-}
-
-enum SourceType {
-  WEB = 'web',
-  DOCUMENT = 'document',
-  VIDEO = 'video',
-  AUDIO = 'audio',
-  IMAGE = 'image',
-  OTHER = 'other'
-}
-
-interface SourceMetadata {
-  description?: string;
-  tags: string[];
-  relevance: RelevanceLevel;
-  credibility: CredibilityLevel;
-}
-
-enum RelevanceLevel {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high'
-}
-
-enum CredibilityLevel {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  PEER_REVIEWED = 'peer_reviewed'
-}
-```
-
-#### Summary File
-```typescript
-interface SummaryFile {
-  sourceId: string;
-  studyId: string;
-  generatedAt: Date;
-  summary: ResearchSummary;
-  metadata: {
-    aiAgent: string;
-    version: string;
-    processingTime: number;
-  };
-}
-
-interface ResearchSummary {
-  id: string;
-  content: string;
-  keyPoints: string[];
-  insights: string[];
-  recommendations: string[];
-  metadata: SummaryMetadata;
-}
-
-interface SummaryMetadata {
-  wordCount: number;
-  readingTime: number;
-  confidence: ConfidenceLevel;
-  topics: string[];
-}
-
-enum ConfidenceLevel {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high'
-}
-```
-
-#### Interview File
-```typescript
-interface InterviewFile {
-  studyId: string;
-  participantId: string;
-  generatedAt: Date;
-  interview: Interview;
-  metadata: {
-    aiAgent: string;
-    version: string;
-    processingTime: number;
-  };
-}
-
-interface Interview {
-  id: string;
-  participantId: string;
-  transcript: string;
-  insights: string[];
-  quotes: InterviewQuote[];
-  metadata: InterviewMetadata;
-}
-
-interface InterviewQuote {
-  id: string;
-  text: string;
-  timestamp?: number;
-  speaker: 'participant' | 'interviewer';
-  sentiment: Sentiment;
-  importance: Priority;
-}
-
-interface InterviewMetadata {
-  duration: number;
-  participantInfo: ParticipantInfo;
-  topics: string[];
-  keyThemes: string[];
-}
-
-interface ParticipantInfo {
-  id: string;
-  demographics?: Demographics;
-  experience?: Experience;
-}
-
-interface Demographics {
-  age?: string;
-  gender?: string;
-  location?: string;
-  occupation?: string;
-}
-
-interface Experience {
-  level: ExperienceLevel;
-  domain?: string;
-  years?: number;
-}
-
-enum ExperienceLevel {
-  BEGINNER = 'beginner',
-  INTERMEDIATE = 'intermediate',
-  ADVANCED = 'advanced',
-  EXPERT = 'expert'
-}
-
-enum Sentiment {
-  POSITIVE = 'positive',
-  NEUTRAL = 'neutral',
-  NEGATIVE = 'negative',
-  MIXED = 'mixed'
-}
-```
-
-#### Insights File
-```typescript
-interface InsightsFile {
-  studyId: string;
-  generatedAt: Date;
-  insights: ResearchInsight[];
-  metadata: {
-    aiAgent: string;
-    version: string;
-    sourceArtifacts: string[];
-  };
-}
-
-interface ResearchInsight {
-  id: string;
-  title: string;
-  description: string;
-  evidence: string[];
-  priority: Priority;
-  category: InsightCategory;
-  confidence: ConfidenceLevel;
-  impact: ImpactLevel;
-  effort: EffortLevel;
-  recommendations: string[];
-  metadata: InsightMetadata;
-}
-
-enum InsightCategory {
-  USER_NEED = 'user_need',
-  PAIN_POINT = 'pain_point',
-  OPPORTUNITY = 'opportunity',
-  BEHAVIOR_PATTERN = 'behavior_pattern',
-  USABILITY_ISSUE = 'usability_issue',
-  ACCESSIBILITY_ISSUE = 'accessibility_issue',
-  PERFORMANCE_ISSUE = 'performance_issue',
-  CONTENT_ISSUE = 'content_issue',
-  OTHER = 'other'
-}
-
-enum ImpactLevel {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical'
-}
-
-enum EffortLevel {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  VERY_HIGH = 'very_high'
-}
-
-interface InsightMetadata {
-  sourceCount: number;
-  evidenceStrength: EvidenceStrength;
-  validationStatus: ValidationStatus;
-  assignedTo?: string;
-  dueDate?: Date;
-}
-
-enum EvidenceStrength {
-  WEAK = 'weak',
-  MODERATE = 'moderate',
-  STRONG = 'strong',
-  VERY_STRONG = 'very_strong'
-}
-
-enum ValidationStatus {
-  UNVALIDATED = 'unvalidated',
-  IN_PROGRESS = 'in_progress',
-  VALIDATED = 'validated',
-  REJECTED = 'rejected'
-}
-```
-
-## Configuration Model
-
-### UX-Kit Configuration
-```typescript
-interface UXKitConfig {
-  version: string;
-  aiAgent: {
-    provider: 'cursor' | 'codex' | 'custom';
-    settings: Record<string, any>;
-    timeout: number;
-    retries: number;
-  };
-  storage: {
-    basePath: string;
-    format: 'markdown' | 'json' | 'yaml';
-    autoSave: boolean;
-    backup: boolean;
-  };
-  research: {
-    defaultTemplates: string[];
-    autoDiscovery: boolean;
-    qualityThreshold: number;
-  };
-  ui: {
-    theme: 'light' | 'dark' | 'auto';
-    verbose: boolean;
-    progress: boolean;
-  };
-}
-```
-
-### Template Configuration
-```typescript
-interface TemplateConfig {
-  name: string;
-  description: string;
-  type: TemplateType;
-  path: string;
-  variables: TemplateVariable[];
-  metadata: TemplateMetadata;
-}
-
-enum TemplateType {
-  QUESTIONS = 'questions',
-  SOURCES = 'sources',
-  SUMMARY = 'summary',
-  INTERVIEW = 'interview',
-  INSIGHTS = 'insights',
+enum AIAgentType {
+  CURSOR = 'cursor',
+  CODEX = 'codex',
   CUSTOM = 'custom'
 }
+```
 
-interface TemplateVariable {
+**Purpose**: Defines the available AI agent types for selection during initialization.
+
+**Usage**: Used in InitCommand for AI agent selection and validation.
+
+### CodexConfiguration Interface
+
+```typescript
+interface CodexConfiguration {
+  enabled: boolean;
+  cliPath?: string;
+  validationEnabled: boolean;
+  fallbackToCustom: boolean;
+  templatePath: string;
+}
+```
+
+**Purpose**: Configuration options for Codex integration.
+
+**Properties**:
+- `enabled`: Whether Codex integration is enabled
+- `cliPath`: Optional path to Codex CLI executable
+- `validationEnabled`: Whether to validate Codex CLI availability
+- `fallbackToCustom`: Whether to fallback to custom agent if Codex unavailable
+- `templatePath`: Path to Codex command templates
+
+### CodexValidationResult Interface
+
+```typescript
+interface CodexValidationResult {
+  isValid: boolean;
+  cliAvailable: boolean;
+  cliPath?: string;
+  errorMessage?: string;
+  suggestions?: string[];
+}
+```
+
+**Purpose**: Result of Codex CLI validation process.
+
+**Properties**:
+- `isValid`: Whether Codex CLI is properly configured
+- `cliAvailable`: Whether Codex CLI is available in system PATH
+- `cliPath`: Path to found Codex CLI executable
+- `errorMessage`: Error message if validation fails
+- `suggestions`: Suggested actions for user
+
+### CodexCommandTemplate Interface
+
+```typescript
+interface CodexCommandTemplate {
   name: string;
-  type: 'string' | 'number' | 'boolean' | 'array' | 'object';
-  required: boolean;
-  defaultValue?: any;
   description: string;
-}
-
-interface TemplateMetadata {
-  version: string;
-  author: string;
-  createdAt: Date;
-  updatedAt: Date;
-  tags: string[];
+  command: string;
+  parameters: CodexCommandParameter[];
+  examples: string[];
+  category: string;
 }
 ```
 
-## File System Structure
+**Purpose**: Structure for Codex command templates.
 
-### Directory Layout
-```
-.uxkit/
-├── config.yaml                 # Main configuration file
-├── memory/                     # Persistent context
-│   ├── principles.md          # Research principles
-│   ├── methodologies.md       # Research methodologies
-│   └── templates/             # Custom templates
-│       ├── questions-template.md
-│       ├── sources-template.md
-│       ├── summary-template.md
-│       ├── interview-template.md
-│       └── insights-template.md
-└── studies/                    # Research studies
-    ├── 001-user-onboarding/
-    │   ├── questions.md
-    │   ├── sources.md
-    │   ├── summaries/
-    │   │   ├── source-001-summary.md
-    │   │   └── source-002-summary.md
-    │   ├── interviews/
-    │   │   ├── participant-001-interview.md
-    │   │   └── participant-002-interview.md
-    │   └── insights.md
-    └── 002-checkout-flow/
-        ├── questions.md
-        ├── sources.md
-        └── insights.md
+**Properties**:
+- `name`: Template name/identifier
+- `description`: Human-readable description
+- `command`: The command structure
+- `parameters`: Required and optional parameters
+- `examples`: Usage examples
+- `category`: Template category (e.g., 'research', 'analysis')
+
+### CodexCommandParameter Interface
+
+```typescript
+interface CodexCommandParameter {
+  name: string;
+  type: 'string' | 'number' | 'boolean' | 'array';
+  required: boolean;
+  description: string;
+  defaultValue?: any;
+  validation?: (value: any) => boolean;
+}
 ```
 
-### File Naming Conventions
-- **Study directories**: `{id}-{kebab-case-name}`
-- **Question files**: `questions.md`
-- **Source files**: `sources.md`
-- **Summary files**: `{source-id}-summary.md`
-- **Interview files**: `{participant-id}-interview.md`
-- **Insight files**: `insights.md`
+**Purpose**: Parameter definition for Codex commands.
 
-## Data Validation
+**Properties**:
+- `name`: Parameter name
+- `type`: Parameter data type
+- `required`: Whether parameter is required
+- `description`: Parameter description
+- `defaultValue`: Default value if not provided
+- `validation`: Optional validation function
 
-### File Validation Rules
+## Service Interfaces
+
+### ICodexValidator Interface
+
+```typescript
+interface ICodexValidator {
+  validateCodexCLI(): Promise<CodexValidationResult>;
+  isCodexAvailable(): Promise<boolean>;
+  getCodexPath(): Promise<string | null>;
+}
+```
+
+**Purpose**: Interface for Codex CLI validation services.
+
+**Methods**:
+- `validateCodexCLI()`: Comprehensive validation of Codex CLI
+- `isCodexAvailable()`: Quick check for Codex CLI availability
+- `getCodexPath()`: Find Codex CLI executable path
+
+### ICodexCommandGenerator Interface
+
+```typescript
+interface ICodexCommandGenerator {
+  generateTemplates(config: CodexConfiguration): Promise<void>;
+  getTemplate(name: string): Promise<CodexCommandTemplate | null>;
+  listTemplates(): Promise<CodexCommandTemplate[]>;
+  validateTemplate(template: CodexCommandTemplate): boolean;
+}
+```
+
+**Purpose**: Interface for Codex command template generation.
+
+**Methods**:
+- `generateTemplates()`: Generate all Codex command templates
+- `getTemplate()`: Retrieve specific template by name
+- `listTemplates()`: List all available templates
+- `validateTemplate()`: Validate template structure
+
+### ICodexIntegration Interface
+
+```typescript
+interface ICodexIntegration {
+  initialize(config: CodexConfiguration): Promise<void>;
+  validate(): Promise<CodexValidationResult>;
+  generateCommandTemplates(): Promise<void>;
+  getStatus(): Promise<CodexIntegrationStatus>;
+}
+```
+
+**Purpose**: Main interface for Codex integration functionality.
+
+**Methods**:
+- `initialize()`: Initialize Codex integration
+- `validate()`: Validate Codex setup
+- `generateCommandTemplates()`: Generate command templates
+- `getStatus()`: Get current integration status
+
+### CodexIntegrationStatus Interface
+
+```typescript
+interface CodexIntegrationStatus {
+  isInitialized: boolean;
+  isConfigured: boolean;
+  cliAvailable: boolean;
+  templatesGenerated: boolean;
+  lastValidation?: Date;
+  errorCount: number;
+}
+```
+
+**Purpose**: Status information for Codex integration.
+
+**Properties**:
+- `isInitialized`: Whether integration is initialized
+- `isConfigured`: Whether configuration is complete
+- `cliAvailable`: Whether Codex CLI is available
+- `templatesGenerated`: Whether templates are generated
+- `lastValidation`: Last validation timestamp
+- `errorCount`: Number of validation errors
+
+## Configuration Models
+
+### InitCommandOptions Interface
+
+```typescript
+interface InitCommandOptions {
+  aiAgent: AIAgentType;
+  projectPath: string;
+  skipValidation?: boolean;
+  forceReinit?: boolean;
+  codexConfig?: Partial<CodexConfiguration>;
+}
+```
+
+**Purpose**: Options for initialization command.
+
+**Properties**:
+- `aiAgent`: Selected AI agent type
+- `projectPath`: Project directory path
+- `skipValidation`: Skip AI agent validation
+- `forceReinit`: Force re-initialization
+- `codexConfig`: Codex-specific configuration
+
+### CodexTemplateConfig Interface
+
+```typescript
+interface CodexTemplateConfig {
+  outputPath: string;
+  templateFormat: 'markdown' | 'json' | 'yaml';
+  includeExamples: boolean;
+  includeDocumentation: boolean;
+  customTemplates?: string[];
+}
+```
+
+**Purpose**: Configuration for template generation.
+
+**Properties**:
+- `outputPath`: Where to generate templates
+- `templateFormat`: Template file format
+- `includeExamples`: Include usage examples
+- `includeDocumentation`: Include documentation
+- `customTemplates`: Custom template paths
+
+## Error Models
+
+### CodexError Interface
+
+```typescript
+interface CodexError {
+  code: string;
+  message: string;
+  details?: any;
+  suggestions?: string[];
+  recoverable: boolean;
+}
+```
+
+**Purpose**: Standardized error structure for Codex operations.
+
+**Properties**:
+- `code`: Error code identifier
+- `message`: Human-readable error message
+- `details`: Additional error details
+- `suggestions`: Suggested actions
+- `recoverable`: Whether error is recoverable
+
+### CodexErrorCodes Enum
+
+```typescript
+enum CodexErrorCodes {
+  CLI_NOT_FOUND = 'CODEX_CLI_NOT_FOUND',
+  CLI_INVALID = 'CODEX_CLI_INVALID',
+  TEMPLATE_GENERATION_FAILED = 'CODEX_TEMPLATE_GENERATION_FAILED',
+  VALIDATION_FAILED = 'CODEX_VALIDATION_FAILED',
+  CONFIGURATION_INVALID = 'CODEX_CONFIGURATION_INVALID'
+}
+```
+
+**Purpose**: Standardized error codes for Codex operations.
+
+## Data Flow Models
+
+### InitializationFlow Interface
+
+```typescript
+interface InitializationFlow {
+  step: 'selection' | 'validation' | 'configuration' | 'template_generation' | 'complete';
+  status: 'pending' | 'in_progress' | 'complete' | 'error';
+  data?: any;
+  error?: CodexError;
+}
+```
+
+**Purpose**: Tracks initialization flow progress.
+
+**Properties**:
+- `step`: Current initialization step
+- `status`: Step status
+- `data`: Step-specific data
+- `error`: Error information if step failed
+
+### TemplateGenerationFlow Interface
+
+```typescript
+interface TemplateGenerationFlow {
+  templateName: string;
+  status: 'pending' | 'generating' | 'complete' | 'error';
+  progress: number; // 0-100
+  outputPath?: string;
+  error?: CodexError;
+}
+```
+
+**Purpose**: Tracks template generation progress.
+
+**Properties**:
+- `templateName`: Name of template being generated
+- `status`: Generation status
+- `progress`: Generation progress percentage
+- `outputPath`: Generated template path
+- `error`: Error information if generation failed
+
+## Validation Models
+
+### ValidationRule Interface
+
 ```typescript
 interface ValidationRule {
-  field: string;
-  type: 'required' | 'format' | 'range' | 'enum' | 'custom';
-  value?: any;
+  name: string;
+  validate: (value: any) => boolean;
   message: string;
-}
-
-interface FileValidationSchema {
-  fileType: string;
-  rules: ValidationRule[];
-  dependencies?: string[];
+  severity: 'error' | 'warning' | 'info';
 }
 ```
 
-### Validation Schemas
+**Purpose**: Defines validation rules for Codex configuration.
+
+**Properties**:
+- `name`: Rule identifier
+- `validate`: Validation function
+- `message`: Error/warning message
+- `severity`: Rule severity level
+
+### ValidationResult Interface
+
 ```typescript
-const VALIDATION_SCHEMAS: Record<string, FileValidationSchema> = {
-  questions: {
-    fileType: 'questions',
-    rules: [
-      { field: 'studyId', type: 'required', message: 'Study ID is required' },
-      { field: 'questions', type: 'required', message: 'Questions array is required' },
-      { field: 'questions[].question', type: 'required', message: 'Question text is required' }
-    ]
-  },
-  sources: {
-    fileType: 'sources',
-    rules: [
-      { field: 'studyId', type: 'required', message: 'Study ID is required' },
-      { field: 'sources', type: 'required', message: 'Sources array is required' },
-      { field: 'sources[].title', type: 'required', message: 'Source title is required' }
-    ]
-  }
-  // ... other schemas
-};
-```
-
-## Data Migration
-
-### Version Management
-```typescript
-interface DataMigration {
-  fromVersion: string;
-  toVersion: string;
-  description: string;
-  steps: MigrationStep[];
-}
-
-interface MigrationStep {
-  type: 'transform' | 'rename' | 'add' | 'remove';
-  description: string;
-  action: (data: any) => any;
+interface ValidationResult {
+  isValid: boolean;
+  errors: ValidationError[];
+  warnings: ValidationWarning[];
+  info: ValidationInfo[];
 }
 ```
 
-### Migration Examples
-```typescript
-const MIGRATIONS: DataMigration[] = [
-  {
-    fromVersion: '1.0.0',
-    toVersion: '1.1.0',
-    description: 'Add metadata to all file types',
-    steps: [
-      {
-        type: 'add',
-        description: 'Add metadata field to questions file',
-        action: (data) => ({ ...data, metadata: { version: '1.1.0' } })
-      }
-    ]
-  }
-];
-```
+**Purpose**: Result of validation process.
+
+**Properties**:
+- `isValid`: Overall validation result
+- `errors`: Validation errors
+- `warnings`: Validation warnings
+- `info`: Validation information
 
 ## Summary
 
-This data model provides a simple, file-based approach to managing UX research data that:
+The data models for Codex support integration follow the existing UX-Kit patterns and provide:
 
-1. **Leverages file system**: Uses directories and files instead of complex databases
-2. **Supports AI agents**: Generates structured files that AI agents can easily process
-3. **Maintains version control**: All files are version-controlled and trackable
-4. **Enables collaboration**: Files can be shared and edited by team members
-5. **Provides flexibility**: Easy to extend and modify without complex migrations
-6. **Follows spec-kit inspiration**: Similar to GitHub's spec-kit approach for structured workflows
+1. **Type Safety**: Strong typing with TypeScript interfaces
+2. **Extensibility**: Easy to add new features and configurations
+3. **Validation**: Comprehensive validation and error handling
+4. **Consistency**: Follows existing architectural patterns
+5. **Documentation**: Clear interfaces with purpose and usage
 
-The model balances simplicity with functionality, making it easy to implement while providing all necessary features for comprehensive UX research workflows.
+These models ensure the Codex integration maintains the high quality standards of the UX-Kit codebase while providing a solid foundation for implementation.
