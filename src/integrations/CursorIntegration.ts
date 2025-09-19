@@ -38,6 +38,28 @@ export class CursorIntegration implements ICursorIntegration {
   }
 
   /**
+   * Check if Cursor is available
+   */
+  async isAvailable(): Promise<boolean> {
+    try {
+      return await this.ideInterface.isCursorAvailable();
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Get Cursor version
+   */
+  async getVersion(): Promise<string | null> {
+    try {
+      return await this.ideInterface.getCursorVersion();
+    } catch {
+      return null;
+    }
+  }
+
+  /**
    * Register a slash command
    */
   registerSlashCommand(command: ISlashCommand): void {
@@ -192,6 +214,15 @@ export class CursorIntegration implements ICursorIntegration {
   }
 
   /**
+   * Create execute function for slash commands
+   */
+  private createExecuteFunction(commandName: string) {
+    return async (params: Record<string, any>) => {
+      await this.executeSlashCommand(commandName, Object.keys(params));
+    };
+  }
+
+  /**
    * Initialize default commands
    */
   private initializeDefaultCommands(): void {
@@ -203,7 +234,8 @@ export class CursorIntegration implements ICursorIntegration {
       examples: [
         '/research:questions --study="user-interviews" --topic="e-commerce checkout"',
         '/research:questions --study="usability-test" --topic="mobile app" --count=10 --format="markdown"'
-      ]
+      ],
+      execute: this.createExecuteFunction('research:questions')
     });
 
     this.registerSlashCommand({
@@ -213,7 +245,8 @@ export class CursorIntegration implements ICursorIntegration {
       examples: [
         '/research:sources --study="user-interviews" --keywords="UX, usability, e-commerce"',
         '/research:sources --study="usability-test" --keywords="mobile, app, design" --limit=20'
-      ]
+      ],
+      execute: this.createExecuteFunction('research:sources')
     });
 
     this.registerSlashCommand({
@@ -223,7 +256,8 @@ export class CursorIntegration implements ICursorIntegration {
       examples: [
         '/research:summarize --study="user-interviews"',
         '/research:summarize --study="usability-test" --format="markdown" --length="brief"'
-      ]
+      ],
+      execute: this.createExecuteFunction('research:summarize')
     });
 
     this.registerSlashCommand({
@@ -233,7 +267,8 @@ export class CursorIntegration implements ICursorIntegration {
       examples: [
         '/research:interview --study="user-interviews" --participant="P001"',
         '/research:interview --study="usability-test" --participant="P002" --template="standard"'
-      ]
+      ],
+      execute: this.createExecuteFunction('research:interview')
     });
 
     this.registerSlashCommand({
@@ -243,7 +278,8 @@ export class CursorIntegration implements ICursorIntegration {
       examples: [
         '/research:synthesize --study="user-interviews" --insights="key-findings"',
         '/research:synthesize --study="usability-test" --insights="patterns" --format="report"'
-      ]
+      ],
+      execute: this.createExecuteFunction('research:synthesize')
     });
 
     // Study commands
@@ -254,7 +290,8 @@ export class CursorIntegration implements ICursorIntegration {
       examples: [
         '/study:create --name="e-commerce-usability" --description="Usability study for checkout flow"',
         '/study:create --name="mobile-app-test" --description="Mobile app usability testing" --template="standard"'
-      ]
+      ],
+      execute: this.createExecuteFunction('study:create')
     });
 
     this.registerSlashCommand({
@@ -264,7 +301,8 @@ export class CursorIntegration implements ICursorIntegration {
       examples: [
         '/study:list',
         '/study:list --format="table" --filter="active"'
-      ]
+      ],
+      execute: this.createExecuteFunction('study:list')
     });
 
     this.registerSlashCommand({
@@ -274,7 +312,8 @@ export class CursorIntegration implements ICursorIntegration {
       examples: [
         '/study:show --name="e-commerce-usability"',
         '/study:show --name="mobile-app-test" --format="detailed" --details'
-      ]
+      ],
+      execute: this.createExecuteFunction('study:show')
     });
 
     this.registerSlashCommand({
@@ -284,7 +323,8 @@ export class CursorIntegration implements ICursorIntegration {
       examples: [
         '/study:delete --name="old-study" --confirm',
         '/study:delete --name="test-study" --confirm --force'
-      ]
+      ],
+      execute: this.createExecuteFunction('study:delete')
     });
   }
 
@@ -292,7 +332,8 @@ export class CursorIntegration implements ICursorIntegration {
    * Format command help text
    */
   private formatCommandHelp(command: ISlashCommand): string {
-    return `# ${command.name}\n\n${command.description}\n\n**Parameters:**\n${command.parameters.map(p => `- ${p}`).join('\n')}\n\n**Examples:**\n${command.examples.map(e => `- ${e}`).join('\n')}`;
+    const examples = command.examples ? command.examples.map(e => `- ${e}`).join('\n') : 'No examples available';
+    return `# ${command.name}\n\n${command.description}\n\n**Parameters:**\n${command.parameters.map(p => `- ${p}`).join('\n')}\n\n**Examples:**\n${examples}`;
   }
 
   /**

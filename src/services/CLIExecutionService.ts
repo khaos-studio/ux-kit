@@ -17,6 +17,7 @@ export class CLIExecutionService implements ICLIExecutionService {
     options?: CLIExecutionOptions
   ): Promise<CLIExecutionResult> {
     return new Promise((resolve, reject) => {
+      const startTime = Date.now();
       const timeout = options?.timeout || 30000;
       const captureOutput = options?.captureOutput !== false;
       const captureError = options?.captureError !== false;
@@ -62,7 +63,7 @@ export class CLIExecutionService implements ICLIExecutionService {
             exitCode: code || 0,
             stdout: stdout.trim(),
             stderr: stderr.trim(),
-            command: `${command} ${args.join(' ')}`
+            executionTime: Date.now() - startTime
           });
         }
       });
@@ -101,5 +102,35 @@ export class CLIExecutionService implements ICLIExecutionService {
         return false;
       }
     }
+  }
+
+  /**
+   * Get command version
+   */
+  async getCommandVersion(command: string): Promise<string | null> {
+    try {
+      const result = await this.executeCommand(command, ['--version'], {
+        timeout: 5000,
+        captureOutput: true,
+        captureError: true
+      });
+      if (result.success && result.stdout) {
+        return result.stdout.trim();
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
+   * Execute command with timeout
+   */
+  async executeCommandWithTimeout(
+    command: string,
+    args: readonly string[],
+    timeout: number
+  ): Promise<CLIExecutionResult> {
+    return this.executeCommand(command, args, { timeout });
   }
 }

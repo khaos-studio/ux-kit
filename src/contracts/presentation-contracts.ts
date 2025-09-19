@@ -14,6 +14,108 @@ import {
 } from './domain-contracts';
 
 // ============================================================================
+// Logging Contracts
+// ============================================================================
+
+/**
+ * Interface for logging operations
+ */
+export interface ILogger {
+  /**
+   * Log debug message
+   */
+  debug(message: string, context?: any): void;
+  
+  /**
+   * Log info message
+   */
+  info(message: string, context?: any): void;
+  
+  /**
+   * Log warning message
+   */
+  warn(message: string, context?: any): void;
+  
+  /**
+   * Log error message
+   */
+  error(message: string, error?: Error, context?: any): void;
+}
+
+/**
+ * Validation error information
+ */
+export interface ValidationError {
+  readonly field: string;
+  readonly message: string;
+  readonly value: any;
+}
+
+// ============================================================================
+// Cursor Integration Contracts
+// ============================================================================
+
+/**
+ * Interface for Cursor IDE integration
+ */
+export interface ICursorIntegration {
+  /**
+   * Check if Cursor is available
+   */
+  isAvailable(): Promise<boolean>;
+  
+  /**
+   * Get Cursor version
+   */
+  getVersion(): Promise<string | null>;
+  
+  /**
+   * Execute slash command
+   */
+  executeSlashCommand(name: string, args: string[]): Promise<void>;
+  
+  /**
+   * Get current cursor position
+   */
+  getCursorPosition(): Promise<CursorPosition | null>;
+  
+  /**
+   * Show notification
+   */
+  showNotification(message: string, type: NotificationType): Promise<void>;
+}
+
+/**
+ * Slash command interface
+ */
+export interface ISlashCommand {
+  readonly name: string;
+  readonly description: string;
+  readonly parameters: readonly string[];
+  readonly examples?: readonly string[];
+  readonly execute: (params: Record<string, any>) => Promise<void>;
+}
+
+/**
+ * Cursor position information
+ */
+export interface CursorPosition {
+  readonly line: number;
+  readonly character: number;
+  readonly file: string;
+}
+
+/**
+ * Notification types
+ */
+export enum NotificationType {
+  INFO = 'info',
+  SUCCESS = 'success',
+  WARNING = 'warning',
+  ERROR = 'error'
+}
+
+// ============================================================================
 // Output Contracts
 // ============================================================================
 
@@ -63,7 +165,7 @@ export interface ICommand {
   /**
    * Command arguments
    */
-  readonly arguments: readonly string[];
+  readonly arguments: Array<{ name: string; description: string; required: boolean; type: 'string' | 'number' | 'boolean' }>;
   
   /**
    * Command options

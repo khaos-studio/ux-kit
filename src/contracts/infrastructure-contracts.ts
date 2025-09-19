@@ -59,6 +59,47 @@ export interface IFileSystemService {
    * Get file stats
    */
   getFileStats(path: string): Promise<FileStats>;
+  
+  // Additional utility methods
+  /**
+   * Ensure a directory exists (create if it doesn't exist)
+   */
+  ensureDirectoryExists(path: string): Promise<void>;
+  
+  /**
+   * Delete a directory
+   */
+  deleteDirectory(path: string, recursive?: boolean): Promise<void>;
+  
+  /**
+   * Check if a path exists
+   */
+  pathExists(path: string): Promise<boolean>;
+  
+  /**
+   * Check if a path is a directory
+   */
+  isDirectory(path: string): Promise<boolean>;
+  
+  /**
+   * List directories in a directory
+   */
+  listDirectories(path: string): Promise<string[]>;
+  
+  /**
+   * Join multiple path segments into a single path
+   */
+  joinPaths(...paths: string[]): string;
+  
+  /**
+   * Extract the basename from a path
+   */
+  basename(path: string, ext?: string): string;
+  
+  /**
+   * Extract the directory name from a path
+   */
+  dirname(path: string): string;
 }
 
 /**

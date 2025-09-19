@@ -15,6 +15,8 @@ export interface IDEInterface {
   insertText(text: string, position?: CursorPosition): Promise<void>;
   replaceSelection(text: string): Promise<void>;
   showNotification(message: string, type?: NotificationType): Promise<void>;
+  isCursorAvailable(): Promise<boolean>;
+  getCursorVersion(): Promise<string | null>;
 }
 
 /**
@@ -80,5 +82,21 @@ export class IDEInterface {
     // Default implementation - should be overridden by specific IDE implementations
     // For now, just log the notification
     console.log(`[${type.toUpperCase()}] ${message}`);
+  }
+
+  /**
+   * Check if Cursor is available
+   */
+  async isCursorAvailable(): Promise<boolean> {
+    // Default implementation - should be overridden by specific IDE implementations
+    return false;
+  }
+
+  /**
+   * Get Cursor version
+   */
+  async getCursorVersion(): Promise<string | null> {
+    // Default implementation - should be overridden by specific IDE implementations
+    return null;
   }
 }

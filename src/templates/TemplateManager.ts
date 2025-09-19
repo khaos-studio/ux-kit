@@ -44,7 +44,7 @@ export class TemplateManager {
    */
   async listTemplates(templateDirectory: string): Promise<string[]> {
     try {
-      return await this.fileSystem.listFiles(templateDirectory);
+      return [...await this.fileSystem.listFiles(templateDirectory)];
     } catch (error) {
       return [];
     }
