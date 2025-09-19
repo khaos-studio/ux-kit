@@ -41,24 +41,24 @@ describe('QuestionsCommand', () => {
 
   describe('Command Properties', () => {
     it('should have correct command properties', () => {
-      expect(QuestionsCommand.command).toBe('questions <prompt>');
-      expect(QuestionsCommand.description).toBe('Generate research questions for a study');
-      expect(QuestionsCommand.options).toHaveLength(2);
+      expect(questionsCommand.name).toBe('research:questions');
+      expect(questionsCommand.description).toBe('Generate research questions for a study');
+      expect(questionsCommand.options).toHaveLength(2);
     });
 
     it('should have correct options configuration', () => {
-      const studyOption = QuestionsCommand.options.find(opt => opt.flags.includes('--study'));
-      const projectRootOption = QuestionsCommand.options.find(opt => opt.flags.includes('--projectRoot'));
+      const studyOption = questionsCommand.options.find(opt => opt.name === 'study');
+      const topicOption = questionsCommand.options.find(opt => opt.name === 'topic');
 
       expect(studyOption).toBeDefined();
-      expect(studyOption?.flags).toBe('-s, --study <studyId>');
+      expect(studyOption?.name).toBe('study');
       expect(studyOption?.description).toBe('Study ID or name');
       expect(studyOption?.required).toBe(true);
 
-      expect(projectRootOption).toBeDefined();
-      expect(projectRootOption?.flags).toBe('-p, --projectRoot <path>');
-      expect(projectRootOption?.description).toBe('Specify the project root directory');
-      expect(projectRootOption?.required).toBeFalsy();
+      expect(topicOption).toBeDefined();
+      expect(topicOption?.name).toBe('topic');
+      expect(topicOption?.description).toBe('Research topic or prompt to generate questions for');
+      expect(topicOption?.required).toBeFalsy();
     });
   });
 

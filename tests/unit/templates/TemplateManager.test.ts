@@ -15,6 +15,14 @@ class MockFileSystemService implements IFileSystemService {
     this.directories.clear();
   }
 
+  async fileExists(path: string): Promise<boolean> {
+    return this.files.has(path);
+  }
+
+  async directoryExists(path: string): Promise<boolean> {
+    return this.directories.has(path);
+  }
+
   async createDirectory(path: string): Promise<void> {
     this.directories.add(path);
   }
@@ -84,6 +92,17 @@ class MockFileSystemService implements IFileSystemService {
     const parts = path.split('/');
     parts.pop();
     return parts.join('/');
+  }
+
+  async getFileStats(path: string): Promise<any> {
+    return {
+      size: this.files.get(path)?.length || 0,
+      created: new Date(),
+      modified: new Date(),
+      isFile: () => this.files.has(path),
+      isDirectory: () => this.directories.has(path),
+      permissions: '644'
+    };
   }
 }
 

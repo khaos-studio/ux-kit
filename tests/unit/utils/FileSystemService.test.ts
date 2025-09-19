@@ -39,7 +39,7 @@ describe('FileSystemService', () => {
     it('should create nested directories recursively', async () => {
       const dirPath = path.join(tempDir, 'level1', 'level2', 'level3');
 
-      await fileSystem.createDirectory(dirPath, true);
+      await fileSystem.createDirectory(dirPath);
 
       const exists = await fileSystem.pathExists(dirPath);
       expect(exists).toBe(true);

@@ -8,16 +8,22 @@
 import { CursorIntegration } from '../../src/integrations/CursorIntegration';
 import { IDEInterface } from '../../src/integrations/IDEInterface';
 import { CommandExecutor } from '../../src/integrations/CommandExecutor';
+import { ResearchService } from '../../src/services/ResearchService';
+import { StudyService } from '../../src/services/StudyService';
 import { ICursorIntegration, ISlashCommand, CursorPosition, NotificationType } from '../../src/contracts/presentation-contracts';
 
 describe('Cursor IDE Integration Use Cases', () => {
   let cursorIntegration: CursorIntegration;
   let ideInterface: IDEInterface;
   let commandExecutor: CommandExecutor;
+  let mockResearchService: jest.Mocked<ResearchService>;
+  let mockStudyService: jest.Mocked<StudyService>;
 
   beforeEach(() => {
     ideInterface = new IDEInterface();
-    commandExecutor = new CommandExecutor();
+    mockResearchService = {} as jest.Mocked<ResearchService>;
+    mockStudyService = {} as jest.Mocked<StudyService>;
+    commandExecutor = new CommandExecutor(mockResearchService, mockStudyService);
     cursorIntegration = new CursorIntegration(ideInterface, commandExecutor);
   });
 
@@ -59,7 +65,10 @@ describe('Cursor IDE Integration Use Cases', () => {
         name: 'custom:command',
         description: 'A custom command for testing',
         parameters: ['param1', 'param2'],
-        examples: ['/custom:command --param1="value1" --param2="value2"']
+        examples: ['/custom:command --param1="value1" --param2="value2"'],
+        execute: async (params: Record<string, any>) => {
+          // Mock implementation
+        }
       };
 
       // When: Command is registered
@@ -94,7 +103,10 @@ describe('Cursor IDE Integration Use Cases', () => {
         name: 'research:questions',
         description: 'Updated description',
         parameters: ['study', 'topic'],
-        examples: ['/research:questions --study="test" --topic="test"']
+        examples: ['/research:questions --study="test" --topic="test"'],
+        execute: async (params: Record<string, any>) => {
+          // Mock implementation
+        }
       };
 
       cursorIntegration.registerSlashCommand(newCommand);
@@ -193,7 +205,7 @@ describe('Cursor IDE Integration Use Cases', () => {
 
     it('should get cursor position from Cursor', async () => {
       // Given: Cursor is positioned in a file
-      const expectedPosition: CursorPosition = { line: 10, character: 5 };
+      const expectedPosition: CursorPosition = { line: 10, character: 5, file: 'test.ts' };
       jest.spyOn(ideInterface, 'getCursorPosition').mockResolvedValue(expectedPosition);
 
       // When: Cursor position is requested
@@ -206,7 +218,7 @@ describe('Cursor IDE Integration Use Cases', () => {
     it('should insert text at cursor position', async () => {
       // Given: Text to insert and position
       const textToInsert = 'Research questions:\n1. How do users navigate the checkout process?';
-      const position: CursorPosition = { line: 5, character: 0 };
+      const position: CursorPosition = { line: 5, character: 0, file: 'test.ts' };
       jest.spyOn(ideInterface, 'insertText').mockResolvedValue(undefined);
 
       // When: Text is inserted
@@ -382,7 +394,10 @@ describe('Cursor IDE Integration Use Cases', () => {
         name: 'test:command',
         description: 'Test command',
         parameters: ['param'],
-        examples: ['/test:command --param="value"']
+        examples: ['/test:command --param="value"'],
+        execute: async (params: Record<string, any>) => {
+          // Mock implementation
+        }
       };
 
       cursorIntegration.registerSlashCommand(newCommand);
