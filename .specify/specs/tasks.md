@@ -28,6 +28,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Setup  
 **Priority**: Critical  
 **Effort**: 1 hour  
+**Size**: small
 **Dependencies**: None  
 **Completed**: 2025-09-19 00:30:10 EDT
 
@@ -71,6 +72,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Setup  
 **Priority**: Critical  
 **Effort**: 30 minutes  
+**Size**: small
 **Dependencies**: T001  
 **Completed**: 2025-09-19 00:34:07 EDT
 
@@ -119,6 +121,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Test  
 **Priority**: High  
 **Effort**: 2 hours  
+**Size**: medium
 **Dependencies**: T002  
 **Completed**: 2025-09-19 00:39:51 EDT
 
@@ -161,6 +164,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Test  
 **Priority**: High  
 **Effort**: 2 hours  
+**Size**: medium
 **Dependencies**: T002  
 **Completed**: 2025-09-19 00:47:16 EDT
 
@@ -208,6 +212,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Test  
 **Priority**: High  
 **Effort**: 2 hours  
+**Size**: medium
 **Dependencies**: T002  
 **Completed**: 2025-09-19 00:54:08 EDT
 
@@ -254,6 +259,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Test  
 **Priority**: High  
 **Effort**: 2 hours  
+**Size**: medium
 **Dependencies**: T002  
 **Completed**: 2025-09-19 00:54:08 EDT
 
@@ -300,6 +306,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Test  
 **Priority**: High  
 **Effort**: 3 hours  
+**Size**: medium
 **Dependencies**: T010  
 
 **Description**: Create comprehensive unit tests for CodexValidator service.
@@ -326,6 +333,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Test  
 **Priority**: High  
 **Effort**: 3 hours  
+**Size**: medium
 **Dependencies**: T011  
 
 **Description**: Create comprehensive unit tests for CodexCommandGenerator service.
@@ -352,6 +360,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Test  
 **Priority**: High  
 **Effort**: 3 hours  
+**Size**: medium
 **Dependencies**: T012  
 
 **Description**: Create comprehensive unit tests for CodexIntegration service.
@@ -378,6 +387,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Test  
 **Priority**: High  
 **Effort**: 4 hours  
+**Size**: large
 **Dependencies**: T013  
 
 **Description**: Create integration tests for InitCommand with Codex support.
@@ -406,6 +416,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Core  
 **Priority**: Critical  
 **Effort**: 4 hours  
+**Size**: large
 **Dependencies**: T003, T005  
 **Completed**: 2025-09-19 01:15:47 EDT
 
@@ -454,6 +465,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Core  
 **Priority**: Critical  
 **Effort**: 6 hours  
+**Size**: xlarge
 **Dependencies**: T003, T005  
 **Completed**: 2025-09-19 01:44:44 EDT
 
@@ -506,6 +518,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Core  
 **Priority**: Critical  
 **Effort**: 4 hours  
+**Size**: large
 **Dependencies**: T011, T012  
 **Completed**: 2025-09-19 02:14:46 EDT
 
@@ -556,6 +569,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Core  
 **Priority**: High  
 **Effort**: 3 hours  
+**Size**: medium
 **Dependencies**: T005  
 **Completed**: 2025-09-19 02:22:53 EDT
 
@@ -607,6 +621,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Core  
 **Priority**: High  
 **Effort**: 2 hours  
+**Size**: small
 **Dependencies**: T003  
 **Completed**: 2025-09-19 02:32:57 EDT
 
@@ -653,31 +668,54 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 - Proper TypeScript typing and error handling throughout
 - Comprehensive error handling with helpful error messages
 
-### T016: Create Codex Error Handler
+### T016: Create Codex Error Handler ✅ COMPLETED
 **Type**: Core  
 **Priority**: High  
 **Effort**: 2 hours  
+**Size**: small
 **Dependencies**: T003  
+**Completed**: 2025-09-19 02:49:50 EDT
 
 **Description**: Implement error handling service for Codex operations.
 
 **Acceptance Criteria**:
-- [ ] Implement error handling interface
-- [ ] Add error categorization
-- [ ] Add user-friendly error messages
-- [ ] Add error recovery suggestions
-- [ ] Add error logging
+- [x] Implement error handling interface
+- [x] Add error categorization
+- [x] Add user-friendly error messages
+- [x] Add error recovery suggestions
+- [x] Add error logging
 
 **Files to Create/Modify**:
-- `src/services/codex/CodexErrorHandler.ts`
+- `src/services/codex/CodexErrorHandler.ts` ✅
+- `tests/use-cases/T016-CodexErrorHandler.use-case.test.ts` (new) ✅
+- `tests/unit/services/codex/CodexErrorHandler.test.ts` (new) ✅
 
 **Technical Tasks**:
-- [ ] Create CodexErrorHandler class
-- [ ] Implement handleFileSystemError method
-- [ ] Implement handleCLIExecutionError method
-- [ ] Implement handleValidationError method
-- [ ] Implement createUserFriendlyError method
-- [ ] Add error categorization logic
+- [x] Create CodexErrorHandler class
+- [x] Implement handleFileSystemError method
+- [x] Implement handleCLIExecutionError method
+- [x] Implement handleValidationError method
+- [x] Implement createUserFriendlyError method
+- [x] Add error categorization logic
+- [x] Implement TDD approach with use case tests first
+- [x] Add comprehensive unit tests with 100% coverage
+- [x] Add comprehensive error type detection and categorization
+- [x] Add context-aware error suggestions based on error type and context
+- [x] Support all IErrorHandlingService interface methods
+
+**Implementation Notes**:
+- Successfully implemented CodexErrorHandler service following TDD approach
+- All IErrorHandlingService interface methods implemented: handleFileSystemError, handleCLIExecutionError, handleValidationError, handleConfigurationError, createUserFriendlyError
+- Comprehensive error categorization with specific error type detection for file system, CLI execution, validation, and configuration errors
+- Context-aware error suggestions that provide specific, actionable recommendations based on error type and context
+- User-friendly error message generation with proper formatting and recovery guidance
+- Cross-platform error handling with support for common error types (ENOENT, EACCES, ENOSPC, etc.)
+- Use case tests: 22/22 passing - Complete user scenarios and expected behavior
+- Unit tests: 57/57 passing - 100% coverage of all service methods and error scenarios
+- Total test coverage: 79/79 tests passing
+- Service integrates with domain contracts for proper error structure and typing
+- Proper TypeScript typing and error handling throughout
+- Comprehensive error details preservation with original error context
 
 ## Integration Tasks
 
@@ -685,6 +723,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Integration  
 **Priority**: Critical  
 **Effort**: 4 hours  
+**Size**: large
 **Dependencies**: T013  
 
 **Description**: Integrate Codex support into existing InitCommand.
@@ -711,6 +750,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Integration  
 **Priority**: High  
 **Effort**: 3 hours  
+**Size**: medium
 **Dependencies**: T014  
 
 **Description**: Integrate Codex CLI service with existing CLI infrastructure.
@@ -737,6 +777,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Integration  
 **Priority**: High  
 **Effort**: 2 hours  
+**Size**: small
 **Dependencies**: T016  
 
 **Description**: Integrate Codex error handling with existing error system.
@@ -765,6 +806,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Polish  
 **Priority**: Medium  
 **Effort**: 3 hours  
+**Size**: medium
 **Dependencies**: T017, T018, T019  
 
 **Description**: Update all documentation to include Codex integration.
@@ -793,6 +835,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Polish  
 **Priority**: Medium  
 **Effort**: 2 hours  
+**Size**: small
 **Dependencies**: T017, T018, T019  
 
 **Description**: Optimize performance and add monitoring.
@@ -819,6 +862,7 @@ This document provides actionable, dependency-ordered tasks for implementing Cod
 **Type**: Polish  
 **Priority**: High  
 **Effort**: 4 hours  
+**Size**: large
 **Dependencies**: T020, T021  
 
 **Description**: Perform final testing and validation of Codex integration.
@@ -914,14 +958,14 @@ graph TD
 
 ## Effort Summary
 
-| Phase | Tasks | Total Effort | Priority |
-|-------|-------|--------------|----------|
-| Setup | 2 tasks | 1.5 hours | Critical |
-| Test | 8 tasks | 21 hours | High |
-| Core | 6 tasks | 21 hours | Critical/High |
-| Integration | 3 tasks | 9 hours | Critical/High |
-| Polish | 3 tasks | 9 hours | Medium/High |
-| **Total** | **22 tasks** | **61.5 hours** | |
+| Phase | Tasks | Total Effort | Size Distribution | Priority |
+|-------|-------|--------------|-------------------|----------|
+| Setup | 2 tasks | 1.5 hours | 2 small | Critical |
+| Test | 8 tasks | 21 hours | 6 medium, 2 large | High |
+| Core | 6 tasks | 21 hours | 2 small, 2 medium, 2 large, 1 xlarge | Critical/High |
+| Integration | 3 tasks | 9 hours | 2 small, 1 medium, 1 large | Critical/High |
+| Polish | 3 tasks | 9 hours | 1 small, 1 medium, 1 large | Medium/High |
+| **Total** | **22 tasks** | **61.5 hours** | **7 small, 8 medium, 6 large, 1 xlarge** | |
 
 ## Success Criteria
 
@@ -936,9 +980,9 @@ graph TD
 
 ## Next Steps
 
-1. **Immediate**: Begin with T016 (Create Codex Error Handler) - Next Up
+1. **Immediate**: Begin with T017 (Update InitCommand for Codex Support) - Next Up
 2. **Week 1**: Complete Setup and Test tasks (T007-T010)
-3. **Week 2**: Complete Core tasks (T016)
+3. **Week 2**: Complete Core tasks (T016) ✅
 4. **Week 3**: Complete Integration tasks (T017-T019)
 5. **Week 4**: Complete Polish tasks (T020-T022)
 

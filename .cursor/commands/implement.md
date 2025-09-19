@@ -22,6 +22,7 @@ Given the task numbers provided as arguments, do this:
    - **Green Phase**: Implement minimal code to make use case tests pass
    - **Refactor Phase**: Improve code while keeping all tests green
    - **Never hesitate to use web search for guidance or clarification on implementation or issues**
+   - **Track Effort**:  Keep track of time spent on each task as well as actual size vs predicted and update the tasks.md file accordingly
 
 5. **Web Search Integration**: 
    - Use web search when encountering implementation challenges

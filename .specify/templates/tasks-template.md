@@ -36,6 +36,7 @@
 **Type**: [Setup|Test|Core|Integration|Polish]  
 **Priority**: [Critical|High|Medium|Low]  
 **Effort**: [X days|X hours]  
+**Size**: [small|medium|large|xlarge|epic]
 **Dependencies**: [TXXX, TYYY]  
 **Parallel**: [P] (if applicable)
 
